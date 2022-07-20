@@ -1,27 +1,54 @@
-import './App.css';
-import logo from './logo.svg';
+import React, { useState, useEffect, useRef } from "react";
+import TuiImageEditor from "tui-image-editor";
 import Upload from './1-Upload/App';
 
-function App() {
+import "tui-image-editor/dist/tui-image-editor.css";
+import "tui-color-picker/dist/tui-color-picker.css";
+
+class ImageEditor extends React.Component {
+  rootEl = React.createRef();
+  imageEditorInst = null;
+
+  componentDidMount() {
+    this.imageEditorInst = new TuiImageEditor(this.rootEl.current, {
+      ...this.props
+    });
+  }
+
+  componentWillUnmount() {
+    // this.unbindEventHandlers();
+    this.imageEditorInst.destroy();
+    this.imageEditorInst = null;
+  }
+
+  render() {
+    return <div ref={this.rootEl} />;
+  }
+}
+
+export default function App() {
+  const props = {
+    includeUI: {
+      menu: ["shape", "filter", "text"],
+      initMenu: "filter",
+      uiSize: {
+        width: "1000px",
+        height: "700px"
+      },
+      menuBarPosition: "bottom"
+    },
+    cssMaxWidth: 700,
+    cssMaxHeight: 500,
+    selectionStyle: {
+      cornerSize: 20,
+      rotatingPointOffset: 70
+    }
+  };
+
   return (
-    <div className="App">
-      
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Upload />
+      <ImageEditor {...props} />
     </div>
   );
 }
-
-export default App;
