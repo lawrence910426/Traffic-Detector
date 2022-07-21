@@ -8,7 +8,7 @@ import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
-import { MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardLink } from 'mdb-react-ui-kit';
+import { MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBBtn } from 'mdb-react-ui-kit';
 
 class ImageEditor extends React.Component {
   rootEl = React.createRef();
@@ -54,26 +54,39 @@ export default function App() {
       <Container>
         <Row>
           <Col>
-
-    <MDBCard>
-      <MDBCard>
-        <MDBCardBody>
-          <MDBCardTitle>Panel title</MDBCardTitle>
-          <MDBCardTitle subtitle className='mb-2 text-muted'>
-            Panel subtitle
-          </MDBCardTitle>
-          <MDBCardText>
-            Some quick example text to build on the panel title and make up the bulk of the panel's content.
-          </MDBCardText>
-          <MDBCardLink href='#'>Panel link</MDBCardLink>
-          <MDBCardLink href='#'>Another link</MDBCardLink>
-        </MDBCardBody>
-      </MDBCard>
-    </MDBCard>
-          
+            <MDBCard background='info'>
+              <MDBCardBody>
+                <MDBCardTitle>完整模型</MDBCardTitle>
+                <MDBCardText>
+                  <ul>
+                    <li>適合作為報告輸出</li>
+                    <li>符合工研院標準</li>
+                    <li>每分鐘的影片約需要三分鐘處理</li>
+                  </ul>
+                </MDBCardText>
+                <MDBBtn href='#'>使用完整模型</MDBBtn>
+              </MDBCardBody>
+            </MDBCard>
           </Col>
+
+          <Col>
+            <MDBCard>
+              <MDBCardBody>
+                <MDBCardTitle>預覽模型</MDBCardTitle>
+                <MDBCardText>
+                  <ul>
+                    <li>適合調整鏡頭角度</li>
+                    <li>不符合工研院標準</li>
+                    <li>每分鐘的影片約需要十秒鐘處理</li>
+                  </ul>                
+                </MDBCardText>
+                <MDBBtn href='#'>使用預覽模型</MDBBtn>
+              </MDBCardBody>
+            </MDBCard>
+           </Col>
         </Row>
-        <Row><Col>
+
+        <Row style={{ marginTop: '3rem' }}><Col>
           <ImageEditor />
         </Col></Row>
       </Container>
