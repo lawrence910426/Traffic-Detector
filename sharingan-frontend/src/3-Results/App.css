@@ -36,3 +36,9 @@
     transform: rotate(360deg);
   }
 }
+
+#Upload_Box {
+  margin: 30px;
+  border: 2px dashed #000000;
+  height: 150px;
+}
