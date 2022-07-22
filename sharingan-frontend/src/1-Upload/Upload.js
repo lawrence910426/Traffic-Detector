@@ -6,10 +6,15 @@ import { MDBIcon } from 'mdb-react-ui-kit';
 Dropzone.autoDiscover = false;
 
 class Upload extends React.Component {
+  droppedFiles(acceptedFiles) {
+    console.log(acceptedFiles);
+    this.props.next();
+  }
+
   render() {
     return (
       <div>
-        <Dropzone onDrop={this.droppedFiles}>
+        <Dropzone onDrop={this.droppedFiles.bind(this)}>
           {({getRootProps, getInputProps}) => (
             <section>
               <div {...getRootProps()} style={{
@@ -34,10 +39,6 @@ class Upload extends React.Component {
         </Dropzone>
       </div>
     );
-  }
-
-  droppedFiles(acceptedFiles) {
-    console.log(acceptedFiles)
   }
 }
 

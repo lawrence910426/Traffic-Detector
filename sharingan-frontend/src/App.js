@@ -24,12 +24,12 @@ export default function App() {
 
   const handleReset = () => {
     setActiveStep(0);
-  };
+  }
 
-  const getStepContent = (step) => {
-    if(activeStep == 0) return (<Upload></Upload>)
-    if(activeStep == 1) return (<Parameter></Parameter>)
-    if(activeStep == 2) return (<Results></Results>)
+  const getStepContent = () => {
+    if(activeStep === 0) return (<Upload next={handleNext}></Upload>)
+    if(activeStep === 1) return (<Parameter next={handleNext}></Parameter>)
+    if(activeStep === 2) return (<Results reset={handleReset}></Results>)
   }
 
   return (
@@ -53,9 +53,6 @@ export default function App() {
 
         <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
           <Box sx={{ flex: '1 1 auto' }} />
-          <Button onClick={handleNext}>
-            {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-          </Button>
         </Box>
       </React.Fragment>
     </Box>

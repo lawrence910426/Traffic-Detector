@@ -4,7 +4,9 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import 'mdb-react-ui-kit/dist/css/mdb.min.css'
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import "tui-image-editor/dist/tui-image-editor.css";
+import "tui-color-picker/dist/tui-color-picker.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
