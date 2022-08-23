@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import Button from '@mui/material/Button';
 
 import Upload from './1-Upload/Upload'
 import Parameter from './2-Parameter/Parameter'
@@ -34,7 +33,7 @@ export default function App() {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Stepper activeStep={activeStep}>
+      <Stepper style={{ marginLeft: '3rem', marginRight: '3rem' }} activeStep={activeStep}>
         {steps.map((label) => {
           const stepProps = {};
           const labelProps = {};
