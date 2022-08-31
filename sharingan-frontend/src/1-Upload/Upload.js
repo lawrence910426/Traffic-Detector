@@ -3,13 +3,30 @@ import PropTypes from 'prop-types';
 
 import Dropzone from 'react-dropzone'
 import { MDBIcon } from 'mdb-react-ui-kit';
+import config from '../utils/config'
 
 Dropzone.autoDiscover = false;
 
 class Upload extends React.Component {
-  droppedFiles(acceptedFiles) {
-    console.log(acceptedFiles);
+  async droppedFiles(acceptedFiles) {
+    var fileObj = acceptedFiles.files[0]
+    console.log(fileObj);
+
+    var vid = await this.uploadFileServer(fileObj);
+    this.props.video(vid)
+
     this.props.next();
+  }
+
+  async uploadFileServer(file) {
+      let formData = new FormData(); 
+      formData.append("fileContent", file);
+      var ans = await fetch(config.host + "upload", {
+          method: "POST", 
+          body: formData
+      }); 
+      ans = await ans.json()
+      return ans.link
   }
 
   render() {
@@ -44,7 +61,8 @@ class Upload extends React.Component {
 }
 
 Upload.propTypes = {
-  next: PropTypes.func
+  next: PropTypes.func,
+  video: PropTypes.func
 };
 
 export default Upload;

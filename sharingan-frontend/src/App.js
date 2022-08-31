@@ -16,6 +16,8 @@ const steps = ['上傳影片', '設置參數', '下載結果'];
 
 export default function App() {
   const [activeStep, setActiveStep] = React.useState(0);
+  const [videoId, setVideoId] = React.useState("");
+  const [taskId, setTaskId] = React.useState("");
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -26,9 +28,9 @@ export default function App() {
   }
 
   const getStepContent = () => {
-    if(activeStep === 0) return (<Upload next={handleNext}></Upload>)
-    if(activeStep === 1) return (<Parameter next={handleNext}></Parameter>)
-    if(activeStep === 2) return (<Results reset={handleReset}></Results>)
+    if(activeStep === 0) return (<Upload next={handleNext} video={setVideoId}></Upload>)
+    if(activeStep === 1) return (<Parameter next={handleNext} video={videoId} task={setTaskId}></Parameter>)
+    if(activeStep === 2) return (<Results reset={handleReset} task={taskId}></Results>)
   }
 
   return (
