@@ -3,7 +3,7 @@ import React from "react";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
-import { MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBBtn } from 'mdb-react-ui-kit';
+import { MDBCard, MDBCardBody, MDBCardTitle, MDBBtn } from 'mdb-react-ui-kit';
 
 class ModelSelection extends React.Component {
   constructor() {

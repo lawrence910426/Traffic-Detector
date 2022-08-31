@@ -20,7 +20,7 @@ class Parameters extends React.Component {
       },
       {
         value: 30,
-        label: '20 (sec)',
+        label: '30 (sec)',
       },
       {
         value: 60,
