@@ -19,7 +19,7 @@ class ImageEditor extends React.Component {
           initMenu: "icon",
           uiSize: {
             width: "100%",
-            height: "70rem"
+            height: "50rem"
           },
           menuBarPosition: "bottom"
         },
