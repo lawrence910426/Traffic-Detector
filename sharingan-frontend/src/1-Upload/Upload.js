@@ -1,6 +1,7 @@
 import React from 'react';
-import Dropzone from 'react-dropzone'
+import PropTypes from 'prop-types';
 
+import Dropzone from 'react-dropzone'
 import { MDBIcon } from 'mdb-react-ui-kit';
 
 Dropzone.autoDiscover = false;
@@ -41,5 +42,9 @@ class Upload extends React.Component {
     );
   }
 }
+
+Upload.propTypes = {
+  next: PropTypes.func
+};
 
 export default Upload;

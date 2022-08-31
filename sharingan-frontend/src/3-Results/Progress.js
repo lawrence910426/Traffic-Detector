@@ -1,9 +1,11 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 
 import { MDBBtn } from 'mdb-react-ui-kit';
-import React from 'react';
 
 class Progress extends React.Component {
   constructor() {
@@ -72,5 +74,10 @@ class Progress extends React.Component {
     )
   }
 }
+
+Progress.propTypes = {
+    complete: PropTypes.func,
+    reset: PropTypes.func,
+};
 
 export default Progress;

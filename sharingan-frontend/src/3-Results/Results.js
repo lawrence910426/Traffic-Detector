@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Data from './Data';
 import Progress from './Progress';
@@ -27,5 +28,10 @@ class Results extends React.Component {
     )
   }
 }
+
+Results.propTypes = {
+  reset: PropTypes.func
+};
+
 
 export default Results;

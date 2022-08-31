@@ -1,63 +1,49 @@
 import React from "react";
+import PropTypes from 'prop-types';
 
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
-import { MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBBtn } from 'mdb-react-ui-kit';
-
+import PeriodSelection from "./PeriodSelection";
 import ImageEditor from "./ImageEditor";
+
+import { MDBBtn } from 'mdb-react-ui-kit';
 
 class Parameters extends React.Component {
   constructor() {
     super();
-    this.state = {
-      selectedModel: "full-model"
-    };
+    this.marks = [
+      {
+        value: 0,
+        label: '0 (sec)',
+      },
+      {
+        value: 30,
+        label: '20 (sec)',
+      },
+      {
+        value: 60,
+        label: '60 (sec)',
+      },
+      {
+        value: 90,
+        label: '90 (sec)',
+      }
+    ];
   }
 
-  toggleModel(modelName) {
-    this.setState({ selectedModel: modelName });
-  }
+  valuetext(value) { return `${value} (sec)`; }
+  valueLabelFormat(value) { return `${value} (sec)`; }
 
   render() {
     return (
       <div>
         <Container>
-          <Row>
-            <Col>
-              <MDBCard style={{
-                  backgroundColor: this.state.selectedModel === "full-model" ? "lightgrey" : "white"
-                }}>
-                <MDBCardBody>
-                  <MDBCardTitle>完整模型</MDBCardTitle>
-                  <ul>
-                    <li>適合作為報告輸出</li>
-                    <li>符合工研院標準</li>
-                    <li>每分鐘的影片約需要三分鐘處理</li>
-                  </ul>
-                  <MDBBtn onClick={() => {this.toggleModel('full-model')}}>使用完整模型</MDBBtn>
-                </MDBCardBody>
-              </MDBCard>
-            </Col>
-  
-            <Col>
-              <MDBCard style={{
-                  backgroundColor: this.state.selectedModel === "mini-model" ? "lightgrey" : "white"
-                }}>
-                <MDBCardBody>
-                  <MDBCardTitle>預覽模型</MDBCardTitle>
-                  <ul>
-                    <li>適合調整鏡頭角度</li>
-                    <li>不符合工研院標準</li>
-                    <li>每分鐘的影片約需要十秒鐘處理</li>
-                  </ul>                
-                  <MDBBtn onClick={() => {this.toggleModel('mini-model')}}>使用預覽模型</MDBBtn>
-                </MDBCardBody>
-              </MDBCard>
-             </Col>
-          </Row>
-  
+          <Row><Col>
+            <PeriodSelection />
+          </Col></Row>
+
           <Row style={{ marginTop: '3rem' }}><Col>
             <ImageEditor />
           </Col></Row>
@@ -70,5 +56,9 @@ class Parameters extends React.Component {
     );
   }
 }
+
+Parameters.propTypes = {
+  next: PropTypes.func
+};
 
 export default Parameters;
