@@ -14,16 +14,34 @@ class Progress extends React.Component {
   constructor() {
     super();
     this.state = {
-      progress: 0
+      progress: 0,
+      seconds: 0
     };
   }
 
   componentDidMount() {
-    this.intervalId = setInterval(async () => {
-        await axios.get(config.host + "progress", {
+    var intervalId = setInterval(async () => {
+        var progress = await axios.get(config.host + "progress", {
             params: { taskId: this.props.task }
         })
+        this.setState({ progress: progress })
+        this.setState((prevState) => { 
+          return { seconds: prevState.seconds + 1 }
+        })
+
+        if(progress == 100) {
+          clearInterval(intervalId)
+          this.props.complete()
+        }
     }, 1000)
+  }
+
+  estimateRuntime() {
+    var estimateSeconds = this.state.seconds / this.state.progress * 100
+    var secs = estimateSeconds % 60
+    var mins = Math.floor(estimateSeconds / 60) % 60
+    var hours = Math.floor(estimateSeconds / 3600)
+    return `預計剩餘時間：${hours} 小時 ${mins} 分鐘 ${secs} 秒`
   }
 
   terminateCompute() {
@@ -38,7 +56,7 @@ class Progress extends React.Component {
                     請稍候，伺服器正在計算交通流量
                 </h3>
                 <label style={{ textAlign: 'center', width: '100%' }}>
-                    預計剩餘時間：3 小時 15 分鐘
+                    ${this.estimateRuntime()}
                 </label>
             </Col></Row>
 

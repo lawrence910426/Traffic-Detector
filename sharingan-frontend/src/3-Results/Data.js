@@ -6,20 +6,50 @@ import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import { MDBBtn, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit';
 
-import { utils } from 'xlsx';
+import { utils, writeFile } from 'xlsx';
+import axios from 'axios'
+import config from '../utils/config'
 
 class Data extends React.Component {
     constructor() {
         super()
+        this.state = { 
+            sheet: utils.json_to_sheet([
+                { 車種: '小客車', 順向流量: 0, 逆向流量: 0 },
+                { 車種: '機車', 順向流量: 0, 逆向流量: 0 },
+                { 車種: '大車', 順向流量: 0, 逆向流量: 0 },
+                { 車種: 'MCU', 順向流量: 0, 逆向流量: 0 }
+                ], { header: ["車種", "順向流量", "逆向流量"] }
+            ),
+            flow: {},
+            videoUrl: "http://techslides.com/demos/sample-videos/small.mp4"
+        }
+    }
+
+    async componentDidMount() {
+        var flow = await axios.get(config.host + "flow", {
+            params: { taskId: this.props.task }
+        })
+        flow.large.forward = flow.truck.forward + flow.bus.forward
+        flow.large.reverse = flow.truck.reverse + flow.bus.reverse
+        this.setState({ flow: flow })
+
         var worksheet = utils.json_to_sheet([
-            { S: 1, h: 2, t: 5, J: 6, S_1: 7 },
-            { S: 2, h: 3, t: 6, J: 7, S_1: 8 },
-            { S: 3, h: 4, t: 7, J: 8, S_1: 9 },
-            { S: 4, h: 5, e: 6, e_1: 7, t: 8, J: 9, S_1: 0 }
-        ], { header: ["S", "h", "e", "e_1", "t", "J", "S_1"] }
-        );
-        var html = utils.sheet_to_html(worksheet);
-        this.state = { sheet: html }
+            { 車種: '小客車', 順向流量: flow.car.forward, 逆向流量: flow.car.reverse },
+            { 車種: '機車', 順向流量: flow.motorbike.forward, 逆向流量: flow.motorbike.reverse },
+            { 車種: '大車', 順向流量: flow.large.forward, 逆向流量: flow.large.reverse },
+            { 車種: 'MCU', 順向流量: flow.mcu.forward, 逆向流量: flow.mcu.reverse }
+            ], { header: ["車種", "順向流量", "逆向流量"] }
+        )
+        this.setState({ sheet: worksheet })
+
+        this.setState({ videoUrl: flow.videoUrl })
+    }
+
+    downloadExcel() {
+        const workbook = utils.book_new();
+        utils.book_append_sheet(workbook, this.state.sheet, "交通流量計數");
+        writeFile(workbook, "Traffic.xlsb")
     }
 
     render() {
@@ -38,38 +68,33 @@ class Data extends React.Component {
                             <MDBTableBody>
                                 <tr>
                                     <th scope='row'>小客車</th>
-                                    <td>23</td>
-                                    <td>52</td>
+                                    <td>{this.state.flow.car.forward}</td>
+                                    <td>{this.state.flow.car.reverse}</td>
                                 </tr>
                                 <tr>
                                     <th scope='row'>機車</th>
-                                    <td>104</td>
-                                    <td>203</td>
+                                    <td>{this.state.flow.motorbike.forward}</td>
+                                    <td>{this.state.flow.motorbike.reverse}</td>
                                 </tr>
                                 <tr>
                                     <th scope='row'>大車</th>
-                                    <td>104</td>
-                                    <td>203</td>
-                                </tr>
-                                <tr>
-                                    <th scope='row'>連結車</th>
-                                    <td>3</td>
-                                    <td>7</td>
+                                    <td>{this.state.flow.large.forward}</td>
+                                    <td>{this.state.flow.large.reverse}</td>
                                 </tr>
                                 <tr>
                                     <th scope='row'>MCU</th>
-                                    <td>1033</td>
-                                    <td>1523</td>
+                                    <td>{this.state.flow.mcu.forward}</td>
+                                    <td>{this.state.flow.mcu.reverse}</td>
                                 </tr>
                             </MDBTableBody>
 
                         </MDBTable>
-                        <MDBBtn>下載交通流量結果</MDBBtn>
+                        <MDBBtn onClick={this.downloadExcel}>下載交通流量結果</MDBBtn>
                     </Col>
 
                     <Col style={{ marginTop: '1rem' }}>
                         <video width="100%" controls>
-                            <source src="http://techslides.com/demos/sample-videos/small.mp4" type="video/mp4" />
+                            <source src={this.state.videoUrl} type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
                         <MDBBtn>下載影片</MDBBtn>
@@ -85,7 +110,8 @@ class Data extends React.Component {
 }
 
 Data.propTypes = {
-    reset: PropTypes.func
+    reset: PropTypes.func,
+    task: PropTypes.string
 };
 
 export default Data;
