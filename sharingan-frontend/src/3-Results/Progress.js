@@ -7,6 +7,9 @@ import Container from 'react-bootstrap/Container';
 
 import { MDBBtn } from 'mdb-react-ui-kit';
 
+import axios from 'axios'
+import config from '../utils/config'
+
 class Progress extends React.Component {
   constructor() {
     super();
@@ -16,25 +19,11 @@ class Progress extends React.Component {
   }
 
   componentDidMount() {
-    setTimeout(() => {
-        this.setState({ progress: 25 });
-      }, 1000)
-  
-      setTimeout(() => {
-          this.setState({ progress: 50 });
-      }, 2000)
-  
-      setTimeout(() => {
-          this.setState({ progress: 75 });
-      }, 3000)
-  
-      setTimeout(() => {
-          this.setState({ progress: 100 });
-      }, 4000)
-  
-      setTimeout(() => {
-          this.props.complete();
-      }, 5000)
+    this.intervalId = setInterval(async () => {
+        await axios.get(config.host + "progress", {
+            params: { taskId: this.props.task }
+        })
+    }, 1000)
   }
 
   terminateCompute() {
@@ -78,6 +67,7 @@ class Progress extends React.Component {
 Progress.propTypes = {
     complete: PropTypes.func,
     reset: PropTypes.func,
+    task: PropTypes.string
 };
 
 export default Progress;

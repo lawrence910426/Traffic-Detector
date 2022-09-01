@@ -82,7 +82,7 @@ class ImageEditor extends React.Component {
 
 ImageEditor.propTypes = {
   video: PropTypes.string,
-  detector: PropTypes.number
+  detector: PropTypes.func
 };
 
 export default ImageEditor;

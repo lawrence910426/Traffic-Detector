@@ -65,7 +65,7 @@ class PeriodSelection extends React.Component {
 }
 
 PeriodSelection.propTypes = {
-  period: PropTypes.number
+  period: PropTypes.func
 };
 
 export default PeriodSelection;
