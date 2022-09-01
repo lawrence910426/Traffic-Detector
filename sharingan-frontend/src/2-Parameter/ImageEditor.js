@@ -34,7 +34,7 @@ class ImageEditor extends React.Component {
         usageStatistics: true
       });
       
-      var imgLink = await axios.get(config.host + 'getFirstFrame', {
+      var imgLink = await axios.get(config.host + 'first_frame', {
         params: { id: this.props.video }
       })
       await this.imageEditorInst.loadImageFromURL(imgLink, 'SampleImage')
