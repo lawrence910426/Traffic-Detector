@@ -30,7 +30,8 @@ class Results extends React.Component {
 }
 
 Results.propTypes = {
-  reset: PropTypes.func
+  reset: PropTypes.func,
+  task: PropTypes.string
 };
 
 

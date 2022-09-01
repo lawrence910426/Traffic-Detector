@@ -53,11 +53,11 @@ class Parameters extends React.Component {
       <div>
         <Container>
           <Row><Col>
-            <PeriodSelection period={this.updateStabilization} />
+            <PeriodSelection period={this.updateStabilization.bind(this)} />
           </Col></Row>
 
           <Row style={{ marginTop: '3rem' }}><Col>
-            <ImageEditor video={this.props.video} detector={this.updateDetector} />
+            <ImageEditor video={this.props.video} detector={this.updateDetector.bind(this)} />
           </Col></Row>
 
           <Row style={{ marginTop: '3rem' }}><Col>
