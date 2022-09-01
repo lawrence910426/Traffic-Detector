@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
@@ -33,6 +34,10 @@ class PeriodSelection extends React.Component {
   valuetext(value) { return `${value} (sec)`; }
   valueLabelFormat(value) { return `${value} (sec)`; }
 
+  handleChange(event, value) {
+    this.props.period(value)
+  }
+
   render() {
     return (
       <MDBCard>
@@ -42,11 +47,12 @@ class PeriodSelection extends React.Component {
             <Row><Col>
               <Slider
                 aria-label="Restricted values"
-                defaultValue={10}
+                defaultValue={30}
                 max={90}
                 valueLabelFormat={this.valueLabelFormat}
                 getAriaValueText={this.valuetext}
                 step={1}
+                onChange={this.handleChange}
                 valueLabelDisplay="on"
                 marks={this.marks}
               />
@@ -57,5 +63,9 @@ class PeriodSelection extends React.Component {
     );
   }
 }
+
+PeriodSelection.propTypes = {
+  period: PropTypes.number
+};
 
 export default PeriodSelection;

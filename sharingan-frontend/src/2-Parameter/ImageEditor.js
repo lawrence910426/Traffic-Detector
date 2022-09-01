@@ -1,5 +1,9 @@
-import TuiImageEditor from "tui-image-editor";
 import React from 'react';
+import PropTypes from 'prop-types';
+
+import TuiImageEditor from "tui-image-editor";
+import axios from 'axios'
+import config from '../utils/config'
 
 class ImageEditor extends React.Component {
     rootEl = React.createRef();
@@ -29,8 +33,11 @@ class ImageEditor extends React.Component {
         },
         usageStatistics: true
       });
-
-      await this.imageEditorInst.loadImageFromURL('https://i.imgur.com/okbPT0k.jpg', 'SampleImage')
+      
+      var imgLink = await axios.get(config.host + 'getFirstFrame', {
+        params: { id: this.props.video }
+      })
+      await this.imageEditorInst.loadImageFromURL(imgLink, 'SampleImage')
       this.imageEditorInst.registerIcons({
         detectionLine: `
           M 0 0 L 0 185 L -5 185 L -5 0 L 0 0
@@ -49,7 +56,14 @@ class ImageEditor extends React.Component {
         `
       })
       var objectProps = await this.imageEditorInst.addIcon('detectionLine')
-      this.imageEditorInst.changeIconColor(objectProps.id, '#FF0000')
+      this.iconId = objectProps.id
+
+      this.imageEditorInst.changeIconColor(this.iconId, '#FF0000')
+      this.imageEditorInst.on('objectMoved', () => {
+        var A = this.imageEditorInst.getObjectPosition(this.iconId, 'left', 'top')
+        var B = this.imageEditorInst.getObjectPosition(this.iconId, 'left', 'bottom')
+        this.props.detector(A.x, A.y, B.x, B.y)
+      });
 
       this.removeByClassName("tui-image-editor-header-logo")
       this.removeByClassName("tui-image-editor-header-buttons")
@@ -65,5 +79,10 @@ class ImageEditor extends React.Component {
       return <div ref={this.rootEl} />;
     }
 }
+
+ImageEditor.propTypes = {
+  video: PropTypes.string,
+  detector: PropTypes.number
+};
 
 export default ImageEditor;
