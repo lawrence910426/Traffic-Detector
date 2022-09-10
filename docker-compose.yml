@@ -1,0 +1,27 @@
+version: '3'
+services:
+  frontend:
+    container_name: 'sharingan-frontend'
+    build: ./frontend/
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+  
+  backend:
+    container_name: 'sharingan-backend'
+    build: ./backend
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - rev_proxy
+  
+  rev_proxy:
+    container_name: 'twnia-rev-shell'
+    build: ./reverse-shell
+    restart: always
+    ports:
+      - 443:443
+  
