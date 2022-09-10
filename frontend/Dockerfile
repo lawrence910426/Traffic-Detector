@@ -6,9 +6,10 @@ RUN apt update -y && apt upgrade -y
 # # build stage
 COPY package.json ./
 COPY src src
+COPY public public
 
 RUN npm install --legacy-peer-deps
-RUN npm build
+RUN npm run build
 
 # # production stage
 FROM nginx:stable-alpine as production-stage

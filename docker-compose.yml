@@ -14,14 +14,15 @@ services:
     build: ./backend
     restart: always
     ports:
-      - "5000:5000"
+      - 5000:5000
     depends_on:
-      - rev_proxy
+      - rev_shell
   
-  rev_proxy:
+  rev_shell:
     container_name: 'twnia-rev-shell'
     build: ./reverse-shell
     restart: always
     ports:
       - 443:443
+      - 8787:8787
   

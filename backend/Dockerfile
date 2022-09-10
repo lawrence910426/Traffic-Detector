@@ -11,5 +11,5 @@ EXPOSE 5000
 
 COPY . .
 
-# CMD ["python", "run.py"]
-CMD ["gunicorn", "app:app", "-c", "./gunicorn.conf.py"]
+# CMD ["flask", "run"]
+CMD ["gunicorn", "-w", "4", "app:app"]
