@@ -19,13 +19,13 @@ class Upload extends React.Component {
 
   async uploadFileServer(file) {
       let formData = new FormData(); 
-      formData.append("fileContent", file);
+      formData.append("file", file);
       var ans = await fetch(config.host + "upload", {
           method: "POST", 
           body: formData
       }); 
       ans = await ans.json()
-      return ans.link
+      return ans.id
   }
 
   render() {
