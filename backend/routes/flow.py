@@ -3,10 +3,16 @@ from flask import Flask, request, jsonify
 @app.route('/flow', methods=['GET'])
 def getFlow():
     task_id = request.form['taskId']
-    process = subprocess.run([
-        "cat", f"slurm-{task_id}.txt", "|", "tail", "-n", "1"
-    ], stdout=subprocess.PIPE, capture_output=True)
+
+    with open('scripts/get_result.sh', 'r') as file:
+        bash_template = file.read()
+        bash_command = bash_template.format(
+            id=task_id
+        )
+
+    process = subprocess.run(bashCommand.split(), stdout=subprocess.PIPE, capture_output=True)
     out, err = process.stdout, process.stderr
     
-    flow = out.split("---")[0]
+    print(out)
+    progress = out.split("---")[-1]
     return flow
