@@ -32,6 +32,9 @@ class Data extends React.Component {
         })
         flow.large.forward = flow.truck.forward + flow.bus.forward
         flow.large.reverse = flow.truck.reverse + flow.bus.reverse
+
+        flow.mcu.forward = 0
+        flow.mcu.reverse = 0
         this.setState({ flow: flow })
 
         var worksheet = utils.json_to_sheet([
