@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from app import app
 
 @app.route('/flow', methods=['GET'])
 def getFlow():

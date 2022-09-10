@@ -1,5 +1,6 @@
 from flask import Flask, flash, request, redirect, url_for, json, jsonify
 import hashlib
+from app import app
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():

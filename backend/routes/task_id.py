@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from app import app
 import subprocess
 
 @app.route('/task_id', methods=['GET'])
@@ -6,7 +7,7 @@ def getTaskId():
     form = request.form
     video_id = form['id']
     stabilization = form['stabilization']
-    detector = f'{form['detector']['x1']},{form['detector']['y1']},{form['detector']['x2']},{form['detector']['y2']}'
+    detector = f"{form['detector']['x1']},{form['detector']['y1']},{form['detector']['x2']},{form['detector']['y2']}"
 
     with open('scripts/init_sbatch.sh', 'r') as file:
         bash_template = file.read()
