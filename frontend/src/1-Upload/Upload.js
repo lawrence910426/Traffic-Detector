@@ -8,8 +8,8 @@ import config from '../utils/config'
 Dropzone.autoDiscover = false;
 
 class Upload extends React.Component {
-  async droppedFiles(acceptedFiles) {
-    var fileObj = acceptedFiles.files[0]
+  async droppedFiles(files) {
+    var fileObj = files[0]
     console.log(fileObj);
 
     var vid = await this.uploadFileServer(fileObj);
