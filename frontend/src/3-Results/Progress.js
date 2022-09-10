@@ -24,7 +24,7 @@ class Progress extends React.Component {
         var progress = await axios.get(config.host + "progress", {
             params: { taskId: this.props.task }
         })
-        this.setState({ progress: progress })
+        this.setState({ progress: progress['progress'] })
         this.setState((prevState) => { 
           return { seconds: prevState.seconds + 1 }
         })

@@ -21,7 +21,8 @@ class Parameters extends React.Component {
         x1: 0, y1: 0,
         x2: 100, y2: 100
       },
-      stabilization: 10
+      stabilization: 10,
+      id: this.props.video
     }
   }
 

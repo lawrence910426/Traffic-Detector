@@ -1,14 +1,18 @@
-import time
 from flask import Flask, flash, request, redirect, url_for, json, jsonify
+import hashlib
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         file = request.files['file']
         filename = secure_filename(file.filename)
-        ts = int(time.time())
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename + "-" + str(ts)))
-        return jsonify({ "id": filename + "-" + str(ts) })
+        
+        m = hashlib.sha256()
+        m.update(filename)
+        fname = m.hexdigest()
+
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+        return jsonify({ "id": fname })
     else:
         return '''
         <!doctype html>
