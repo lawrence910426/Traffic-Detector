@@ -14,15 +14,16 @@ import axios from 'axios'
 import config from '../utils/config'
 
 class Parameters extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
     this.state = {
       detector: {
         x1: 0, y1: 0,
         x2: 100, y2: 100
       },
       stabilization: 10,
-      id: this.props.video
+      id: props.video
     }
   }
 
