@@ -63,7 +63,7 @@ class Parameters extends React.Component {
           </Col></Row>
 
           <Row style={{ marginTop: '3rem' }}><Col>
-            <MDBBtn onClick={this.complete}>完成參數設置</MDBBtn>
+            <MDBBtn onClick={this.complete.bind(this)}>完成參數設置</MDBBtn>
           </Col></Row>
         </Container>
       </div>

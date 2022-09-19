@@ -19,14 +19,28 @@ def upload_file():
         fname = m.hexdigest() + "." + extension
 
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+        with open('scripts/upload_video.sh', 'r') as file:
+            bash_template = file.read()
+            bash_command = bash_template.format(
+                host=os.environ['BACKEND_HOST'],
+                fileName=fname
+            )
+
+        out = subprocess.check_output(
+            bash_command, 
+            shell=True
+        )
+        out = out.decode('utf-8')
+        print("[Out]", out)
+
         return jsonify({ "id": fname })
     else:
         return '''
             <!doctype html>
-            <title>Upload new File</title>
-            <h1>Upload new File</h1>
-            <form method=post enctype=multipart/form-data>
-            <input type=file name=file>
-            <input type=submit value=Upload>
+                <title>Upload new File</title>
+                <h1>Upload new File</h1>
+                <form method=post enctype=multipart/form-data>
+                <input type=file name=file>
+                <input type=submit value=Upload>
             </form>
         '''

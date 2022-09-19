@@ -1,15 +1,17 @@
 from flask import Flask, request, jsonify
 from app import app
 import subprocess
+import json
 
 @app.route('/task_id', methods=['GET'])
 def getTaskId():
     form = request.form
-    video_id = form['id']
-    stabilization = form['stabilization']
-    detector = f"{form['detector']['x1']},{form['detector']['y1']},{form['detector']['x2']},{form['detector']['y2']}"
+    video_id = request.args.get('id')
+    stabilization = request.args.get('stabilization')
+    detector = json.loads(request.args.get('detector'))
+    detector = f"{detector['x1']},{detector['y1']},{detector['x2']},{detector['y2']}"
 
-    with open('scripts/init_sbatch.sh', 'r') as file:
+    with open('scripts/init_task.sh', 'r') as file:
         bash_template = file.read()
         bash_command = bash_template.format(
             stabilization=stabilization,
@@ -17,9 +19,13 @@ def getTaskId():
             video_id=video_id
         )
 
-    process = subprocess.run(bash_command.split(), stdout=subprocess.PIPE, capture_output=True)
-    out, err = process.stdout, process.stderr
-    
-    print(out)
+    out = subprocess.check_output(
+        bash_command, 
+        shell=True
+    )
+    out = out.decode('utf-8')
+    print("[Out]", out)
+
+    out = out.split("\n")[-1]
     slurm_id = out.split(" ")[-1]
     return jsonify({ "id": slurm_id })

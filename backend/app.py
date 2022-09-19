@@ -8,6 +8,6 @@ app = Flask(
     static_url_path='/static'
 )
 app.config['UPLOAD_FOLDER'] = "/tmp/"
-app.config['STATIC_URL'] = "http://172.28.188.72:5000/static/"
+app.config['STATIC_URL'] = f"{os.environ['BACKEND_HOST']}/static/"
 
 from routes import first_frame, flow, progress, task_id, upload
