@@ -8,6 +8,8 @@ services:
       - "80:80"
     depends_on:
       - backend
+    environment:
+      - BACKEND_HOST=${BACKEND_HOST}
   
   backend:
     container_name: 'sharingan-backend'
@@ -17,6 +19,8 @@ services:
       - 8000:8000
     depends_on:
       - rev_shell
+    environment:
+      - BACKEND_HOST=${BACKEND_HOST}
   
   rev_shell:
     container_name: 'twnia-rev-shell'
@@ -25,4 +29,6 @@ services:
     ports:
       - 443:443
       - 8787:8787
+    environment:
+      - BACKEND_HOST=${BACKEND_HOST}
   
