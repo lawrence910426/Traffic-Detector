@@ -11,6 +11,10 @@ COPY public public
 RUN npm install --legacy-peer-deps
 RUN npm run build
 
+COPY nginx nginx
+RUN envsubst '${LOCAL_IP}' < nginx/nginx.conf > nginx/nginx.conf.subst
+RUN mv nginx/nginx.conf.subst nginx/nginx.conf
+
 # # production stage
 FROM nginx:stable-alpine as production-stage
 COPY --from=build-stage /app/build /usr/share/nginx/html
