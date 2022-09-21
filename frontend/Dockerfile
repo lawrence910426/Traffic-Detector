@@ -13,7 +13,7 @@ RUN npm install --legacy-peer-deps
 RUN npm run build
 
 COPY nginx nginx
-RUN envsubst '${LOCAL_IP}' < nginx/nginx.conf > nginx/nginx.conf.subst
+RUN envsubst '${LOCAL_IP}' < nginx/nginx_template.conf > nginx/nginx.conf
 RUN mv nginx/nginx.conf.subst nginx/nginx.conf
 
 # # production stage
