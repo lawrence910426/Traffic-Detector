@@ -12,13 +12,9 @@ COPY public public
 RUN npm install --legacy-peer-deps
 RUN npm run build
 
-COPY nginx nginx
-RUN envsubst '${LOCAL_IP}' < nginx/nginx_template.conf > nginx/nginx.conf
-RUN mv nginx/nginx.conf.subst nginx/nginx.conf
-
 # # production stage
 FROM nginx:stable-alpine as production-stage
 COPY --from=build-stage /app/build /usr/share/nginx/html
-COPY /nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx nginx
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["bash nginx/nginx.vars.sh", "&", "nginx", "-g", "daemon off;"]
