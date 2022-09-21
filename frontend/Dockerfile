@@ -2,6 +2,7 @@
 FROM node:18-bullseye as build-stage
 WORKDIR /app
 RUN apt update -y && apt upgrade -y
+RUN apt install gettext -y
 
 # # build stage
 COPY package.json ./
