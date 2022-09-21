@@ -19,4 +19,4 @@ COPY --from=build-stage /app/build /usr/share/nginx/html
 COPY nginx/nginx_template.conf /etc/nginx/nginx_template.conf
 COPY nginx/nginx_vars.sh /etc/nginx/nginx_vars.sh
 
-CMD ["bash /etc/nginx/nginx_vars.sh", "&", "nginx", "-g", "daemon off;"]
+CMD ["/bin/sh", "/etc/nginx/nginx_vars.sh", "&", "nginx", "-g", "daemon off;"]

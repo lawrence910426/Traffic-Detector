@@ -10,7 +10,8 @@ services:
       - backend
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
-  
+      - LOCAL_IP=${LOCAL_IP}
+
   backend:
     container_name: 'sharingan-backend'
     build: ./backend
