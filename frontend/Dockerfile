@@ -1,3 +1,5 @@
+ARG BACKEND_HOST
+
 # # build stage
 FROM node:18-bullseye as build-stage
 WORKDIR /app

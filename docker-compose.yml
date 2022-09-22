@@ -8,6 +8,9 @@ services:
       - "80:80"
     depends_on:
       - backend
+    args:
+      - BACKEND_HOST=${BACKEND_HOST}
+      - LOCAL_IP=${LOCAL_IP}
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
       - LOCAL_IP=${LOCAL_IP}
