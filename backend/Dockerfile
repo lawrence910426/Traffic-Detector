@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 
-RUN apt install netcat
+RUN apt update -y && apt upgrade -y && apt install netcat -y
 RUN pip3 install -r requirements.txt
 
 EXPOSE 8000

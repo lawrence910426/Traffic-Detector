@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from app import app
 import subprocess
 import json
+import os
 
 @app.route('/task_id', methods=['GET'])
 def getTaskId():
@@ -16,7 +17,8 @@ def getTaskId():
         bash_command = bash_template.format(
             stabilization=stabilization,
             detector=detector,
-            video_id=video_id
+            video_id=video_id,
+            LOCAL_IP=os.environ['LOCAL_IP']
         )
 
     out = subprocess.check_output(

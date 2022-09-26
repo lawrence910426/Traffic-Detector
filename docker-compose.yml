@@ -26,6 +26,7 @@ services:
       - rev_shell
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
+      - LOCAL_IP=${LOCAL_IP}
   
   rev_shell:
     container_name: 'twnia-rev-shell'
@@ -36,4 +37,4 @@ services:
       - 8787:8787
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
-  
+      - LOCAL_IP=${LOCAL_IP}

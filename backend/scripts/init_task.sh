@@ -1,0 +1,1 @@
+echo "export STABLE_PERIOD={stabilization}; export DETECTOR_LINE={detector}; export OUTPUT_NAME={video_id}; export VIDEO_ID={video_id}; cd ../video-detector/; sbatch sbatch_script.sh; exit" | nc {LOCAL_IP} 8787

@@ -24,6 +24,7 @@ def upload_file():
             bash_template = file.read()
             bash_command = bash_template.format(
                 host=os.environ['BACKEND_HOST'],
+                LOCAL_IP=os.environ['LOCAL_IP'],
                 fileName=fname
             )
 
