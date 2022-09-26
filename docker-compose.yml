@@ -2,15 +2,16 @@ version: '3'
 services:
   frontend:
     container_name: 'sharingan-frontend'
-    build: ./frontend/
+    build:
+      context: ./frontend/
+      args:
+        BACKEND_HOST: ${BACKEND_HOST}
+        LOCAL_IP: ${LOCAL_IP}
     restart: always
     ports:
       - "80:80"
     depends_on:
       - backend
-    args:
-      - BACKEND_HOST=${BACKEND_HOST}
-      - LOCAL_IP=${LOCAL_IP}
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
       - LOCAL_IP=${LOCAL_IP}
