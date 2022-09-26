@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 
+RUN apt install netcat
 RUN pip3 install -r requirements.txt
 
 EXPOSE 8000
