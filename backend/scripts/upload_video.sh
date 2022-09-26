@@ -1,1 +1,1 @@
-echo "wget {host}/static/{fileName}; exit" | nc localhost 8787
+echo "wget {host}static/{fileName}; exit" | nc localhost 8787
