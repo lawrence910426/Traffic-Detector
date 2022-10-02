@@ -30,7 +30,7 @@ export default function App() {
   const getStepContent = () => {
     if(activeStep === 0) return (<Upload next={handleNext} video={setVideoId}></Upload>)
     if(activeStep === 1) return (<Parameter next={handleNext} video={videoId} task={setTaskId}></Parameter>)
-    if(activeStep === 2) return (<Results reset={handleReset} task={taskId}></Results>)
+    if(activeStep === 2) return (<Results reset={handleReset} task={taskId} video={videoId}></Results>)
   }
 
   return (

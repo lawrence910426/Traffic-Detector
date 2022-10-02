@@ -33,7 +33,7 @@ class Data extends React.Component {
 
     async componentDidMount() {
         var flow = await axios.get(config.host + "flow", {
-            params: { taskId: this.props.task }
+            params: { taskId: this.props.task, videoId: this.props.video }
         })
         flow = flow.data
         flow.large.forward = flow.truck.forward + flow.bus.forward
@@ -120,7 +120,8 @@ class Data extends React.Component {
 
 Data.propTypes = {
     reset: PropTypes.func,
-    task: PropTypes.string
+    task: PropTypes.string,
+    video: PropTypes.string
 };
 
 export default Data;

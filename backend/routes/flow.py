@@ -6,13 +6,12 @@ import json
 
 @app.route('/flow', methods=['GET'])
 def getFlow():
-    task_id = request.args.get('taskId')
-    
     # First, upload the video
+    video_id = request.args.get('videoId')
     with open('scripts/get_result_vdo.sh', 'r') as file:
         bash_template = file.read()
         bash_command = bash_template.format(
-            id=task_id,
+            id=video_id,
             host=os.environ['BACKEND_HOST'],
             LOCAL_IP=os.environ['LOCAL_IP']
         )
@@ -23,10 +22,11 @@ def getFlow():
     out = out.decode('utf-8')
     print("[Out]", out)
 
-    out = out.split("\n")[1]
+    out = out.split("\n")[-3]
     url = json.loads(out)["url"]
 
     # Next, get the traffic flow
+    task_id = request.args.get('taskId')
     with open('scripts/get_result_flow.sh', 'r') as file:
         bash_template = file.read()
         bash_command = bash_template.format(
