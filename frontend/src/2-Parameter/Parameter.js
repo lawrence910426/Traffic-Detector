@@ -45,7 +45,7 @@ class Parameters extends React.Component {
   async complete() {
     var taskId = await axios.get(config.host + "task_id", {
       params: this.state
-    })
+    }).data.id
     this.props.task(taskId)
     this.props.next()
   }
