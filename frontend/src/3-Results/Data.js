@@ -30,6 +30,7 @@ class Data extends React.Component {
         var flow = await axios.get(config.host + "flow", {
             params: { taskId: this.props.task }
         })
+        flow = flow.data
         flow.large.forward = flow.truck.forward + flow.bus.forward
         flow.large.reverse = flow.truck.reverse + flow.bus.reverse
 
