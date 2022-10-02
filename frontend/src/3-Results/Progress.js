@@ -43,7 +43,7 @@ class Progress extends React.Component {
     if (isNaN(estimateSeconds)) {
       return `預計剩餘時間：估計中...`
     } else {
-      var secs = estimateSeconds % 60
+      var secs = Math.floor(estimateSeconds % 60)
       var mins = Math.floor(estimateSeconds / 60) % 60
       var hours = Math.floor(estimateSeconds / 3600)
       return `預計剩餘時間：${hours} 小時 ${mins} 分鐘 ${secs} 秒`
