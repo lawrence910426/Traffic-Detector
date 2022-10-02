@@ -21,7 +21,7 @@ class Results extends React.Component {
       <div>
         {
           this.state.isLoading ? 
-          (<Progress reset={this.props.reset} complete={this.computationComplete.bind(this)} />) : 
+          (<Progress reset={this.props.reset} complete={this.computationComplete.bind(this)} task={this.props.task} />) : 
           (<Data reset={this.props.reset} task={this.props.task} />)
         }
       </div>
