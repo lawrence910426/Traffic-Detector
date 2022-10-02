@@ -61,7 +61,7 @@ class Progress extends React.Component {
                     請稍候，伺服器正在計算交通流量
                 </h3>
                 <label style={{ textAlign: 'center', width: '100%' }}>
-                    ${this.estimateRuntime()}
+                    {this.estimateRuntime()}
                 </label>
             </Col></Row>
 
