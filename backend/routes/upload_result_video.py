@@ -7,7 +7,7 @@ import time
 import subprocess
 
 @app.route('/upload_result_video', methods=['POST'])
-def upload_file():
+def upload_result_video():
     file = request.files['file']
     fname = file.filename
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
