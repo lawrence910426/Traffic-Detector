@@ -38,7 +38,8 @@ class Progress extends React.Component {
 
   estimateRuntime() {
     var estimateSeconds = this.state.seconds / this.state.progress * 100
-    if (estimateSeconds == undefined) {
+    console.log(estimateSeconds)
+    if (isNaN(estimateSeconds)) {
       return `預計剩餘時間：估計中...`
     } else {
       var secs = estimateSeconds % 60
