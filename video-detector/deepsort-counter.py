@@ -59,7 +59,7 @@ class Sharingan(object):
             os.makedirs(self.args.save_path, exist_ok=True)
 
             # path of saved video and results
-            self.save_video_path = os.path.join(self.args.save_path, self.args.output_name + ".avi")
+            self.save_video_path = os.path.join(self.args.save_path, self.args.output_name + ".mp4")
             self.save_results_path = os.path.join(self.args.save_path, self.args.output_name + ".txt")
 
             # create video writer
@@ -82,11 +82,12 @@ class Sharingan(object):
         progress = Progress(10, 99)
 
         # initialize detection line
+        detection_line = Line(*self.args.detector_line.split(","))
         detection_counter = {}
         for enabled_cls in self.enabled_classes:
             detection_counter[enabled_cls[0]] = Counter(
                 self.vdo.get(cv2.CAP_PROP_FPS),
-                Line(*self.args.detector_line.split(","))
+                detection_line
             )
         width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH)) 
         height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -161,8 +162,11 @@ class Sharingan(object):
                 
                 fg_im = draw_boxes(fg_im, bbox_xyxy, identities)
                 results.append((idx_frame - 1, bbox_tlwh, identities))
-
-            fg_im = draw_flow(fg_im, detection_counter.getFlow())
+            
+            detector_flow = {}
+            for k in detection_counter:
+                detector_flow[k] = detection_counter[k].getFlow()
+            fg_im = draw_flow(fg_im, detector_flow)
             fg_im = draw_detector(fg_im, detection_line)
 
             end = time.time()
@@ -188,7 +192,7 @@ class Sharingan(object):
         for enabled_cls in self.enabled_classes:
             flow[enabled_cls[1]] = detection_counter[enabled_cls[0]].getFlow()
         flow = str(flow)
-
+        
         print(f"Flow: {flow}, " + Progress(99, 100).get_progress(100))
 
 
