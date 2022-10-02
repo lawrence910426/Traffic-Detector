@@ -42,9 +42,11 @@ def getFlow():
     print("[Out]", out)
     
     out = out.split("\n")[1]
-    flow = out.split("---")[-1]
+    flow = out.split("---")[0]
+    flow = flow[6:-12]
+    flow = flow.replace("\'", "\"")
 
     # Last, combine the results
     flow = json.loads(flow)
-    flow.videoUrl = url
+    flow["videoUrl"] = url
     return flow

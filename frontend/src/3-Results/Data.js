@@ -36,13 +36,16 @@ class Data extends React.Component {
             params: { taskId: this.props.task, videoId: this.props.video }
         })
         flow = flow.data
+        
+        flow.large = {}
         flow.large.forward = flow.truck.forward + flow.bus.forward
         flow.large.reverse = flow.truck.reverse + flow.bus.reverse
 
+        flow.mcu = {}
         flow.mcu.forward = 0
         flow.mcu.reverse = 0
         this.setState({ flow: flow })
-
+        
         var worksheet = utils.json_to_sheet([
             { 車種: '小客車', 順向流量: flow.car.forward, 逆向流量: flow.car.reverse },
             { 車種: '機車', 順向流量: flow.motorbike.forward, 逆向流量: flow.motorbike.reverse },
@@ -51,7 +54,7 @@ class Data extends React.Component {
             ], { header: ["車種", "順向流量", "逆向流量"] }
         )
         this.setState({ sheet: worksheet })
-
+        
         this.setState({ videoUrl: flow.videoUrl })
     }
 
@@ -102,7 +105,7 @@ class Data extends React.Component {
                     </Col>
 
                     <Col style={{ marginTop: '1rem' }}>
-                        <video width="100%" controls>
+                        <video src={this.state.videoUrl} width="100%" controls autoPlay>
                             <source src={this.state.videoUrl} type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
