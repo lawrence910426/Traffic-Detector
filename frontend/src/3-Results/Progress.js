@@ -25,7 +25,7 @@ class Progress extends React.Component {
             params: { taskId: this.props.task }
         })
         progress = progress.data
-        this.setState({ progress: progress['progress'] })
+        this.setState({ progress: progress['progress'] + 0.01 })
         this.setState((prevState) => { 
           return { seconds: prevState.seconds + 1 }
         })
