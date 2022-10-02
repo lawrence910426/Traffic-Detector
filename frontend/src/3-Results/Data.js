@@ -21,7 +21,12 @@ class Data extends React.Component {
                 { 車種: 'MCU', 順向流量: 0, 逆向流量: 0 }
                 ], { header: ["車種", "順向流量", "逆向流量"] }
             ),
-            flow: {},
+            flow: {
+                car: { forward: 0, reverse: 0 },
+                motorbike: { forward: 0, reverse: 0 },
+                large: { forward: 0, reverse: 0 },
+                mcu: { forward: 0, reverse: 0 }
+            },
             videoUrl: "http://techslides.com/demos/sample-videos/small.mp4"
         }
     }
