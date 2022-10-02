@@ -59,7 +59,7 @@ class Sharingan(object):
             os.makedirs(self.args.save_path, exist_ok=True)
 
             # path of saved video and results
-            self.save_video_path = os.path.join(self.args.save_path, self.args.output_name + ".avi")
+            self.save_video_path = os.path.join(self.args.save_path, self.args.output_name + ".mp4")
             self.save_results_path = os.path.join(self.args.save_path, self.args.output_name + ".txt")
 
             # create video writer
