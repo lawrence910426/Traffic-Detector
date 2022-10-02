@@ -20,6 +20,7 @@ def getProgress():
     )
     out = out.decode('utf-8')
     print("[Out]", out)
-
+    
+    out = out.split("\n")[1]
     progress = out.split("---")[-1]
     return jsonify({ "progress": progress })
