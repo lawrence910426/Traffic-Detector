@@ -19,8 +19,8 @@ class Parameters extends React.Component {
 
     this.state = {
       detector: {
-        x1: 0, y1: 0,
-        x2: 100, y2: 100
+        x1: 100, y1: 100,
+        x2: 200, y2: 100
       },
       stabilization: 10,
       id: props.video
@@ -28,10 +28,11 @@ class Parameters extends React.Component {
   }
 
   updateDetector(x1, y1, x2, y2) {
+    // Translates Web coordinate to OpenCV coordinate
     this.setState({
       detector: {
-        x1: x1, y1: y1,
-        x2: x2, y2: y2
+        x1: Math.floor(y1), y1: Math.floor(x1),
+        x2: Math.floor(y2), y2: Math.floor(x2)
       }
     })
   }

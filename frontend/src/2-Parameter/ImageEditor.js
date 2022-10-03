@@ -60,12 +60,19 @@ class ImageEditor extends React.Component {
       var objectProps = await this.imageEditorInst.addIcon('detectionLine')
       this.iconId = objectProps.id
 
-      this.imageEditorInst.changeIconColor(this.iconId, '#FF0000')
-      this.imageEditorInst.on('objectMoved', () => {
+      await this.imageEditorInst.setObjectPosition(this.iconId, {
+          x: 100, y: 100, originX: 'left', originY: 'top'
+      })
+      await this.imageEditorInst.changeIconColor(this.iconId, '#FF0000')
+
+      const updatePosition = () => {
         var A = this.imageEditorInst.getObjectPosition(this.iconId, 'left', 'top')
-        var B = this.imageEditorInst.getObjectPosition(this.iconId, 'left', 'bottom')
+        var B = this.imageEditorInst.getObjectPosition(this.iconId, 'right', 'bottom')
         this.props.detector(A.x, A.y, B.x, B.y)
-      });
+      }; 
+      this.imageEditorInst.on('objectMoved', updatePosition);
+      this.imageEditorInst.on('objectRotated', updatePosition);
+      this.imageEditorInst.on('objectScaled', updatePosition);
 
       this.removeByClassName("tui-image-editor-header-logo")
       this.removeByClassName("tui-image-editor-header-buttons")

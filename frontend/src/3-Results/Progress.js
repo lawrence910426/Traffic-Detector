@@ -26,7 +26,7 @@ class Progress extends React.Component {
         })
         progress = parseInt(progress.data.progress)
 
-        this.setState({ progress: progress['progress'] + 0.01 })
+        this.setState({ progress: progress + 0.01 })
         this.setState((prevState) => { 
           return { seconds: prevState.seconds + 1 }
         })
@@ -40,7 +40,7 @@ class Progress extends React.Component {
 
   estimateRuntime() {
     var estimateSeconds = this.state.seconds / this.state.progress * 100
-    console.log(estimateSeconds)
+    console.log(this.state.seconds, this.state.progress, estimateSeconds)
     if (isNaN(estimateSeconds)) {
       return `預計剩餘時間：估計中...`
     } else {

@@ -17,9 +17,10 @@ def getTaskId():
             stabilization=stabilization,
             detector=detector,
             video_id=video_id,
+            output_id=video_id.replace(".", ""),
             LOCAL_IP=os.environ['LOCAL_IP']
         )
-
+    # raise Exception(bash_command)
     out = subprocess.check_output(
         bash_command, 
         shell=True

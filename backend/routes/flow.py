@@ -11,7 +11,7 @@ def getFlow():
     with open('scripts/get_result_vdo.sh', 'r') as file:
         bash_template = file.read()
         bash_command = bash_template.format(
-            id=video_id,
+            id=video_id.replace(".", ""),
             host=os.environ['BACKEND_HOST'],
             LOCAL_IP=os.environ['LOCAL_IP']
         )
@@ -38,15 +38,18 @@ def getFlow():
         bash_command, 
         shell=True
     )
-    out = out.decode('utf-8')
+    raw_out = out = out.decode('utf-8')
     print("[Out]", out)
     
-    out = out.split("\n")[1]
-    flow = out.split("---")[0]
-    flow = flow[6:-12]
-    flow = flow.replace("\'", "\"")
+    try:
+        out = out.split("\n")[1]
+        flow = out.split("---")[0]
+        flow = flow[6:-12]
+        flow = flow.replace("\'", "\"")
+        flow = json.loads(flow)
+    except:
+        raise Exception(raw_out)
 
     # Last, combine the results
-    flow = json.loads(flow)
     flow["videoUrl"] = url
     return flow
