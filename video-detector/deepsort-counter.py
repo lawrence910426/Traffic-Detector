@@ -63,7 +63,7 @@ class Sharingan(object):
             self.save_results_path = os.path.join(self.args.save_path, self.args.output_name + ".txt")
 
             # create video writer
-            fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+            fourcc = cv2.VideoWriter_fourcc(*'avc1')
             self.writer = cv2.VideoWriter(self.save_video_path, fourcc, 20, (self.im_width, self.im_height))
 
             # logging
