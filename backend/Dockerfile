@@ -1,9 +1,12 @@
 FROM python:3.7-buster
+ARG LOCAL_IP
+
 
 WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 
+RUN apt update -y && apt upgrade -y && apt install netcat -y
 RUN pip3 install -r requirements.txt
 
 EXPOSE 8000

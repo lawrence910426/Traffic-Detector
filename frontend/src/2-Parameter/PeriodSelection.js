@@ -27,6 +27,10 @@ class PeriodSelection extends React.Component {
       {
         value: 90,
         label: '90 (sec)',
+      },
+      {
+        value: 120,
+        label: '120 (sec)',
       }
     ];
   }
@@ -48,12 +52,12 @@ class PeriodSelection extends React.Component {
               <Slider
                 aria-label="Restricted values"
                 defaultValue={30}
-                max={90}
+                max={120}
                 valueLabelFormat={this.valueLabelFormat}
                 getAriaValueText={this.valuetext}
                 step={1}
-                onChange={this.handleChange}
-                valueLabelDisplay="on"
+                onChange={this.handleChange.bind(this)}
+                valueLabelDisplay="auto"
                 marks={this.marks}
               />
             </Col></Row>

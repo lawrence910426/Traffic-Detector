@@ -37,6 +37,8 @@ class ImageEditor extends React.Component {
       var imgLink = await axios.get(config.host + 'first_frame', {
         params: { id: this.props.video }
       })
+      imgLink = imgLink.data.link
+
       await this.imageEditorInst.loadImageFromURL(imgLink, 'SampleImage')
       this.imageEditorInst.registerIcons({
         detectionLine: `
@@ -69,6 +71,7 @@ class ImageEditor extends React.Component {
       this.removeByClassName("tui-image-editor-header-buttons")
       this.removeByClassName("tui-image-editor-submenu")
       this.removeByClassName("tui-image-editor-menu")
+      this.removeByClassName("tui-image-editor-help-menu")
     }
   
     componentWillUnmount() {

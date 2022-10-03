@@ -2,13 +2,20 @@ version: '3'
 services:
   frontend:
     container_name: 'sharingan-frontend'
-    build: ./frontend/
+    build:
+      context: ./frontend/
+      args:
+        BACKEND_HOST: ${BACKEND_HOST}
+        LOCAL_IP: ${LOCAL_IP}
     restart: always
     ports:
       - "80:80"
     depends_on:
       - backend
-  
+    environment:
+      - BACKEND_HOST=${BACKEND_HOST}
+      - LOCAL_IP=${LOCAL_IP}
+
   backend:
     container_name: 'sharingan-backend'
     build: ./backend
@@ -17,6 +24,9 @@ services:
       - 8000:8000
     depends_on:
       - rev_shell
+    environment:
+      - BACKEND_HOST=${BACKEND_HOST}
+      - LOCAL_IP=${LOCAL_IP}
   
   rev_shell:
     container_name: 'twnia-rev-shell'
@@ -25,4 +35,6 @@ services:
     ports:
       - 443:443
       - 8787:8787
-  
+    environment:
+      - BACKEND_HOST=${BACKEND_HOST}
+      - LOCAL_IP=${LOCAL_IP}

@@ -1,19 +1,27 @@
 # # build stage
 FROM node:18-bullseye as build-stage
+
+ARG BACKEND_HOST
+ARG LOCAL_IP
+
 WORKDIR /app
 RUN apt update -y && apt upgrade -y
+RUN apt install gettext -y
 
 # # build stage
 COPY package.json ./
 COPY src src
 COPY public public
 
+RUN BACKEND_HOST=${BACKEND_HOST} && envsubst '${BACKEND_HOST}' < src/utils/config_template.js > src/utils/config.js
 RUN npm install --legacy-peer-deps
 RUN npm run build
 
 # # production stage
 FROM nginx:stable-alpine as production-stage
 COPY --from=build-stage /app/build /usr/share/nginx/html
-COPY /nginx/nginx.conf /etc/nginx/nginx.conf
 
-CMD ["nginx", "-g", "daemon off;"]
+COPY nginx/nginx_template.conf /etc/nginx/nginx_template.conf
+COPY nginx/nginx_init.sh /etc/nginx/nginx_init.sh
+
+CMD ["/bin/sh", "/etc/nginx/nginx_init.sh"]

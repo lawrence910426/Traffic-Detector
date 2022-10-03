@@ -14,15 +14,16 @@ import axios from 'axios'
 import config from '../utils/config'
 
 class Parameters extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
     this.state = {
       detector: {
         x1: 0, y1: 0,
         x2: 100, y2: 100
       },
       stabilization: 10,
-      id: this.props.video
+      id: props.video
     }
   }
 
@@ -45,10 +46,12 @@ class Parameters extends React.Component {
     var taskId = await axios.get(config.host + "task_id", {
       params: this.state
     })
+    taskId = taskId.data.id
     this.props.task(taskId)
     this.props.next()
   }
 
+  
   render() {
     return (
       <div>
@@ -62,7 +65,7 @@ class Parameters extends React.Component {
           </Col></Row>
 
           <Row style={{ marginTop: '3rem' }}><Col>
-            <MDBBtn onClick={this.complete}>完成參數設置</MDBBtn>
+            <MDBBtn onClick={this.complete.bind(this)}>完成參數設置</MDBBtn>
           </Col></Row>
         </Container>
       </div>

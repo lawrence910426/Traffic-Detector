@@ -21,31 +21,40 @@ class Data extends React.Component {
                 { 車種: 'MCU', 順向流量: 0, 逆向流量: 0 }
                 ], { header: ["車種", "順向流量", "逆向流量"] }
             ),
-            flow: {},
+            flow: {
+                car: { Forward: 0, Reverse: 0 },
+                motorbike: { Forward: 0, Reverse: 0 },
+                large: { Forward: 0, Reverse: 0 },
+                mcu: { Forward: 0, Reverse: 0 }
+            },
             videoUrl: "http://techslides.com/demos/sample-videos/small.mp4"
         }
     }
 
     async componentDidMount() {
         var flow = await axios.get(config.host + "flow", {
-            params: { taskId: this.props.task }
+            params: { taskId: this.props.task, videoId: this.props.video }
         })
-        flow.large.forward = flow.truck.forward + flow.bus.forward
-        flow.large.reverse = flow.truck.reverse + flow.bus.reverse
+        flow = flow.data
+        
+        flow.large = {}
+        flow.large.Forward = flow.truck.Forward + flow.bus.Forward
+        flow.large.Reverse = flow.truck.Reverse + flow.bus.Reverse
 
-        flow.mcu.forward = 0
-        flow.mcu.reverse = 0
+        flow.mcu = {}
+        flow.mcu.Forward = 0
+        flow.mcu.Reverse = 0
         this.setState({ flow: flow })
-
+        
         var worksheet = utils.json_to_sheet([
-            { 車種: '小客車', 順向流量: flow.car.forward, 逆向流量: flow.car.reverse },
-            { 車種: '機車', 順向流量: flow.motorbike.forward, 逆向流量: flow.motorbike.reverse },
-            { 車種: '大車', 順向流量: flow.large.forward, 逆向流量: flow.large.reverse },
-            { 車種: 'MCU', 順向流量: flow.mcu.forward, 逆向流量: flow.mcu.reverse }
+            { 車種: '小客車', 順向流量: flow.car.Forward, 逆向流量: flow.car.Reverse },
+            { 車種: '機車', 順向流量: flow.motorbike.Forward, 逆向流量: flow.motorbike.Reverse },
+            { 車種: '大車', 順向流量: flow.large.Forward, 逆向流量: flow.large.Reverse },
+            { 車種: 'MCU', 順向流量: flow.mcu.Forward, 逆向流量: flow.mcu.Reverse }
             ], { header: ["車種", "順向流量", "逆向流量"] }
         )
         this.setState({ sheet: worksheet })
-
+        
         this.setState({ videoUrl: flow.videoUrl })
     }
 
@@ -71,23 +80,23 @@ class Data extends React.Component {
                             <MDBTableBody>
                                 <tr>
                                     <th scope='row'>小客車</th>
-                                    <td>{this.state.flow.car.forward}</td>
-                                    <td>{this.state.flow.car.reverse}</td>
+                                    <td>{this.state.flow.car.Forward}</td>
+                                    <td>{this.state.flow.car.Reverse}</td>
                                 </tr>
                                 <tr>
                                     <th scope='row'>機車</th>
-                                    <td>{this.state.flow.motorbike.forward}</td>
-                                    <td>{this.state.flow.motorbike.reverse}</td>
+                                    <td>{this.state.flow.motorbike.Forward}</td>
+                                    <td>{this.state.flow.motorbike.Reverse}</td>
                                 </tr>
                                 <tr>
                                     <th scope='row'>大車</th>
-                                    <td>{this.state.flow.large.forward}</td>
-                                    <td>{this.state.flow.large.reverse}</td>
+                                    <td>{this.state.flow.large.Forward}</td>
+                                    <td>{this.state.flow.large.Reverse}</td>
                                 </tr>
                                 <tr>
                                     <th scope='row'>MCU</th>
-                                    <td>{this.state.flow.mcu.forward}</td>
-                                    <td>{this.state.flow.mcu.reverse}</td>
+                                    <td>{this.state.flow.mcu.Forward}</td>
+                                    <td>{this.state.flow.mcu.Reverse}</td>
                                 </tr>
                             </MDBTableBody>
 
@@ -96,7 +105,7 @@ class Data extends React.Component {
                     </Col>
 
                     <Col style={{ marginTop: '1rem' }}>
-                        <video width="100%" controls>
+                        <video src={this.state.videoUrl} width="100%" controls autoPlay>
                             <source src={this.state.videoUrl} type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
@@ -114,7 +123,8 @@ class Data extends React.Component {
 
 Data.propTypes = {
     reset: PropTypes.func,
-    task: PropTypes.string
+    task: PropTypes.string,
+    video: PropTypes.string
 };
 
 export default Data;

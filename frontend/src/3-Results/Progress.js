@@ -24,7 +24,9 @@ class Progress extends React.Component {
         var progress = await axios.get(config.host + "progress", {
             params: { taskId: this.props.task }
         })
-        this.setState({ progress: progress['progress'] })
+        progress = parseInt(progress.data.progress)
+
+        this.setState({ progress: progress['progress'] + 0.01 })
         this.setState((prevState) => { 
           return { seconds: prevState.seconds + 1 }
         })
@@ -38,10 +40,15 @@ class Progress extends React.Component {
 
   estimateRuntime() {
     var estimateSeconds = this.state.seconds / this.state.progress * 100
-    var secs = estimateSeconds % 60
-    var mins = Math.floor(estimateSeconds / 60) % 60
-    var hours = Math.floor(estimateSeconds / 3600)
-    return `預計剩餘時間：${hours} 小時 ${mins} 分鐘 ${secs} 秒`
+    console.log(estimateSeconds)
+    if (isNaN(estimateSeconds)) {
+      return `預計剩餘時間：估計中...`
+    } else {
+      var secs = Math.floor(estimateSeconds % 60)
+      var mins = Math.floor(estimateSeconds / 60) % 60
+      var hours = Math.floor(estimateSeconds / 3600)
+      return `預計剩餘時間：${hours} 小時 ${mins} 分鐘 ${secs} 秒`
+    }
   }
 
   terminateCompute() {
@@ -56,7 +63,7 @@ class Progress extends React.Component {
                     請稍候，伺服器正在計算交通流量
                 </h3>
                 <label style={{ textAlign: 'center', width: '100%' }}>
-                    ${this.estimateRuntime()}
+                    {this.estimateRuntime()}
                 </label>
             </Col></Row>
 

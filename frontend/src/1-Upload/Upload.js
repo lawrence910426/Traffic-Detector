@@ -10,6 +10,7 @@ Dropzone.autoDiscover = false;
 class Upload extends React.Component {
   async droppedFiles(files) {
     var fileObj = files[0]
+    console.log(fileObj)
 
     var vid = await this.uploadFileServer(fileObj);
     this.props.video(vid)
