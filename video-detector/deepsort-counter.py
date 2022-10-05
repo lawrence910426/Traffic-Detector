@@ -37,16 +37,19 @@ class Sharingan(object):
             cv2.namedWindow("test", cv2.WINDOW_NORMAL)
             cv2.resizeWindow("test", args.display_width, args.display_height)
 
+        self.enabled_classes = {
+            2: 'car',
+            3: 'motorbike',
+            5: 'bus',
+            7: 'truck'
+        }
         self.vdo = cv2.VideoCapture()
         self.detector = build_detector(cfg, use_cuda=use_cuda)
-        self.deepsort = build_tracker(cfg, use_cuda=use_cuda)
+        self.deepsort = {}
+        for k in self.enabled_classes:
+            self.deepsort[k] = build_tracker(cfg, use_cuda=use_cuda)
         self.class_names = self.detector.class_names
-        self.enabled_classes = [
-            (2, 'car'),
-            (3, 'motorbike'),
-            (5, 'bus'),
-            (7, 'truck')
-        ]
+
 
     def __enter__(self):
         assert os.path.isfile(self.video_path), "Path error"
@@ -64,7 +67,11 @@ class Sharingan(object):
 
             # create video writer
             fourcc = cv2.VideoWriter_fourcc(*'avc1')
-            self.writer = cv2.VideoWriter(self.save_video_path, fourcc, 20, (self.im_width, self.im_height))
+            self.writer = cv2.VideoWriter(
+                self.save_video_path, fourcc, 
+                self.vdo.get(cv2.CAP_PROP_FPS), 
+                (self.im_width, self.im_height)
+            )
 
             # logging
             self.logger.info("Save results to {}".format(self.args.save_path))
@@ -84,8 +91,8 @@ class Sharingan(object):
         # initialize detection line
         detection_line = Line(*self.args.detector_line.split(","))
         detection_counter = {}
-        for enabled_cls in self.enabled_classes:
-            detection_counter[enabled_cls[0]] = Counter(
+        for enabled_cls_id in self.enabled_classes:
+            detection_counter[enabled_cls_id] = Counter(
                 self.vdo.get(cv2.CAP_PROP_FPS),
                 detection_line
             )
@@ -138,34 +145,35 @@ class Sharingan(object):
             # do detection
             bbox_xywh, cls_conf, cls_ids = self.detector(fg_im_rgb)
 
-            # select traffic class
-            mask = False
-            for enabled_cls_id in self.enabled_classes:
-                mask |= cls_ids == enabled_cls_id[0]
+            # enumerate traffic class
+            for k in self.enabled_classes:
+                mask = cls_ids == enabled_cls_id
 
-            bbox_xywh = bbox_xywh[mask]
-            cls_conf = cls_conf[mask]
-
-            # do tracking
-            outputs = self.deepsort.update(bbox_xywh, cls_conf, fg_im_rgb)
-
-            # draw boxes for visualization
-            if len(outputs) > 0:
-                bbox_tlwh = []
-                bbox_xyxy = outputs[:, :4]
-                identities = outputs[:, -1]
-
-                for i in range(len(outputs)):
-                    bb_xyxy, bb_id = bbox_xyxy[i], identities[i]
-                    bbox_tlwh.append(self.deepsort._xyxy_to_tlwh(bb_xyxy))
-                    detection_counter[cls_conf[i]].update(bb_id, Box(*bb_xyxy))
+                bbox_xywh = bbox_xywh[mask]
+                cls_conf = cls_conf[mask]
+                cls_ids = cls_ids[mask]
+                 
+                # do tracking
+                outputs = self.deepsort[k].update(bbox_xywh, cls_conf, fg_im_rgb)
                 
-                fg_im = draw_boxes(fg_im, bbox_xyxy, identities)
-                results.append((idx_frame - 1, bbox_tlwh, identities))
+                # draw boxes for visualization
+                if len(outputs) > 0:
+                    bbox_tlwh = []
+                    bbox_xyxy = outputs[:, :4]
+                    identities = outputs[:, -1]
+    
+                    for i in range(len(outputs)):
+                        bb_xyxy, bb_id = bbox_xyxy[i], identities[i]
+                        bbox_tlwh.append(self.deepsort[k]._xyxy_to_tlwh(bb_xyxy))
+                        detection_counter[k].update(bb_id, Box(*bb_xyxy))
+                
+                    fg_im = draw_boxes(fg_im, bbox_xyxy, identities)
+                    results.append((idx_frame - 1, bbox_tlwh, identities))
             
             detector_flow = {}
             for k in detection_counter:
-                detector_flow[k] = detection_counter[k].getFlow()
+                key = self.enabled_classes[k]
+                detector_flow[key] = detection_counter[k].getFlow()
             fg_im = draw_flow(fg_im, detector_flow)
             fg_im = draw_detector(fg_im, detection_line)
 
@@ -189,8 +197,9 @@ class Sharingan(object):
             print(log)
 
         flow = {}
-        for enabled_cls in self.enabled_classes:
-            flow[enabled_cls[1]] = detection_counter[enabled_cls[0]].getFlow()
+        for k in self.enabled_classes:
+            cls_name = self.enabled_classes[k]
+            flow[cls_name] = detection_counter[k].getFlow()
         flow = str(flow)
         
         print(f"Flow: {flow}, " + Progress(99, 100).get_progress(100))
