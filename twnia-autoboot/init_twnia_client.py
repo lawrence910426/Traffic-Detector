@@ -16,7 +16,7 @@ child.expect('Changing MOTP:')
 out = child.sendline (totp.now())
 
 child.expect('[lawrence0426@ln01-twnia2 ~]$')
-out = child.sendline("cd /work/lawrence0426/Sharingan/reverse-shell; nohup bash init_twnia_rev_shell_client.sh")
+out = child.sendline("cd /work/lawrence0426/Sharingan/twnia-autoboot; pgrep -x rev_shell_client || nohup bash init_twnia_rev_shell_client.sh; rm nohup.out")
 
 time.sleep(3)
 exit()
