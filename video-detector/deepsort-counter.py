@@ -147,7 +147,7 @@ class Sharingan(object):
 
             # enumerate traffic class
             for k in self.enabled_classes:
-                mask = cls_ids == enabled_cls_id
+                mask = cls_ids == k
 
                 bbox_xywh = bbox_xywh[mask]
                 cls_conf = cls_conf[mask]
