@@ -10,6 +10,11 @@ import json
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--file", help="The desired file to be uploaded")
+args = parser.parse_args()
 
 scopes = ["https://www.googleapis.com/auth/youtube.upload"]
 
@@ -31,7 +36,7 @@ def main():
 
     request = youtube.videos().insert(
         part="snippet,status",
-        media_body="30sec.MOV"
+        media_body=args.file
     )
     response = request.execute()
     print("Youtube link: https://youtube.com/watch?v=" + response['id'])

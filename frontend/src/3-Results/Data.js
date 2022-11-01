@@ -54,8 +54,6 @@ class Data extends React.Component {
             ], { header: ["車種", "順向流量", "逆向流量"] }
         )
         this.setState({ sheet: worksheet })
-        
-        this.setState({ videoUrl: flow.videoUrl })
     }
 
     downloadExcel() {

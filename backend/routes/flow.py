@@ -6,33 +6,6 @@ import json
 
 @app.route('/flow', methods=['GET'])
 def getFlow():
-    # First, upload the video
-    while True: 
-        # Wget on remote fails every now and then. Resend the
-        # request could be a workaround for this situation.
-        video_id = request.args.get('videoId')
-        with open('scripts/get_result_vdo.sh', 'r') as file:
-            bash_template = file.read()
-            bash_command = bash_template.format(
-                id=video_id.replace(".", ""),
-                host=os.environ['BACKEND_HOST'],
-                LOCAL_IP=os.environ['LOCAL_IP']
-            )
-        out = subprocess.check_output(
-            bash_command, 
-            shell=True
-        )
-        raw_out = out = out.decode('utf-8')
-        print("[Out]", out)
-        
-        try:
-            out = out.split("\n")[-3]
-            url = json.loads(out)["url"]
-            break
-        except:
-            pass
-
-    # Next, get the traffic flow
     task_id = request.args.get('taskId')
     with open('scripts/get_result_flow.sh', 'r') as file:
         bash_template = file.read()
@@ -57,6 +30,4 @@ def getFlow():
     except:
         raise Exception(raw_out)
 
-    # Last, combine the results
-    flow["videoUrl"] = url
     return flow
