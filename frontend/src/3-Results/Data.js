@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
-import { MDBBtn, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit';
+import { MDBBtn, MDBTable, MDBTableBody, MDBTableHead, MDBInput } from 'mdb-react-ui-kit';
 
 import { utils, writeFile } from 'xlsx';
 import axios from 'axios'
@@ -13,13 +13,13 @@ import config from '../utils/config'
 class Data extends React.Component {
     constructor() {
         super()
-        this.state = { 
+        this.state = {
             sheet: utils.json_to_sheet([
                 { 車種: '小客車', 順向流量: 0, 逆向流量: 0 },
                 { 車種: '機車', 順向流量: 0, 逆向流量: 0 },
                 { 車種: '大車', 順向流量: 0, 逆向流量: 0 },
                 { 車種: 'MCU', 順向流量: 0, 逆向流量: 0 }
-                ], { header: ["車種", "順向流量", "逆向流量"] }
+            ], { header: ["車種", "順向流量", "逆向流量"] }
             ),
             flow: {
                 car: { Forward: 0, Reverse: 0 },
@@ -27,7 +27,11 @@ class Data extends React.Component {
                 large: { Forward: 0, Reverse: 0 },
                 mcu: { Forward: 0, Reverse: 0 }
             },
-            videoUrl: "http://techslides.com/demos/sample-videos/small.mp4"
+            video: {
+                authState: 'unauthorized',
+                authToken: undefined,
+                url: undefined
+            }
         }
     }
 
@@ -36,7 +40,7 @@ class Data extends React.Component {
             params: { taskId: this.props.task, videoId: this.props.video }
         })
         flow = flow.data
-        
+
         flow.large = {}
         flow.large.Forward = flow.truck.Forward + flow.bus.Forward
         flow.large.Reverse = flow.truck.Reverse + flow.bus.Reverse
@@ -45,16 +49,18 @@ class Data extends React.Component {
         flow.mcu.Forward = 0
         flow.mcu.Reverse = 0
         this.setState({ flow: flow })
-        
+
         var worksheet = utils.json_to_sheet([
             { 車種: '小客車', 順向流量: flow.car.Forward, 逆向流量: flow.car.Reverse },
             { 車種: '機車', 順向流量: flow.motorbike.Forward, 逆向流量: flow.motorbike.Reverse },
             { 車種: '大車', 順向流量: flow.large.Forward, 逆向流量: flow.large.Reverse },
             { 車種: 'MCU', 順向流量: flow.mcu.Forward, 逆向流量: flow.mcu.Reverse }
-            ], { header: ["車種", "順向流量", "逆向流量"] }
+        ], { header: ["車種", "順向流量", "逆向流量"] }
         )
         this.setState({ sheet: worksheet })
     }
+
+    authcodeChanged(e) { this.setState({ video: { authToken: e.target.value } }) }
 
     downloadExcel() {
         const workbook = utils.book_new();
@@ -62,9 +68,49 @@ class Data extends React.Component {
         writeFile(workbook, "Traffic.xlsb")
     }
 
+    authenticateVideo() {
+        this.setState({ video: { authState: 'authorizing' } })
+    }
+
+    retrieveVideo() {
+        this.setState({ video: { authState: 'authorized' } })
+    }
+
+    videoComponent() {
+        if (this.state.video.authState == 'authorized') {
+            return (
+                <iframe
+                    width="560"
+                    height="315"
+                    src={this.state.video.url}
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            )
+        } else {
+            return (<h3>請點擊上方按鈕以查看影片</h3>)
+        }
+    }
+
     render() {
         return (
             <Container>
+                <Modal show={this.state.video.authState == 'authroizing'} onHide={this.retrieveVideo.bind(this)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>請輸入授權碼</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <MDBInput onChange={this.authcodeChanged.bind(this)} type='text' />
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={this.retrieveVideo.bind(this)}>
+                            確認送出
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
                 <Row>
                     <Col style={{ marginTop: '1rem' }}>
                         <MDBTable striped hover>
@@ -99,15 +145,12 @@ class Data extends React.Component {
                             </MDBTableBody>
 
                         </MDBTable>
-                        <MDBBtn onClick={this.downloadExcel}>下載交通流量結果</MDBBtn>
+                        <MDBBtn onClick={this.downloadExcel.bind(this)}>下載 Excel 交通流量結果</MDBBtn>
                     </Col>
 
                     <Col style={{ marginTop: '1rem' }}>
-                        <video src={this.state.videoUrl} width="100%" controls autoPlay>
-                            <source src={this.state.videoUrl} type="video/mp4" />
-                            Your browser does not support the video tag.
-                        </video>
-                        <MDBBtn>下載影片</MDBBtn>
+                        <MDBBtn>查看影片</MDBBtn>
+                        {this.videoComponent()}
                     </Col>
                 </Row>
 
