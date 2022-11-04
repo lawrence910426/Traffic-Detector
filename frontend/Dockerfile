@@ -1,8 +1,6 @@
 # # build stage
 FROM node:18-bullseye as build-stage
-
 ARG BACKEND_HOST
-ARG LOCAL_IP
 
 WORKDIR /app
 RUN apt update -y && apt upgrade -y
@@ -13,15 +11,22 @@ COPY package.json ./
 COPY src src
 COPY public public
 
+RUN BACKEND_HOST=${BACKEND_HOST} && echo $BACKEND_HOST
 RUN BACKEND_HOST=${BACKEND_HOST} && envsubst '${BACKEND_HOST}' < src/utils/config_template.js > src/utils/config.js
 RUN npm install --legacy-peer-deps
 RUN npm run build
 
 # # production stage
 FROM nginx:stable-alpine as production-stage
+ARG LOCAL_IP
+
 COPY --from=build-stage /app/build /usr/share/nginx/html
 
 COPY nginx/nginx_template.conf /etc/nginx/nginx_template.conf
-COPY nginx/nginx_init.sh /etc/nginx/nginx_init.sh
+COPY nginx/nginx_configure.sh /etc/nginx/nginx_configure.sh
 
-CMD ["/bin/sh", "/etc/nginx/nginx_init.sh"]
+WORKDIR /etc/nginx
+RUN LOCAL_IP=${LOCAL_IP} && echo $LOCAL_IP
+RUN LOCAL_IP=${LOCAL_IP} && envsubst '${LOCAL_IP}' < nginx_template.conf > nginx.conf
+
+CMD nginx -g 'daemon off;'

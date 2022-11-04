@@ -38,3 +38,8 @@ services:
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
       - LOCAL_IP=${LOCAL_IP}
+   
+  twnia-autoboot:
+    container_name: 'twnia-autoboot'
+    build: ./twnia-autoboot
+    restart: always

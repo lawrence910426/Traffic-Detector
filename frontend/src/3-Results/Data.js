@@ -57,7 +57,11 @@ class Data extends React.Component {
         
         this.setState({ videoUrl: flow.videoUrl })
     }
-
+   
+    downloadVideo() {
+        window.open(this.state.videoUrl)
+    }
+    
     downloadExcel() {
         const workbook = utils.book_new();
         utils.book_append_sheet(workbook, this.state.sheet, "交通流量計數");
@@ -109,7 +113,7 @@ class Data extends React.Component {
                             <source src={this.state.videoUrl} type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
-                        <MDBBtn>下載影片</MDBBtn>
+                        <MDBBtn onClick={this.downloadVideo.bind(this)}>下載影片</MDBBtn>
                     </Col>
                 </Row>
 

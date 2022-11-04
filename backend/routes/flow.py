@@ -49,7 +49,7 @@ def getFlow():
     print("[Out]", out)
     
     try:
-        out = out.split("\n")[1]
+        out = out.split("\n")[-3]
         flow = out.split("---")[0]
         flow = flow[6:-12]
         flow = flow.replace("\'", "\"")
