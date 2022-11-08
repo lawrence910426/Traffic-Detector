@@ -10,4 +10,5 @@ app = Flask(
 app.config['UPLOAD_FOLDER'] = "/tmp/"
 app.config['STATIC_URL'] = f"{os.environ['BACKEND_HOST']}static/"
 
-from routes import first_frame, flow, progress, task_id, upload, upload_result_video
+from routes import first_frame, flow, progress, task_id, upload
+from routes.get_youtube_video import get_auth_url, get_video_url

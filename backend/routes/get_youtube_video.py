@@ -13,7 +13,7 @@ handler = None
 
 # One must call `get_auth_url` before `get_video_url`
 @app.route('/get_auth_url', methods=['GET'])
-def upload_result_video():
+def get_auth_url():
     global handler
 
     videoId = request.args.get('videoId')
@@ -22,14 +22,16 @@ def upload_result_video():
         bash_command = bash_template.format(
             videoPath="../video-detector/output/" + videoId + ".mp4"
         )
-    handler = pexpect.spawn(bash_command)
+    handler = pexpect.spawn("nc " + os.environ['LOCAL_IP'] + " 8787")
+    handler.sendline(bash_command)
+
     handler.expect_exact("Please visit this URL to authorize this application: ")
     url = child.readline(1)
     
     return jsonify({ "url": url })
 
 @app.route('/get_video_url', methods=['GET'])
-def upload_result_video():
+def get_video_url():
     global handler
 
     auth_code = request.args.get('authCode')

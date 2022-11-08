@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+
 import { MDBBtn, MDBTable, MDBTableBody, MDBTableHead, MDBInput } from 'mdb-react-ui-kit';
 
 import { utils, writeFile } from 'xlsx';
