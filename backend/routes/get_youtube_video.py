@@ -5,6 +5,7 @@ import os
 import time
 import subprocess
 import pexpect
+import sys
 
 # Be ware, this is a stateful design. If the flask backend
 # is scaled to multiple processes/nodes, the program would 
@@ -15,30 +16,33 @@ handler = None
 @app.route('/get_auth_url', methods=['GET'])
 def get_auth_url():
     global handler
-
+    
+    handler = pexpect.spawn("nc " + os.environ['LOCAL_IP'] + " 8787")
+    handler.logfile = sys.stdout.buffer
+    
     videoId = request.args.get('videoId')
     with open('scripts/upload_video.sh', 'r') as file:
         bash_template = file.read()
         bash_command = bash_template.format(
-            videoPath="../video-detector/output/" + videoId + ".mp4"
-        )
-    handler = pexpect.spawn("nc " + os.environ['LOCAL_IP'] + " 8787")
+            videoPath=videoId # "../video-detector/output/" + videoId + ".mp4"
+        ).replace('\r', '').replace('\n', '')
+    handler.expect("[lawrence0426@ln01-twnia2 ~]$")
     handler.sendline(bash_command)
-
+    
     handler.expect_exact("Please visit this URL to authorize this application: ")
-    url = child.readline(1)
+    url = handler.readline(1).decode('ascii').replace("\r", '').replace("\n", '')
     
     return jsonify({ "url": url })
 
 @app.route('/get_video_url', methods=['GET'])
 def get_video_url():
     global handler
-
+    
     auth_code = request.args.get('authCode')
-    handler.expect_exact("Enter the authorization code: ")
-    out = child.sendline(auth_code)
-
+    handler.expect("Enter the authorization code: ")
+    out = handler.sendline(auth_code)
+    
     handler.expect_exact("Youtube link: ")
-    url = child.readline(1)
+    url = handler.readline(1).decode('ascii').replace("\r", '').replace("\n", '')
     
     return jsonify({ "url": url })

@@ -21,10 +21,12 @@ child.expect('Changing MOTP:')
 out = child.sendline (totp.now())
 
 child.expect('[lawrence0426@ln01-twnia2 ~]$')
-out = child.sendline('cd /work/lawrence0426/Sharingan/twnia-autoboot; if [[ -z $(ps aux | grep -v "grep" | grep "init_twnia_rev_shell_client.sh") ]]; then bash init_twnia_rev_shell_client.sh; fi; rm nohup.out')
+if 'init' in os.environ:
+    out = child.sendline("pkill -f rev; exit")
+else:
+    out = child.sendline('cd /work/lawrence0426/Sharingan/twnia-autoboot; if [[ -z $(ps aux | grep -v "grep" | grep "init_twnia_rev_shell_client.sh") ]]; then bash init_twnia_rev_shell_client.sh; fi; rm nohup.out; exit')
 
-time.sleep(3)
-exit()
+time.sleep(5)
 
 while True:
     try:

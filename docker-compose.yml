@@ -35,6 +35,8 @@ services:
     ports:
       - 443:443
       - 8787:8787
+    depends_on:
+      - twnia-autoboot
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
       - LOCAL_IP=${LOCAL_IP}
