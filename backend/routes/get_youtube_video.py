@@ -21,7 +21,7 @@ def get_auth_url():
     handler.logfile = sys.stdout.buffer
     
     videoId = request.args.get('videoId')
-    with open('scripts/upload_video.sh', 'r') as file:
+    with open('scripts/upload_youtube_video.sh', 'r') as file:
         bash_template = file.read()
         bash_command = bash_template.format(
             videoPath=videoId # "../video-detector/output/" + videoId + ".mp4"

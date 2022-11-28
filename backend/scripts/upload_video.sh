@@ -1,1 +1,1 @@
-module load miniconda3 && conda activate youtube-upload && cd /work/lawrence0426/Sharingan/video-uploader/ && python youtube.py --file {videoPath}
+echo "cd ../video-detector/videos; wget {host}static/{fileName}; exit" | nc {LOCAL_IP} 8787
