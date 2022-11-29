@@ -43,7 +43,7 @@ class Sharingan(object):
             5: 'bus',
             7: 'truck'
         }
-        self.vdo = cv2.VideoCapture()
+        
         self.detector = build_detector(cfg, use_cuda=use_cuda)
         self.deepsort = {}
         for k in self.enabled_classes:
@@ -53,7 +53,7 @@ class Sharingan(object):
 
     def __enter__(self):
         assert os.path.isfile(self.video_path), "Path error"
-        self.vdo.open(self.video_path)
+        self.vdo = cv2.VideoCapture(self.video_path, cv2.CAP_DSHOW)
         self.im_width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.im_height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))
         assert self.vdo.isOpened()
