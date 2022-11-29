@@ -1,1 +1,1 @@
-echo "export STABLE_PERIOD={stabilization}; export DETECTOR_LINE='{detector}'; export OUTPUT_NAME={output_id}; export VIDEO_ID={video_id}; cd ../video-detector/scripts; sbatch sbatch_script.sh; exit" | nc {LOCAL_IP} 8787
+echo "python deepsort-counter.py videos/{video_id} --detector_line {detector} --output_name {output_id} --stable_period {stabilization} > scripts/slurm-{uuid}.txt" | nc {LOCAL_IP} 8787

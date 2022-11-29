@@ -2,7 +2,6 @@ from turtle import back
 import numpy as np
 import cv2
 from utils.shapes import Box, Line
-from numba import cuda
 import math
 
 palette = (2 ** 11 - 1, 2 ** 15 - 1, 2 ** 20 - 1)
@@ -58,7 +57,6 @@ def draw_detector(background, detector: Line):
     )
     return background
 
-@cuda.jit
 def render_detector(background, foreground, x1, y1, x2, y2):
     u1, u2 = x2 - x1, y2 - y1
     scale = foreground.shape[1] / foreground.shape[0]
@@ -71,13 +69,17 @@ def render_detector(background, foreground, x1, y1, x2, y2):
     gw = cuda.gridDim.x
     pos = tx + ty * bw
 
+    I = np.array([[i for _ in range(foreground.shape[1])] for i in range(foreground.shape[0])])
+    J = I.T
+    I, J = I - x1, J - y1
+
     for index in range(pos, background.shape[0] * background.shape[1] * 3, gw * bw):
         i = index % background.shape[0]
         j = (index // background.shape[0]) % background.shape[1]
         col = (index // background.shape[0] // background.shape[1]) % 3
 
-        # since u and v are orthogonal, det must not be 0.
-        I, J = i - x1, j - y1
+        # since u and v are not orthogonal, det must not be 0.
+
         A, B = (v2 * I - v1 * J) / det, (-u2 * I + u1 * J) / det
         x, y = int(A * foreground.shape[0]), int(B * foreground.shape[1])
         alpha_foreground = foreground[x, y, 3] / 255.0

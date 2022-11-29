@@ -3,9 +3,11 @@ from app import app
 import subprocess
 import json
 import os
+import uuid
 
 @app.route('/task_id', methods=['GET'])
 def getTaskId():
+    task_id = uuid.uuid4()
     video_id = request.args.get('id')
     stabilization = request.args.get('stabilization')
     detector = json.loads(request.args.get('detector'))
@@ -18,7 +20,8 @@ def getTaskId():
             detector=detector,
             video_id=video_id,
             output_id=video_id.replace(".", ""),
-            LOCAL_IP=os.environ['LOCAL_IP']
+            LOCAL_IP=os.environ['LOCAL_IP'],
+            uuid=task_id
         )
     # raise Exception(bash_command)
     out = subprocess.check_output(
@@ -29,5 +32,4 @@ def getTaskId():
     print("[Out]", out)
 
     out = out.split("\n")[-3]
-    slurm_id = out.split(" ")[-1]
-    return jsonify({ "id": slurm_id })
+    return jsonify({ "id": task_id })
