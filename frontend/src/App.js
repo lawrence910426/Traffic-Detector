@@ -18,7 +18,7 @@ const steps = ['上傳影片', '設置參數', '下載結果'];
 
 export default function App() {
   const [searchParams] = useSearchParams();
-  var paramActiveStep = searchParams.get("activeStep") ?? 0
+  var paramActiveStep = parseInt(searchParams.get("activeStep")) ?? 0
   var paramVideoId = searchParams.get("videoId") ?? ""
   var paramTaskId = searchParams.get("taskId") ?? ""
 
@@ -40,9 +40,9 @@ export default function App() {
   }
 
   const getStepContent = () => {
-    if(activeStep === 0) return (<Upload next={handleNext} video={setVideoId}></Upload>)
-    if(activeStep === 1) return (<Parameter next={handleNext} video={videoId} task={setTaskId}></Parameter>)
-    if(activeStep === 2) return (<Results reset={handleReset} task={taskId} video={videoId}></Results>)
+    if(activeStep == 0) return (<Upload next={handleNext} video={setVideoId}></Upload>)
+    if(activeStep == 1) return (<Parameter next={handleNext} video={videoId} task={setTaskId}></Parameter>)
+    if(activeStep == 2) return (<Results reset={handleReset} task={taskId} video={videoId}></Results>)
   }
 
   return (
