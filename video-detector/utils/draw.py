@@ -48,44 +48,10 @@ def draw_flow(img, flow):
         )
     return img
 
-foreground = cv2.imread('counter/detector.png', cv2.IMREAD_UNCHANGED)
 def draw_detector(background, detector: Line):
-    # parameter optimized for nvidia volta 100
-    render_detector[32, 1024](
-        background, foreground,
-        detector.x1, detector.y1, detector.x2, detector.y2
-    )
+    # Disable detector drawing since rendering on CPU
+    # is unacceptably slow.
     return background
-
-def render_detector(background, foreground, x1, y1, x2, y2):
-    u1, u2 = x2 - x1, y2 - y1
-    scale = foreground.shape[1] / foreground.shape[0]
-    v1, v2 = u2 * scale, -u1 * scale
-    det = u1 * v2 - u2 * v1
-
-    tx = cuda.threadIdx.x
-    ty = cuda.blockIdx.x
-    bw = cuda.blockDim.x
-    gw = cuda.gridDim.x
-    pos = tx + ty * bw
-
-    I = np.array([[i for _ in range(foreground.shape[1])] for i in range(foreground.shape[0])])
-    J = I.T
-    I, J = I - x1, J - y1
-
-    for index in range(pos, background.shape[0] * background.shape[1] * 3, gw * bw):
-        i = index % background.shape[0]
-        j = (index // background.shape[0]) % background.shape[1]
-        col = (index // background.shape[0] // background.shape[1]) % 3
-
-        # since u and v are not orthogonal, det must not be 0.
-
-        A, B = (v2 * I - v1 * J) / det, (-u2 * I + u1 * J) / det
-        x, y = int(A * foreground.shape[0]), int(B * foreground.shape[1])
-        alpha_foreground = foreground[x, y, 3] / 255.0
-        if 0 <= x <= foreground.shape[0] - 1 and 0 <= y <= foreground.shape[1] - 1:
-            background[i, j, col] = alpha_foreground * foreground[x, y, col] + \
-                background[i, j, col] * (1 - alpha_foreground)
 
 if __name__ == '__main__':
     for i in range(82):

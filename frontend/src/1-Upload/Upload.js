@@ -18,14 +18,27 @@ class Upload extends React.Component {
     this.props.next();
   }
 
-  async uploadFileServer(file) {
+  async uploadFileServer(file) { 
       let formData = new FormData(); 
       formData.append("file", file);
-      var ans = await fetch(config.host + "upload", {
-          method: "POST", 
-          body: formData
-      }); 
-      ans = await ans.json()
+
+      let data = await axios.request({
+          method: "post", 
+          url: config.host + "upload", 
+          data: formData, 
+          onUploadProgress: (p) => {
+            console.log(p); 
+            this.setState({
+                fileProgress: p.loaded / p.total
+            })
+          }
+      })
+
+      this.setState({
+        fileProgress: 1.0,
+      })
+
+      ans = JSON.parse(data)
       return ans.id
   }
 

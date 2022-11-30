@@ -50,7 +50,7 @@ services:
         LOCAL_IP: ${LOCAL_IP}
     restart: always
     volumes:
-      - video-out-volume:/work/lawrence910426/Sharingan/video-detector/outputs
+      - video-out-volume:/work/lawrence910426/Sharingan/video-detector/output
       - video-in-volume:/work/lawrence910426/Sharingan/video-detector/videos
 
 volumes:
