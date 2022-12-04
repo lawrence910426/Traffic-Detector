@@ -24,12 +24,11 @@ class Counter:
             return True
         
         formula = lambda x: (seg.y2 - seg.y1) / (seg.x2 - seg.x1) * (x - seg.x1) + seg.y1
-        if rect.y1 <= formula(rect.x1) and formula(rect.x1) <= rect.y2 and \
-           seg.x1 <= rect.x1 and rect.x1 <= seg.x2:
+        if rect.y1 <= formula(rect.x1) and formula(rect.x1) <= rect.y2:
            return True
-        if rect.y1 <= formula(rect.x2) and formula(rect.x2) <= rect.y2 and \
-           seg.x1 <= rect.x2 and rect.x2 <= seg.x2:
+        if rect.y1 <= formula(rect.x2) and formula(rect.x2) <= rect.y2:
            return True
+        return False
 
     def update(self, id, vehicle: Box):
         if not (id in self.state):
