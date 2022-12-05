@@ -62,7 +62,7 @@ class Upload extends React.Component {
                   style={{width: this.state.progress + '%'}} 
                   aria-valuenow={this.state.progress} 
                   aria-valuemin="0" aria-valuemax="100">
-                  {this.state.progress}%
+                  {Math.floor(this.state.progress)}%
               </div>
             </div>
           </Col>
