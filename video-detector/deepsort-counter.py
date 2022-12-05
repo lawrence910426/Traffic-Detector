@@ -78,7 +78,7 @@ class Sharingan(object):
 
             # logging
             self.logger.info("Save results to {}".format(self.args.save_path))
-            self.yield_logger = open(self.save_yield_path, "w")
+            self.yield_logger = open(self.save_yield_path, "w+")
 
         return self
 
@@ -200,6 +200,7 @@ class Sharingan(object):
             log += progress.get_progress(idx_frame / len(fixed_transform) * 100)
             self.logger.info(log)
             self.yield_logger.write(log + '\n')
+            self.yield_logger.flush()
 
         flow = {}
         for k in self.enabled_classes:
@@ -210,6 +211,7 @@ class Sharingan(object):
         log = f"Flow: {flow}, " + Progress(99, 100).get_progress(100)
         self.logger.info(log)
         self.yield_logger.write(log + '\n')
+        self.yield_logger.flush()
 
 
 def parse_args():
