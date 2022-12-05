@@ -40,7 +40,7 @@ def draw_flow(img, flow):
         t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 2 ,2)[0]
         cv2.putText(
             img, label, (10, 10 + (t_size[1] + 3) * (i + 1)), 
-            cv2.FONT_HERSHEY_PLAIN, 2, [0, 0, 0], 4
+            cv2.FONT_HERSHEY_PLAIN, 2, [0, 0, 0], 5
         )
         cv2.putText(
             img, label, (10, 10 + (t_size[1] + 3) * (i + 1)), 
