@@ -31,7 +31,7 @@ class Upload extends React.Component {
       let formData = new FormData(); 
       formData.append("file", file);
 
-      let data = await axios.request({
+      let resp = await axios.request({
           method: "post", 
           url: config.host + "upload", 
           data: formData, 
@@ -47,8 +47,7 @@ class Upload extends React.Component {
         progress: 100,
       })
 
-      var ans = JSON.parse(data)
-      return ans.id
+      return resp.data.id
   }
 
   renderProgressBar() {
