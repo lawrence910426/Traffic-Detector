@@ -12,15 +12,27 @@ import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
+import { useSearchParams } from "react-router-dom";
+
 const steps = ['上傳影片', '設置參數', '下載結果'];
 
 export default function App() {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [videoId, setVideoId] = React.useState("");
-  const [taskId, setTaskId] = React.useState("");
+  const [searchParams] = useSearchParams();
+  var paramActiveStep = searchParams.get("activeStep") ?? 0
+  var paramVideoId = searchParams.get("videoId") ?? ""
+  var paramTaskId = searchParams.get("taskId") ?? ""
+
+  const [activeStep, setActiveStep] = React.useState(paramActiveStep);
+  const [videoId, setVideoId] = React.useState(paramVideoId);
+  const [taskId, setTaskId] = React.useState(paramTaskId);
+
+  window.history.replaceState(
+    null, "Traffic Flow Detector", 
+    `/?activeStep=${activeStep}&videoId=${videoId}&taskId=${taskId}`
+  )
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep((prevActiveStep) => parseInt(prevActiveStep) + 1);
   };
 
   const handleReset = () => {
@@ -28,9 +40,9 @@ export default function App() {
   }
 
   const getStepContent = () => {
-    if(activeStep === 0) return (<Upload next={handleNext} video={setVideoId}></Upload>)
-    if(activeStep === 1) return (<Parameter next={handleNext} video={videoId} task={setTaskId}></Parameter>)
-    if(activeStep === 2) return (<Results reset={handleReset} task={taskId} video={videoId}></Results>)
+    if(activeStep == 0) return (<Upload next={handleNext} video={setVideoId}></Upload>)
+    if(activeStep == 1) return (<Parameter next={handleNext} video={videoId} task={setTaskId}></Parameter>)
+    if(activeStep == 2) return (<Results reset={handleReset} task={taskId} video={videoId}></Results>)
   }
 
   return (

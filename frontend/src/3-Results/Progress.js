@@ -68,7 +68,7 @@ class Progress extends React.Component {
             </Col></Row>
 
             <Row style={{ marginTop: '1rem' }}><Col>
-                <div className="progress" style={{height: '20px'}}>
+              <div className="progress" style={{height: '20px'}}>
                 <div className="progress-bar" 
                     role="progressbar" 
                     style={{width: this.state.progress + '%'}} 
@@ -76,7 +76,7 @@ class Progress extends React.Component {
                     aria-valuemin="0" aria-valuemax="100">
                     {this.state.progress}%
                 </div>
-                </div>
+              </div>
             </Col></Row>
 
             <Row style={{ marginTop: '1rem' }}><Col>

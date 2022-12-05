@@ -68,6 +68,10 @@ class Data extends React.Component {
         writeFile(workbook, "Traffic.xlsb")
     }
 
+    downloadVideo() {
+        window.open(this.state.videoUrl)
+    }
+
     render() {
         return (
             <Container>

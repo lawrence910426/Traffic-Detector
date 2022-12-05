@@ -6,6 +6,7 @@ import torch
 import warnings
 import numpy as np
 import sys
+import logging
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'thirdparty/fast-reid'))
 
@@ -27,11 +28,12 @@ class Sharingan(object):
         self.args = args
         self.video_path = video_path
         self.logger = get_logger("root")
+        self.logger.setLevel(logging.INFO)
         self.backSub = cv2.createBackgroundSubtractorKNN()
 
         use_cuda = args.use_cuda and torch.cuda.is_available()
         if not use_cuda:
-            warnings.warn("Running in cpu mode which maybe very slow!", UserWarning)
+            self.logger.info("Running in cpu mode might be very slow!")
 
         if args.display:
             cv2.namedWindow("test", cv2.WINDOW_NORMAL)
@@ -43,7 +45,7 @@ class Sharingan(object):
             5: 'bus',
             7: 'truck'
         }
-        self.vdo = cv2.VideoCapture()
+        
         self.detector = build_detector(cfg, use_cuda=use_cuda)
         self.deepsort = {}
         for k in self.enabled_classes:
@@ -53,7 +55,7 @@ class Sharingan(object):
 
     def __enter__(self):
         assert os.path.isfile(self.video_path), "Path error"
-        self.vdo.open(self.video_path)
+        self.vdo = cv2.VideoCapture(self.video_path)
         self.im_width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.im_height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))
         assert self.vdo.isOpened()
@@ -64,6 +66,7 @@ class Sharingan(object):
             # path of saved video and results
             self.save_video_path = os.path.join(self.args.save_path, self.args.output_name + ".mp4")
             self.save_results_path = os.path.join(self.args.save_path, self.args.output_name + ".txt")
+            self.save_yield_path = os.path.join(self.args.save_path, self.args.output_name + ".out")
 
             # create video writer
             fourcc = cv2.VideoWriter_fourcc(*'avc1')
@@ -75,12 +78,14 @@ class Sharingan(object):
 
             # logging
             self.logger.info("Save results to {}".format(self.args.save_path))
+            self.yield_logger = open(self.save_yield_path, "w+")
 
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
+        self.yield_logger.close()
         if exc_type:
-            print(exc_type, exc_value, exc_traceback)
+            self.logger.info(exc_type, exc_value, exc_traceback)
 
     def run(self):
         # calculate the stabilization transform
@@ -193,8 +198,9 @@ class Sharingan(object):
             log = "time: {:.03f}s, fps: {:.03f}, detection numbers: {}, tracking numbers: {}, " \
                 .format(end - start, 1 / (end - start), bbox_xywh.shape[0], len(outputs))
             log += progress.get_progress(idx_frame / len(fixed_transform) * 100)
-            # self.logger.info(log)
-            print(log)
+            self.logger.info(log)
+            self.yield_logger.write(log + '\n')
+            self.yield_logger.flush()
 
         flow = {}
         for k in self.enabled_classes:
@@ -202,7 +208,10 @@ class Sharingan(object):
             flow[cls_name] = detection_counter[k].getFlow()
         flow = str(flow)
         
-        print(f"Flow: {flow}, " + Progress(99, 100).get_progress(100))
+        log = f"Flow: {flow}, " + Progress(99, 100).get_progress(100)
+        self.logger.info(log)
+        self.yield_logger.write(log + '\n')
+        self.yield_logger.flush()
 
 
 def parse_args():

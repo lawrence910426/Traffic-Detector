@@ -27,9 +27,12 @@ services:
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
       - LOCAL_IP=${LOCAL_IP}
+    volumes:
+      - video-in-volume:/tmp/video-in
+      - video-out-volume:/tmp/video-out
   
   rev_shell:
-    container_name: 'twnia-rev-shell'
+    container_name: 'rev-shell'
     build: ./reverse-shell
     restart: always
     ports:
@@ -38,8 +41,18 @@ services:
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
       - LOCAL_IP=${LOCAL_IP}
-   
-  twnia-autoboot:
-    container_name: 'twnia-autoboot'
-    build: ./twnia-autoboot
+
+  detector:
+    container_name: 'sharingan-detector'
+    build: 
+      context: ./video-detector
+      args:
+        LOCAL_IP: ${LOCAL_IP}
     restart: always
+    volumes:
+      - video-out-volume:/work/lawrence910426/Sharingan/video-detector/output
+      - video-in-volume:/work/lawrence910426/Sharingan/video-detector/videos
+
+volumes:
+  video-out-volume: 
+  video-in-volume:

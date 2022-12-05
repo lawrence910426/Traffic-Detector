@@ -4,10 +4,19 @@ import PropTypes from 'prop-types';
 import Dropzone from 'react-dropzone'
 import { MDBIcon } from 'mdb-react-ui-kit';
 import config from '../utils/config'
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+
+import axios from 'axios';
 
 Dropzone.autoDiscover = false;
 
 class Upload extends React.Component {
+  constructor() {
+    super();
+    this.state = { progress: 0 };
+  }
+
   async droppedFiles(files) {
     var fileObj = files[0]
     console.log(fileObj)
@@ -18,15 +27,48 @@ class Upload extends React.Component {
     this.props.next();
   }
 
-  async uploadFileServer(file) {
+  async uploadFileServer(file) { 
       let formData = new FormData(); 
       formData.append("file", file);
-      var ans = await fetch(config.host + "upload", {
-          method: "POST", 
-          body: formData
-      }); 
-      ans = await ans.json()
-      return ans.id
+
+      let resp = await axios.request({
+          method: "post", 
+          url: config.host + "upload", 
+          data: formData, 
+          onUploadProgress: (p) => {
+            console.log(p); 
+            this.setState({
+              progress: p.loaded / p.total * 100
+            })
+          }
+      })
+
+      this.setState({
+        progress: 100,
+      })
+
+      return resp.data.id
+  }
+
+  renderProgressBar() {
+    if (this.state.progress != 0) {
+      return (
+        <Row style={{ marginTop: '1rem' }}>
+          <Col xs={6} md={2}><label>影片上傳進度：</label></Col>
+          <Col>
+            <div className="progress" style={{height: '20px'}}>
+              <div className="progress-bar" 
+                  role="progressbar" 
+                  style={{width: this.state.progress + '%'}} 
+                  aria-valuenow={this.state.progress} 
+                  aria-valuemin="0" aria-valuemax="100">
+                  {Math.floor(this.state.progress)}%
+              </div>
+            </div>
+          </Col>
+        </Row>
+      )
+    }
   }
 
   render() {
@@ -55,6 +97,8 @@ class Upload extends React.Component {
             </section>
           )}
         </Dropzone>
+
+        { this.renderProgressBar() }
       </div>
     );
   }
