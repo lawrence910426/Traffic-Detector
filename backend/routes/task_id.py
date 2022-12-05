@@ -30,6 +30,5 @@ def getTaskId():
     )
     out = out.decode('utf-8')
     print("[Out]", out)
-
-    out = out.split("\n")[-3]
+    
     return jsonify({ "id": task_id })
