@@ -17,8 +17,9 @@ class Counter:
     def getFlow(self):
         return self.flow
 
-    def hover(self, vehicle: Box):
-        seg, rect = self.detector, vehicle
+    @staticmethod
+    def hover(detector: Line vehicle: Box):
+        seg, rect = detector, vehicle
         inside = lambda x, y: rect.x1 <= x and x <= rect.x2 and rect.y1 <= y and y <= rect.y2
         if inside(seg.x1, seg.y1) and inside(seg.x2, seg.y2):
             return True
@@ -46,7 +47,7 @@ class Counter:
         inner_prod = np.dot(np.array(vector), np.array(centroid) - np.array(midpoint))
         self.state[id]["InnerProduct"].append(inner_prod)
 
-        if self.hover(vehicle):
+        if self.hover(self.detector, vehicle):
             self.state[id]["Counted"] = True
             positive = sum([1 if item > 0 else 0 for item in self.state[id]["InnerProduct"]])
             negative = self.fps - positive
