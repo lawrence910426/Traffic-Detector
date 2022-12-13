@@ -121,27 +121,6 @@ class Sharingan(object):
 
             # fix image. stabilize then foreground masking
             fixed_im = stable_fixer.fix_frame(ori_im, fixed_transform[idx_frame], width, height)
-            
-            """
-            fgMaskRaw = self.backSub.apply(fixed_im)
-            fgMask = np.full(fgMaskRaw.shape, False, dtype=bool)
-            """
-
-            # a pixel become permeable iff (-5, +5) is foreground
-            """
-            fgMaskRaw = fgMaskRaw > 0.8
-            for w in range(-5, 6):
-                fgMaskHorz = np.roll(fgMaskRaw, w, axis=0)
-                for h in range(-5, 6):
-                    fgMaskRolled = np.roll(fgMaskHorz, h, axis=1)
-                    fgMask |= fgMaskRolled
-            """
-
-            # mask out background
-            """
-            fgMask = np.stack([fgMask, fgMask, fgMask], axis=2)
-            fg_im = np.multiply(fixed_im, fgMask)
-            """
             fg_im = fixed_im
             
             # convert to rgb
@@ -156,7 +135,6 @@ class Sharingan(object):
 
                 bbox_xywh = bbox_xywh[mask]
                 cls_conf = cls_conf[mask]
-                cls_ids = cls_ids[mask]
                  
                 # do tracking
                 outputs = self.deepsort[k].update(bbox_xywh, cls_conf, fg_im_rgb)
