@@ -48,9 +48,21 @@ def draw_flow(img, flow):
         )
     return img
 
-def draw_detector(background, detector: Line):
-    # Disable detector drawing since rendering on CPU
-    # is unacceptably slow.
+def draw_detector(background, detector: Line, color=(255, 255, 255)):
+    background = cv2.line(
+        background,
+        (detector.x1, detector.y1),
+        (detector.x2, detector.y2),
+        (0, 0, 0), # The black boundary
+        5
+    )
+    background = cv2.line(
+        background,
+        (detector.x1, detector.y1),
+        (detector.x2, detector.y2),
+        color, # The internal line
+        2
+    )
     return background
 
 if __name__ == '__main__':
