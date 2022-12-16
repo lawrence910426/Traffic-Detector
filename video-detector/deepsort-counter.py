@@ -20,6 +20,7 @@ from utils.io import write_results
 from utils.progress import Progress
 from stabilization.stabilizer import Stabilizer
 from counter.counter import Counter, Box, Line
+from counter.MCU import MCU
 
 
 class Sharingan(object):
@@ -44,6 +45,12 @@ class Sharingan(object):
             3: 'motorbike',
             5: 'bus',
             7: 'truck'
+        }
+        self.mcu_weight = {
+            2: 2, # Car
+            3: 1, # Motorbike
+            5: 4, # Bus
+            7: 4  # Truck
         }
         
         self.detector = build_detector(cfg, use_cuda=use_cuda)
@@ -93,7 +100,7 @@ class Sharingan(object):
         fixed_transform = stable_fixer.get_transform(self.vdo)
         progress = Progress(10, 99)
 
-        # initialize detection line
+        # initialize detection line & counters
         detection_line = Line(*self.args.detector_line.split(","))
         detection_counter = {}
         for enabled_cls_id in self.enabled_classes:
@@ -101,6 +108,7 @@ class Sharingan(object):
                 self.vdo.get(cv2.CAP_PROP_FPS),
                 detection_line
             )
+        
         width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH)) 
         height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
@@ -132,12 +140,13 @@ class Sharingan(object):
             # enumerate traffic class
             for k in self.enabled_classes:
                 mask = cls_ids == k
-
-                bbox_xywh = bbox_xywh[mask]
-                cls_conf = cls_conf[mask]
-                 
+                
                 # do tracking
-                outputs = self.deepsort[k].update(bbox_xywh, cls_conf, fg_im_rgb)
+                outputs = self.deepsort[k].update(
+                    bbox_xywh[mask], 
+                    cls_conf[mask], 
+                    fg_im_rgb
+                )
                 
                 # draw boxes for visualization
                 if len(outputs) > 0:
@@ -153,11 +162,17 @@ class Sharingan(object):
                     fg_im = draw_boxes(fg_im, bbox_xyxy, identities)
                     results.append((idx_frame - 1, bbox_tlwh, identities))
             
+            # Sum up the MCU and draw the statistics
+            mcu_counter = MCU()
             detector_flow = {}
             for k in detection_counter:
                 key = self.enabled_classes[k]
                 detector_flow[key] = detection_counter[k].getFlow()
-            fg_im = draw_flow(fg_im, detector_flow)
+                mcu_counter.increment_mcu(
+                    detector_flow[key], 
+                    self.mcu_weight[k]
+                )
+            fg_im = draw_flow(fg_im, mcu_counter.get_mcu())
             fg_im = draw_detector(fg_im, detection_line)
 
             end = time.time()
@@ -208,8 +223,22 @@ def parse_args():
     parser.add_argument("--save_path", type=str, default="./output/")
     parser.add_argument("--cpu", dest="use_cuda", action="store_false", default=True)
 
-    # Sharingan specific parameters
+    # Traffic specific parameters
+    parser.add_argument("--mode", type=str, choices=[
+        "straight", "t_intersection", "cross_intersection"], default='straight')
+    
+    # Straight road
     parser.add_argument("--detector_line", type=str, default='0,0,1000,1000')
+
+    # T intersection
+    parser.add_argument("--detector_line_t", type=str, default='0,0,1000,1000')
+    parser.add_argument("--detector_line_a", type=str, default='0,0,1000,1000')
+    parser.add_argument("--detector_line_b", type=str, default='0,0,1000,1000')
+
+    # Cross intersection (a and b were declared. only x and y needs to be declared.)
+    parser.add_argument("--detector_line_x", type=str, default='0,0,1000,1000')
+    parser.add_argument("--detector_line_y", type=str, default='0,0,1000,1000')
+
     parser.add_argument("--stable_period", type=int, default=1000)
     parser.add_argument("--output_name", type=str, default='results')
     return parser.parse_args()

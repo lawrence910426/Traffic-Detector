@@ -51,15 +51,15 @@ def draw_flow(img, flow):
 def draw_detector(background, detector: Line, color=(255, 255, 255)):
     background = cv2.line(
         background,
-        (detector.x1, detector.y1),
-        (detector.x2, detector.y2),
+        (detector.y1, detector.x1),
+        (detector.y2, detector.x2),
         (0, 0, 0), # The black boundary
         5
     )
     background = cv2.line(
         background,
-        (detector.x1, detector.y1),
-        (detector.x2, detector.y2),
+        (detector.y1, detector.x1),
+        (detector.y2, detector.x2),
         color, # The internal line
         2
     )
