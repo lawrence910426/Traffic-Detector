@@ -19,9 +19,7 @@ from utils.log import get_logger
 from utils.io import write_results
 from utils.progress import Progress
 from stabilization.stabilizer import Stabilizer
-from counter.counter import Counter, Box, Line
-from counter.MCU import MCU
-
+from counter import *
 
 class Sharingan(object):
     def __init__(self, cfg, args, video_path):
@@ -101,13 +99,28 @@ class Sharingan(object):
         progress = Progress(10, 99)
 
         # initialize detection line & counters
-        detection_line = Line(*self.args.detector_line.split(","))
         detection_counter = {}
         for enabled_cls_id in self.enabled_classes:
-            detection_counter[enabled_cls_id] = Counter(
-                self.vdo.get(cv2.CAP_PROP_FPS),
-                detection_line
-            )
+            if self.args.mode == "straight":
+                detection_counter[enabled_cls_id] = Counter(
+                    self.vdo.get(cv2.CAP_PROP_FPS),
+                    Line(*self.args.detector_line.split(","))
+                )
+            if self.args.mode == "t_intersection":
+                detection_counter[enabled_cls_id] = TCounter(
+                    self.vdo.get(cv2.CAP_PROP_FPS),
+                    Line(*self.args.detector_line_a.split(",")),
+                    Line(*self.args.detector_line_b.split(",")),
+                    Line(*self.args.detector_line_t.split(","))
+                )
+            if self.args.mode == "cross_intersection":
+                detection_counter[enabled_cls_id] = CrossCounter(
+                    self.vdo.get(cv2.CAP_PROP_FPS),
+                    Line(*self.args.detector_line_a.split(",")),
+                    Line(*self.args.detector_line_b.split(",")),
+                    Line(*self.args.detector_line_x.split(",")),
+                    Line(*self.args.detector_line_y.split(","))
+                )
         
         width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH)) 
         height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))

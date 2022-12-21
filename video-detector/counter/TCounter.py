@@ -13,9 +13,10 @@ from utils.shapes import Box, Line
 
 
 class CrossCounter(Counter):
-    def __init__(self, fps, A: Line, B: Line, X: Line, Y: Line):
+    def __init__(self, fps, A: Line, B: Line, T: Line):
         self.detector = detector
         self.fps = fps
+        self.A, self.B, self.T = A, B, T
 
         self.occurence_stack = []
         self.realized_flow = {
@@ -45,14 +46,12 @@ class CrossCounter(Counter):
 
     def update(self, id, vehicle: Box):
         detected_line = None
-        if self.hover(A, vehicle):
+        if self.hover(self.A, vehicle):
             detected_line = "A"
-        if self.hover(B, vehicle):
+        if self.hover(self.B, vehicle):
             detected_line = "B"
-        if self.hover(X, vehicle):
-            detected_line = "X"
-        if self.hover(Y, vehicle):
-            detected_line = "Y"
+        if self.hover(self.T, vehicle):
+            detected_line = "T"
         
         if not detected_line is None:
             self.occurence_stack.append((id, detected_line))
@@ -61,7 +60,7 @@ class CrossCounter(Counter):
             pass
 
     def update_realized_flow():
-        for src in range(0, len(self.occurence_stack))
+        for src in range(0, len(self.occurence_stack)):
             for dst in range(src + 1, len(self.occurence_stack)):
                 if self.occurence_stack[src][0] == self.occurence_stack[dst][0]:
                     self.increment_flow(

@@ -18,6 +18,7 @@ class CrossCounter(Counter):
     def __init__(self, fps, A: Line, B: Line, X: Line, Y: Line):
         self.detector = detector
         self.fps = fps
+        self.A, self.B, self.X, self.Y = A, B, X, Y
 
         self.occurence_stack = []
         self.realized_flow = {
@@ -55,13 +56,13 @@ class CrossCounter(Counter):
 
     def update(self, id, vehicle: Box):
         detected_line = None
-        if self.hover(A, vehicle):
+        if self.hover(self.A, vehicle):
             detected_line = "A"
-        if self.hover(B, vehicle):
+        if self.hover(self.B, vehicle):
             detected_line = "B"
-        if self.hover(X, vehicle):
+        if self.hover(self.X, vehicle):
             detected_line = "X"
-        if self.hover(Y, vehicle):
+        if self.hover(self.Y, vehicle):
             detected_line = "Y"
         
         if not detected_line is None:
@@ -71,7 +72,7 @@ class CrossCounter(Counter):
             pass
 
     def update_realized_flow():
-        for src in range(0, len(self.occurence_stack))
+        for src in range(0, len(self.occurence_stack)):
             for dst in range(src + 1, len(self.occurence_stack)):
                 if self.occurence_stack[src][0] == self.occurence_stack[dst][0]:
                     self.increment_flow(

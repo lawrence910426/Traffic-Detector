@@ -49,5 +49,5 @@ COPY . /work/lawrence910426/Sharingan/video-detector
 
 WORKDIR /work/lawrence910426/Sharingan/video-detector
 
-# CMD ["conda", "run", "-n", "detector", "python", "deepsort-counter.py", "videos/sample.mp4" ]
-CMD ["nohup", "bash", "remote_shell.sh", "&"]
+CMD ["conda", "run", "-n", "detector", "python", "deepsort-counter.py", "videos/sample.mp4", "--mode", "cross_intersection"]
+# CMD ["nohup", "bash", "remote_shell.sh", "&"]
