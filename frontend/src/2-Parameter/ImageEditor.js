@@ -16,30 +16,7 @@ class ImageEditor extends React.Component {
       }
     }
 
-    async componentDidMount() {
-      this.imageEditorInst = new TuiImageEditor(this.rootEl.current, {
-        includeUI: {
-          menu: ['icon'],
-          initMenu: "icon",
-          uiSize: {
-            width: "100%",
-            height: "50rem"
-          },
-          menuBarPosition: "bottom"
-        },
-        selectionStyle: {
-          cornerSize: 20,
-          rotatingPointOffset: 70
-        },
-        usageStatistics: true
-      });
-      
-      var imgLink = await axios.get(config.host + 'first_frame', {
-        params: { id: this.props.video }
-      })
-      imgLink = imgLink.data.link
-
-      await this.imageEditorInst.loadImageFromURL(imgLink, 'SampleImage')
+    async StraightWidgets() {
       this.imageEditorInst.registerIcons({
         detectionLine: `
           M 0 0 L 0 185 L -5 185 L -5 0 L 0 0
@@ -68,8 +45,141 @@ class ImageEditor extends React.Component {
       const updatePosition = () => {
         var A = this.imageEditorInst.getObjectPosition(this.iconId, 'left', 'top')
         var B = this.imageEditorInst.getObjectPosition(this.iconId, 'right', 'bottom')
-        this.props.detector(A.x, A.y, B.x, B.y)
+        this.props.updateDetectorCallback({
+          x1: Math.floor(A.y), y1: Math.floor(A.x),
+          x2: Math.floor(B.y), y2: Math.floor(B.x)
+        })
       }; 
+      return updatePosition
+    }
+
+    async TWidgets() {
+      var redLine = await this.imageEditorInst.addShape('rect', {
+        fill: "#ff0000", stroke: "#000000"
+      }), greenLine = await this.imageEditorInst.addShape('rect', {
+        fill: "#00ff00", stroke: "#000000"
+      }), blueLine = await this.imageEditorInst.addShape('rect', {
+        fill: "#0000ff", stroke: "#000000"
+      });
+
+      this.redId = redLine.id
+      this.greenId = greenLine.id
+      this.blueId = blueLine.id
+
+      await this.imageEditorInst.setObjectPosition(this.redId, {
+        x: 100, y: 100, originX: 'left', originY: 'top'
+      })
+      await this.imageEditorInst.setObjectPosition(this.greenId, {
+        x: 200, y: 100, originX: 'left', originY: 'top'
+      })
+      await this.imageEditorInst.setObjectPosition(this.blueId, {
+        x: 300, y: 100, originX: 'left', originY: 'top'
+      })
+
+      const updatePosition = () => {
+        var colorIdMapping = {
+          'A': this.blueId,
+          'B': this.greenId,
+          'T': this.redId,
+        }
+        var detector = {}
+        for (var k in colorIdMapping) {
+          var A = this.imageEditorInst.getObjectPosition(colorIdMapping[k], 'left', 'top')
+          var B = this.imageEditorInst.getObjectPosition(colorIdMapping[k], 'right', 'bottom')
+          detector[k] = {
+            x1: Math.floor(A.y), y1: Math.floor(A.x),
+            x2: Math.floor(B.y), y2: Math.floor(B.x)
+          }
+        }
+        this.props.updateDetectorCallback(detector)
+      }; 
+      return updatePosition
+    }
+
+    async CrossWidgets() {
+      var redLine = await this.imageEditorInst.addShape('rect', {
+        fill: "#ff0000", stroke: "#000000"
+      }), greenLine = await this.imageEditorInst.addShape('rect', {
+        fill: "#00ff00", stroke: "#000000"
+      }), blueLine = await this.imageEditorInst.addShape('rect', {
+        fill: "#0000ff", stroke: "#000000"
+      }), blackLine = await this.imageEditorInst.addShape('rect', {
+        fill: "#ffffff", stroke: "#000000"
+      });
+
+      this.redId = redLine.id
+      this.greenId = greenLine.id
+      this.blueId = blueLine.id
+      this.blackId = blackLine.id
+
+      await this.imageEditorInst.setObjectPosition(this.redId, {
+        x: 100, y: 100, originX: 'left', originY: 'top'
+      })
+      await this.imageEditorInst.setObjectPosition(this.greenId, {
+        x: 200, y: 100, originX: 'left', originY: 'top'
+      })
+      await this.imageEditorInst.setObjectPosition(this.blueId, {
+        x: 300, y: 100, originX: 'left', originY: 'top'
+      })
+      await this.imageEditorInst.setObjectPosition(this.blackId, {
+        x: 400, y: 100, originX: 'left', originY: 'top'
+      })
+
+      const updatePosition = () => {
+        var colorIdMapping = {
+          'A': this.blueId,
+          'B': this.greenId,
+          'X': this.redId,
+          'Y': this.blackId
+        }
+        var detector = {}
+        for (var k in colorIdMapping) {
+          var A = this.imageEditorInst.getObjectPosition(colorIdMapping[k], 'left', 'top')
+          var B = this.imageEditorInst.getObjectPosition(colorIdMapping[k], 'right', 'bottom')
+          detector[k] = {
+            x1: Math.floor(A.y), y1: Math.floor(A.x),
+            x2: Math.floor(B.y), y2: Math.floor(B.x)
+          }
+        }
+        this.props.updateDetectorCallback(detector)
+      }; 
+      return updatePosition
+    }
+
+    async componentDidMount() {
+      this.imageEditorInst = new TuiImageEditor(this.rootEl.current, {
+        includeUI: {
+          menu: ['icon'],
+          initMenu: "icon",
+          uiSize: {
+            width: "100%",
+            height: "50rem"
+          },
+          menuBarPosition: "bottom"
+        },
+        selectionStyle: {
+          cornerSize: 20,
+          rotatingPointOffset: 70
+        },
+        usageStatistics: true
+      });
+      
+      var imgLink = await axios.get(config.host + 'first_frame', {
+        params: { id: this.props.video }
+      })
+      imgLink = imgLink.data.link
+
+      await this.imageEditorInst.loadImageFromURL(imgLink, 'SampleImage')
+
+      var updatePosition;
+      if (this.props.mode == 'straight') {
+        updatePosition = await this.StraightWidgets();
+      } else if (this.props.mode == 't_intersection') {
+        updatePosition = await this.TWidgets();
+      } else if (this.props.mode == 'cross_intersection') {
+        updatePosition = await this.CrossWidgets();
+      }
+      
       this.imageEditorInst.on('objectMoved', updatePosition);
       this.imageEditorInst.on('objectRotated', updatePosition);
       this.imageEditorInst.on('objectScaled', updatePosition);
@@ -92,7 +202,8 @@ class ImageEditor extends React.Component {
 
 ImageEditor.propTypes = {
   video: PropTypes.string,
-  detector: PropTypes.func
+  mode: PropTypes.string,
+  updateDetectorCallback: PropTypes.func
 };
 
 export default ImageEditor;

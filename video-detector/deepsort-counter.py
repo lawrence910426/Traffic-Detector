@@ -92,6 +92,20 @@ class Sharingan(object):
         if exc_type:
             self.logger.info(exc_type, exc_value, exc_traceback)
 
+    def draw_detector(self, img):
+        if self.args.mode == "straight":
+            img = draw_detector(img, Line(*self.args.detector_line.split(",")), (255, 255, 255))
+        if self.args.mode == "t_intersection":
+            img = draw_detector(img, Line(*self.args.detector_line_a.split(",")), (0, 0, 255))
+            img = draw_detector(img, Line(*self.args.detector_line_b.split(",")), (0, 255, 0))
+            img = draw_detector(img, Line(*self.args.detector_line_t.split(",")), (255, 0, 0))
+        if self.args.mode == "cross_intersection":
+            img = draw_detector(img, Line(*self.args.detector_line_a.split(",")), (0, 0, 255))
+            img = draw_detector(img, Line(*self.args.detector_line_b.split(",")), (0, 255, 0))
+            img = draw_detector(img, Line(*self.args.detector_line_t.split(",")), (255, 0, 0))
+            img = draw_detector(img, Line(*self.args.detector_line_t.split(",")), (255, 255, 255))
+        return img
+
     def run(self):
         # calculate the stabilization transform
         stable_fixer = Stabilizer(self.args.stable_period, Progress(0, 10))
@@ -186,7 +200,9 @@ class Sharingan(object):
                     self.mcu_weight[k]
                 )
             fg_im = draw_flow(fg_im, mcu_counter.get_mcu())
-            fg_im = draw_detector(fg_im, detection_line)
+
+
+            
 
             end = time.time()
 

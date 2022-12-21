@@ -57,10 +57,6 @@ class Data extends React.Component {
         
         this.setState({ videoUrl: flow.videoUrl })
     }
-   
-    downloadVideo() {
-        window.open(this.state.videoUrl)
-    }
     
     downloadExcel() {
         const workbook = utils.book_new();
