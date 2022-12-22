@@ -51,7 +51,7 @@ class Parameters extends React.Component {
 
   handleModeChange(event, newValue) {
     this.setState({ modeValue: newValue })
-    this.props.mode(this.modeMapping[this.state.modeValue])
+    this.props.mode(this.modeMapping[newValue])
   }
 
   renderTabs(index) {

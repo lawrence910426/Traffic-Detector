@@ -4,11 +4,12 @@ import PropTypes from 'prop-types';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
-import { MDBBtn, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit';
+import { MDBBtn } from 'mdb-react-ui-kit';
 
 import { utils, writeFile } from 'xlsx';
 import axios from 'axios'
 import config from '../utils/config'
+import FlowPresentation from './FlowPresentation'
 
 class Data extends React.Component {
     constructor() {
@@ -37,24 +38,19 @@ class Data extends React.Component {
         })
         flow = flow.data
         
-        flow.large = {}
-        flow.large.Forward = flow.truck.Forward + flow.bus.Forward
-        flow.large.Reverse = flow.truck.Reverse + flow.bus.Reverse
+        // Recursive addition
+        const recursiveSum = (a, b) => {
+            if(typeof a === 'object') {
+                var ans = {}
+                for (var k in a) ans[k] = recursiveSum(a[k], b[k])
+                return ans
+            } else {
+                ans = a + b
+            }
+        }
+        flow.large = recursiveSum(flow.truck, flow.bus)
 
-        flow.mcu = {}
-        flow.mcu.Forward = 0
-        flow.mcu.Reverse = 0
         this.setState({ flow: flow })
-        
-        var worksheet = utils.json_to_sheet([
-            { 車種: '小客車', 順向流量: flow.car.Forward, 逆向流量: flow.car.Reverse },
-            { 車種: '機車', 順向流量: flow.motorbike.Forward, 逆向流量: flow.motorbike.Reverse },
-            { 車種: '大車', 順向流量: flow.large.Forward, 逆向流量: flow.large.Reverse },
-            { 車種: 'MCU', 順向流量: flow.mcu.Forward, 逆向流量: flow.mcu.Reverse }
-            ], { header: ["車種", "順向流量", "逆向流量"] }
-        )
-        this.setState({ sheet: worksheet })
-        
         this.setState({ videoUrl: flow.videoUrl })
     }
     
@@ -73,38 +69,7 @@ class Data extends React.Component {
             <Container>
                 <Row>
                     <Col style={{ marginTop: '1rem' }}>
-                        <MDBTable striped hover>
-                            <MDBTableHead>
-                                <tr>
-                                    <th scope='col'>車種</th>
-                                    <th scope='col'>順向流量</th>
-                                    <th scope='col'>反向流量</th>
-                                </tr>
-                            </MDBTableHead>
-                            <MDBTableBody>
-                                <tr>
-                                    <th scope='row'>小客車</th>
-                                    <td>{this.state.flow.car.Forward}</td>
-                                    <td>{this.state.flow.car.Reverse}</td>
-                                </tr>
-                                <tr>
-                                    <th scope='row'>機車</th>
-                                    <td>{this.state.flow.motorbike.Forward}</td>
-                                    <td>{this.state.flow.motorbike.Reverse}</td>
-                                </tr>
-                                <tr>
-                                    <th scope='row'>大車</th>
-                                    <td>{this.state.flow.large.Forward}</td>
-                                    <td>{this.state.flow.large.Reverse}</td>
-                                </tr>
-                                <tr>
-                                    <th scope='row'>MCU</th>
-                                    <td>{this.state.flow.mcu.Forward}</td>
-                                    <td>{this.state.flow.mcu.Reverse}</td>
-                                </tr>
-                            </MDBTableBody>
-
-                        </MDBTable>
+                        <FlowPresentation mode={this.props.mode} flow={this.state.flow}></FlowPresentation>
                         <MDBBtn onClick={this.downloadExcel}>下載交通流量結果</MDBBtn>
                     </Col>
 
@@ -128,7 +93,8 @@ class Data extends React.Component {
 Data.propTypes = {
     reset: PropTypes.func,
     task: PropTypes.string,
-    video: PropTypes.string
+    video: PropTypes.string,
+    mode: PropTypes.string
 };
 
 export default Data;

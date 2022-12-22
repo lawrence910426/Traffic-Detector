@@ -39,12 +39,16 @@ class Sharingan(object):
             cv2.resizeWindow("test", args.display_width, args.display_height)
 
         self.enabled_classes = {
+            0: 'person',
+            1: 'bicycle',
             2: 'car',
             3: 'motorbike',
             5: 'bus',
             7: 'truck'
         }
         self.mcu_weight = {
+            0: 0, # Person
+            1: 0, # Bicycle
             2: 2, # Car
             3: 1, # Motorbike
             5: 4, # Bus

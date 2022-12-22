@@ -21,7 +21,7 @@ export default function App() {
   var paramActiveStep = searchParams.get("activeStep") ?? 0
   var paramVideoId = searchParams.get("videoId") ?? ""
   var paramTaskId = searchParams.get("taskId") ?? ""
-  var paramMode = searchParams.get("mode") ?? ""
+  var paramMode = searchParams.get("mode") ?? "straight"
 
   const [activeStep, setActiveStep] = React.useState(paramActiveStep);
   const [videoId, setVideoId] = React.useState(paramVideoId);
@@ -30,7 +30,7 @@ export default function App() {
 
   window.history.replaceState(
     null, "Traffic Flow Detector", 
-    `/?activeStep=${activeStep}&videoId=${videoId}&taskId=${taskId}`
+    `/?activeStep=${activeStep}&videoId=${videoId}&taskId=${taskId}&mode=${mode}`
   )
 
   const handleNext = () => {
