@@ -5,14 +5,14 @@ import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
-import exampleStraight from '../assets/logo-tw.png';
-import paramStraight from '../assets/logo-tw.png';
+import exampleStraight from '../assets/straight_example.png';
+import paramStraight from '../assets/straight_param.png';
 
-import exampleT from '../assets/logo-tw.png';
-import paramT from '../assets/logo-tw.png';
+import exampleT from '../assets/t_example.png';
+import paramT from '../assets/t_param.png';
 
-import exampleCross from '../assets/logo-tw.png';
-import paramCross from '../assets/logo-tw.png';
+import exampleCross from '../assets/cross_example.png';
+import paramCross from '../assets/cross_param.png';
 
 
 class UserHint extends React.Component {
@@ -21,11 +21,15 @@ class UserHint extends React.Component {
             <Container><Row>
                 <Col>
                     <Row><Col><h3>路段俯視圖</h3></Col></Row>
-                    <Row><Col style={{ textAlign: 'center' }}><img src={exampleStraight} /></Col></Row>
+                    <Row><Col style={{ textAlign: 'center' }}>
+                        <img style={{ width: '100%' }} src={exampleStraight} />
+                    </Col></Row>
                 </Col>
                 <Col>
                     <Row><Col><h3>路段偵測線範例</h3></Col></Row>
-                    <Row><Col style={{ textAlign: 'center' }}><img src={paramStraight} /></Col></Row>
+                    <Row><Col style={{ textAlign: 'center' }}>
+                        <img style={{ width: '100%' }} src={paramStraight} />
+                    </Col></Row>
                 </Col>
             </Row></Container>
         )
@@ -36,11 +40,15 @@ class UserHint extends React.Component {
             <Container><Row>
                 <Col>
                     <Row><Col><h3>T 字路口俯視圖</h3></Col></Row>
-                    <Row><Col style={{ textAlign: 'center' }}><img src={exampleT} /></Col></Row>
+                    <Row><Col style={{ textAlign: 'center' }}>
+                        <img style={{ width: '100%' }} src={exampleT} />
+                    </Col></Row>
                 </Col>
                 <Col>
                     <Row><Col><h3>T 字路口偵測線範例</h3></Col></Row>
-                    <Row><Col style={{ textAlign: 'center' }}><img src={paramT} /></Col></Row>
+                    <Row><Col style={{ textAlign: 'center' }}>
+                        <img style={{ width: '100%' }} src={paramT} />
+                    </Col></Row>
                 </Col>
             </Row></Container>
         )
@@ -51,11 +59,15 @@ class UserHint extends React.Component {
             <Container><Row>
                 <Col>
                     <Row><Col><h3>十字路口俯視圖</h3></Col></Row>
-                    <Row><Col style={{ textAlign: 'center' }}><img src={exampleCross} /></Col></Row>
+                    <Row><Col style={{ textAlign: 'center' }}>
+                        <img style={{ width: '100%' }} src={exampleCross} />
+                    </Col></Row>
                 </Col>
                 <Col>
                     <Row><Col><h3>十字路口偵測線範例</h3></Col></Row>
-                    <Row><Col style={{ textAlign: 'center' }}><img src={paramCross} /></Col></Row>
+                    <Row><Col style={{ textAlign: 'center' }}>
+                        <img style={{ width: '100%' }} src={paramCross} />
+                    </Col></Row>
                 </Col>
             </Row></Container>
         )
