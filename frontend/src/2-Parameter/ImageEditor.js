@@ -171,6 +171,12 @@ class ImageEditor extends React.Component {
 
       await this.imageEditorInst.loadImageFromURL(imgLink, 'SampleImage')
 
+      this.removeByClassName("tui-image-editor-header-logo")
+      this.removeByClassName("tui-image-editor-header-buttons")
+      this.removeByClassName("tui-image-editor-submenu")
+      this.removeByClassName("tui-image-editor-menu")
+      this.removeByClassName("tui-image-editor-help-menu")
+
       var updatePosition;
       if (this.props.mode == 'straight') {
         updatePosition = await this.StraightWidgets();
@@ -183,12 +189,6 @@ class ImageEditor extends React.Component {
       this.imageEditorInst.on('objectMoved', updatePosition);
       this.imageEditorInst.on('objectRotated', updatePosition);
       this.imageEditorInst.on('objectScaled', updatePosition);
-
-      this.removeByClassName("tui-image-editor-header-logo")
-      this.removeByClassName("tui-image-editor-header-buttons")
-      this.removeByClassName("tui-image-editor-submenu")
-      this.removeByClassName("tui-image-editor-menu")
-      this.removeByClassName("tui-image-editor-help-menu")
     }
   
     componentWillUnmount() {
