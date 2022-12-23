@@ -17,24 +17,7 @@ class ImageEditor extends React.Component {
     }
 
     async StraightWidgets() {
-      this.imageEditorInst.registerIcons({
-        detectionLine: `
-          M 0 0 L 0 185 L -5 185 L -5 0 L 0 0
-
-          M 0 0 L 20 20 L 20 25 L 0 5 L 0 0
-          M 0 20 L 20 40 L 20 45 L 0 25 L 0 0
-          M 0 40 L 20 60 L 20 65 L 0 45 L 0 0
-          M 0 60 L 20 80 L 20 85 L 0 65 L 0 0
-          M 0 80 L 20 100 L 20 105 L 0 85 L 0 0
-          M 0 100 L 20 120 L 20 125 L 0 105 L 0 0
-          M 0 120 L 20 140 L 20 145 L 0 125 L 0 0
-          M 0 140 L 20 160 L 20 165 L 0 145 L 0 0
-          M 0 160 L 20 180 L 20 185 L 0 165 L 0 0
-          M -5 180 L 20 200 L 20 205 L -5 185 L 0 0
-          Z
-        `
-      })
-      var objectProps = await this.imageEditorInst.addIcon('detectionLine')
+      var objectProps = await this.imageEditorInst.addIcon('detectionArea')
       this.iconId = objectProps.id
 
       await this.imageEditorInst.setObjectPosition(this.iconId, {
@@ -54,26 +37,22 @@ class ImageEditor extends React.Component {
     }
 
     async TWidgets() {
-      var redLine = await this.imageEditorInst.addShape('rect', {
-        fill: "#ff0000", stroke: "#000000"
-      }), greenLine = await this.imageEditorInst.addShape('rect', {
-        fill: "#00ff00", stroke: "#000000"
-      }), blueLine = await this.imageEditorInst.addShape('rect', {
-        fill: "#0000ff", stroke: "#000000"
-      });
-
-      this.redId = redLine.id
-      this.greenId = greenLine.id
-      this.blueId = blueLine.id
+      this.redId = (await this.imageEditorInst.addIcon('detectionLineHori')).id
+      this.greenId = (await this.imageEditorInst.addIcon('detectionLineVert')).id
+      this.blueId = (await this.imageEditorInst.addIcon('detectionLineVert')).id
+      
+      await this.imageEditorInst.changeIconColor(this.redId, '#FF0000')
+      await this.imageEditorInst.changeIconColor(this.greenId, '#00FF00')
+      await this.imageEditorInst.changeIconColor(this.blueId, '#0000FF')
 
       await this.imageEditorInst.setObjectPosition(this.redId, {
+        x: 150, y: 50, originX: 'left', originY: 'top'
+      })
+      await this.imageEditorInst.setObjectPosition(this.blueId, {
         x: 100, y: 100, originX: 'left', originY: 'top'
       })
       await this.imageEditorInst.setObjectPosition(this.greenId, {
-        x: 200, y: 100, originX: 'left', originY: 'top'
-      })
-      await this.imageEditorInst.setObjectPosition(this.blueId, {
-        x: 300, y: 100, originX: 'left', originY: 'top'
+        x: 400, y: 100, originX: 'left', originY: 'top'
       })
 
       const updatePosition = () => {
@@ -97,32 +76,27 @@ class ImageEditor extends React.Component {
     }
 
     async CrossWidgets() {
-      var redLine = await this.imageEditorInst.addShape('rect', {
-        fill: "#ff0000", stroke: "#000000"
-      }), greenLine = await this.imageEditorInst.addShape('rect', {
-        fill: "#00ff00", stroke: "#000000"
-      }), blueLine = await this.imageEditorInst.addShape('rect', {
-        fill: "#0000ff", stroke: "#000000"
-      }), blackLine = await this.imageEditorInst.addShape('rect', {
-        fill: "#ffffff", stroke: "#000000"
-      });
-
-      this.redId = redLine.id
-      this.greenId = greenLine.id
-      this.blueId = blueLine.id
-      this.blackId = blackLine.id
+      this.redId = (await this.imageEditorInst.addIcon('detectionLineHori')).id
+      this.orangeId = (await this.imageEditorInst.addIcon('detectionLineHori')).id
+      this.greenId = (await this.imageEditorInst.addIcon('detectionLineVert')).id
+      this.blueId = (await this.imageEditorInst.addIcon('detectionLineVert')).id
+      
+      await this.imageEditorInst.changeIconColor(this.redId, '#FF0000')
+      await this.imageEditorInst.changeIconColor(this.greenId, '#00FF00')
+      await this.imageEditorInst.changeIconColor(this.blueId, '#0000FF')
+      await this.imageEditorInst.changeIconColor(this.orangeId, '#FF7F00')
 
       await this.imageEditorInst.setObjectPosition(this.redId, {
-        x: 100, y: 100, originX: 'left', originY: 'top'
-      })
-      await this.imageEditorInst.setObjectPosition(this.greenId, {
-        x: 200, y: 100, originX: 'left', originY: 'top'
+        x: 150, y: 100, originX: 'left', originY: 'top'
       })
       await this.imageEditorInst.setObjectPosition(this.blueId, {
-        x: 300, y: 100, originX: 'left', originY: 'top'
+        x: 100, y: 150, originX: 'left', originY: 'top'
       })
-      await this.imageEditorInst.setObjectPosition(this.blackId, {
-        x: 400, y: 100, originX: 'left', originY: 'top'
+      await this.imageEditorInst.setObjectPosition(this.orangeId, {
+        x: 150, y: 400, originX: 'left', originY: 'top'
+      })
+      await this.imageEditorInst.setObjectPosition(this.greenId, {
+        x: 400, y: 150, originX: 'left', originY: 'top'
       })
 
       const updatePosition = () => {
@@ -130,7 +104,7 @@ class ImageEditor extends React.Component {
           'A': this.blueId,
           'B': this.greenId,
           'X': this.redId,
-          'Y': this.blackId
+          'Y': this.orangeId
         }
         var detector = {}
         for (var k in colorIdMapping) {
@@ -163,13 +137,40 @@ class ImageEditor extends React.Component {
         },
         usageStatistics: true
       });
-      
-      var imgLink = await axios.get(config.host + 'first_frame', {
-        params: { id: this.props.video }
-      })
-      imgLink = imgLink.data.link
 
-      await this.imageEditorInst.loadImageFromURL(imgLink, 'SampleImage')
+      this.imageEditorInst.registerIcons({
+        detectionArea: `
+          M 0 0 L 0 185 L -5 185 L -5 0 L 0 0
+
+          M 0 0 L 20 20 L 20 25 L 0 5 L 0 0
+          M 0 20 L 20 40 L 20 45 L 0 25 L 0 0
+          M 0 40 L 20 60 L 20 65 L 0 45 L 0 0
+          M 0 60 L 20 80 L 20 85 L 0 65 L 0 0
+          M 0 80 L 20 100 L 20 105 L 0 85 L 0 0
+          M 0 100 L 20 120 L 20 125 L 0 105 L 0 0
+          M 0 120 L 20 140 L 20 145 L 0 125 L 0 0
+          M 0 140 L 20 160 L 20 165 L 0 145 L 0 0
+          M 0 160 L 20 180 L 20 185 L 0 165 L 0 0
+          M -5 180 L 20 200 L 20 205 L -5 185 L 0 0
+          Z
+        `, detectionLineVert: `
+          M 0 0 L 0 200 L -5 200 L -5 0 L 0 0
+        `, detectionLineHori: `
+          M 0 0 L 200 0 L 200 -5 L 0 -5 L 0 0
+        `
+      })
+      
+      try {
+        var imgLink = await axios.get(config.host + 'first_frame', {
+          params: { id: this.props.video }
+        })
+        imgLink = imgLink.data.link
+  
+        await this.imageEditorInst.loadImageFromURL(imgLink, 'SampleImage')
+      } catch (error) {
+        console.log("Failed to fetch first frame " + error)
+      }
+      
 
       this.removeByClassName("tui-image-editor-header-logo")
       this.removeByClassName("tui-image-editor-header-buttons")

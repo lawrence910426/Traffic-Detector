@@ -107,7 +107,7 @@ class Sharingan(object):
             img = draw_detector(img, Line(*self.args.detector_line_a.split(",")), (0, 0, 255))
             img = draw_detector(img, Line(*self.args.detector_line_b.split(",")), (0, 255, 0))
             img = draw_detector(img, Line(*self.args.detector_line_t.split(",")), (255, 0, 0))
-            img = draw_detector(img, Line(*self.args.detector_line_t.split(",")), (255, 255, 255))
+            img = draw_detector(img, Line(*self.args.detector_line_t.split(",")), (255, 127, 0))
         return img
 
     def run(self):
