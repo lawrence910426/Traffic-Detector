@@ -14,10 +14,9 @@ from .StackCounter import StackCounter
 # (A, B) and (X, Y) are perpendicular.
 
 class CrossCounter(StackCounter):
-    def __init__(self, fps, logger, A: Line, B: Line, X: Line, Y: Line):
+    def __init__(self, logger, A: Line, B: Line, X: Line, Y: Line):
         super().__init__(logger)
         
-        self.fps = fps
         self.A, self.B, self.X, self.Y = A, B, X, Y
         self.realized_flow = {
             "A": {

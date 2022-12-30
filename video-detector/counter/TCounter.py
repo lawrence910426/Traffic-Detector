@@ -13,10 +13,9 @@ from .StackCounter import StackCounter
 
 
 class TCounter(StackCounter):
-    def __init__(self, fps, logger, A: Line, B: Line, T: Line):
+    def __init__(self, logger, A: Line, B: Line, T: Line):
         super().__init__(logger)
 
-        self.fps = fps
         self.A, self.B, self.T = A, B, T
         self.realized_flow = {
             "A": {

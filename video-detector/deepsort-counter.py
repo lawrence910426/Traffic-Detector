@@ -136,18 +136,16 @@ class Sharingan(object):
         detection_counter = {}
         for enabled_cls_id in self.enabled_classes:
             if self.args.mode == "straight":
-                detection_counter[enabled_cls_id] = Counter(
-                    self.vdo.get(cv2.CAP_PROP_FPS), self.detect
+                detection_counter[enabled_cls_id] = StraightCounter(
+                    self.vdo.get(cv2.CAP_PROP_FPS), self.logger, self.detect
                 )
             if self.args.mode == "t_intersection":
                 detection_counter[enabled_cls_id] = TCounter(
-                    self.vdo.get(cv2.CAP_PROP_FPS), self.logger,
-                    self.detect_a, self.detect_b, self.detect_t
+                    self.logger, self.detect_a, self.detect_b, self.detect_t
                 )
             if self.args.mode == "cross_intersection":
                 detection_counter[enabled_cls_id] = CrossCounter(
-                    self.vdo.get(cv2.CAP_PROP_FPS), self.logger,
-                    self.detect_a, self.detect_b, self.detect_x, self.detect_y
+                    self.logger, self.detect_a, self.detect_b, self.detect_x, self.detect_y
                 )
         
         width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH)) 

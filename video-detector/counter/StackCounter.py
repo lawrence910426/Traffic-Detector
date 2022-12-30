@@ -1,14 +1,14 @@
 import copy
-from counter import Counter
+from .Counter import Counter
 
 # This implements the stack matching algorithm
 # for traffic flow detection.
 # Erich was here
 class StackCounter(Counter):
     def __init__(self, logger):
+        super().__init__(logger)
         self.occurence_stack = []
         self.vehicle_status = {}
-        self.logger = logger
 
     def append_detection(self, id, line):
         self.logger.info(
