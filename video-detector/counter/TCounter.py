@@ -1,6 +1,6 @@
 import numpy as np
-from counter import Counter
 from utils.shapes import Box, Line
+from .StackCounter import StackCounter
 
 # The structure of the T-Intersection is as follows
 #           |   |
@@ -12,13 +12,12 @@ from utils.shapes import Box, Line
 # A & B: One turning traffic and one straight traffic
 
 
-class CrossCounter(Counter):
-    def __init__(self, fps, A: Line, B: Line, T: Line):
-        self.detector = detector
+class TCounter(StackCounter):
+    def __init__(self, fps, logger, A: Line, B: Line, T: Line):
+        super().__init__(logger)
+
         self.fps = fps
         self.A, self.B, self.T = A, B, T
-
-        self.occurence_stack = []
         self.realized_flow = {
             "A": {
                 "Left": 0,
@@ -34,16 +33,6 @@ class CrossCounter(Counter):
             }
         }
 
-    def getFlow(self):
-        output_flow = copy.deepcopy(self.realized_flow)
-        for i in range(0, len(self.occurence_stack), 2):
-            self.increment_flow(
-                output_flow,
-                self.occurence_stack[i][1],
-                self.occurence_stack[i + 1][1]
-            )
-        return output_flow
-
     def update(self, id, vehicle: Box):
         detected_line = None
         if self.hover(self.A, vehicle):
@@ -54,33 +43,25 @@ class CrossCounter(Counter):
             detected_line = "T"
         
         if not detected_line is None:
-            self.occurence_stack.append((id, detected_line))
+            self.append_detection(id, detected_line)
 
         while self.update_realized_flow():
             pass
 
-    def update_realized_flow():
-        for src in range(0, len(self.occurence_stack)):
-            for dst in range(src + 1, len(self.occurence_stack)):
-                if self.occurence_stack[src][0] == self.occurence_stack[dst][0]:
-                    self.increment_flow(
-                        self.realized_flow,
-                        self.occurence_stack[src][1],
-                        self.occurence_stack[dst][1]
-                    )
-                    self.occurence_stack.pop(src)
-                    self.occurence_stack.pop(dst)
-                    return True
-        return False
-    
-    def increment_flow(flow, origin, dest):
+    def increment_flow(self, flow, origin, dest):
+        direction = None
         direction = 'Straight' if (origin, dest) in [
             ('A', 'B'), ('B', 'A')
-        ] else None
+        ] else direction
         direction = 'Left' if (origin, dest) in [
             ('A', 'T'), ('T', 'B')
-        ] else None
+        ] else direction
         direction = 'Right' if (origin, dest) in [
             ('T', 'A'), ('B', 'T')
-        ] else None
-        flow[origin][direction] += 1
+        ] else direction
+        
+        if direction is None:
+            return False
+        else:
+            flow[origin][direction] += 1
+            return True

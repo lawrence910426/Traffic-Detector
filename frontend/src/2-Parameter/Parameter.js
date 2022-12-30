@@ -41,10 +41,11 @@ class Parameters extends React.Component {
   }
 
   async complete() {
-    var taskId = await axios.get(config.host + "task_id", {
-      params: this.state
-    })
+    var params = this.state
+    params.modeValue = this.modeMapping[params.modeValue]
+    var taskId = await axios.get(config.host + "task_id", { params: params })
     taskId = taskId.data.id
+    
     this.props.task(taskId)
     this.props.next()
   }

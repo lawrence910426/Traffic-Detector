@@ -1,7 +1,6 @@
 import numpy as np
-from counter import Counter
 from utils.shapes import Box, Line
-import copy
+from .StackCounter import StackCounter
 
 # The structure of the Cross Intersection is as follows
 #           |   |
@@ -14,13 +13,12 @@ import copy
 # 
 # (A, B) and (X, Y) are perpendicular.
 
-class CrossCounter(Counter):
-    def __init__(self, fps, A: Line, B: Line, X: Line, Y: Line):
-        self.detector = detector
+class CrossCounter(StackCounter):
+    def __init__(self, fps, logger, A: Line, B: Line, X: Line, Y: Line):
+        super().__init__(logger)
+        
         self.fps = fps
         self.A, self.B, self.X, self.Y = A, B, X, Y
-
-        self.occurence_stack = []
         self.realized_flow = {
             "A": {
                 "Left": 0,
@@ -44,16 +42,6 @@ class CrossCounter(Counter):
             },
         }
 
-    def getFlow(self):
-        output_flow = copy.deepcopy(self.realized_flow)
-        for i in range(0, len(self.occurence_stack), 2):
-            self.increment_flow(
-                output_flow,
-                self.occurence_stack[i][1],
-                self.occurence_stack[i + 1][1]
-            )
-        return output_flow
-
     def update(self, id, vehicle: Box):
         detected_line = None
         if self.hover(self.A, vehicle):
@@ -70,29 +58,21 @@ class CrossCounter(Counter):
 
         while self.update_realized_flow():
             pass
-
-    def update_realized_flow():
-        for src in range(0, len(self.occurence_stack)):
-            for dst in range(src + 1, len(self.occurence_stack)):
-                if self.occurence_stack[src][0] == self.occurence_stack[dst][0]:
-                    self.increment_flow(
-                        self.realized_flow,
-                        self.occurence_stack[src][1],
-                        self.occurence_stack[dst][1]
-                    )
-                    self.occurence_stack.pop(src)
-                    self.occurence_stack.pop(dst)
-                    return True
-        return False
     
-    def increment_flow(flow, origin, dest):
+    def increment_flow(self, flow, origin, dest):
+        direction = None
         direction = 'Straight' if (origin, dest) in [
             ('X', 'Y'), ('Y', 'X'), ('A', 'B'), ('B', 'A')
-        ] else None
+        ] else direction
         direction = 'Left' if (origin, dest) in [
             ('A', 'X'), ('X', 'B'), ('B', 'Y'), ('Y', 'A')
-        ] else None
+        ] else direction
         direction = 'Right' if (origin, dest) in [
             ('X', 'A'), ('B', 'X'), ('Y', 'B'), ('A', 'Y')
-        ] else None
-        flow[origin][direction] += 1
+        ] else direction
+        
+        if direction is None:
+            return False
+        else:
+            flow[origin][direction] += 1
+            return True

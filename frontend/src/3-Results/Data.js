@@ -22,12 +22,7 @@ class Data extends React.Component {
                 { 車種: 'MCU', 順向流量: 0, 逆向流量: 0 }
                 ], { header: ["車種", "順向流量", "逆向流量"] }
             ),
-            flow: {
-                car: { Forward: 0, Reverse: 0 },
-                motorbike: { Forward: 0, Reverse: 0 },
-                large: { Forward: 0, Reverse: 0 },
-                mcu: { Forward: 0, Reverse: 0 }
-            },
+            flow: {},
             videoUrl: "http://techslides.com/demos/sample-videos/small.mp4"
         }
     }
@@ -43,12 +38,13 @@ class Data extends React.Component {
             if(typeof a === 'object') {
                 var ans = {}
                 for (var k in a) ans[k] = recursiveSum(a[k], b[k])
-                return ans
             } else {
                 ans = a + b
             }
+            return ans
         }
         flow.large = recursiveSum(flow.truck, flow.bus)
+        console.log(flow)
 
         this.setState({ flow: flow })
         this.setState({ videoUrl: flow.videoUrl })

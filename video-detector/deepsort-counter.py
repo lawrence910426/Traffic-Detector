@@ -39,7 +39,7 @@ class Sharingan(object):
             cv2.resizeWindow("test", args.display_width, args.display_height)
 
         self.enabled_classes = {
-            0: 'person',
+            # 0: 'person',
             1: 'bicycle',
             2: 'car',
             3: 'motorbike',
@@ -47,7 +47,7 @@ class Sharingan(object):
             7: 'truck'
         }
         self.mcu_weight = {
-            0: 0, # Person
+            # 0: 0, # Person
             1: 0, # Bicycle
             2: 2, # Car
             3: 1, # Motorbike
@@ -88,7 +88,23 @@ class Sharingan(object):
             # logging
             self.logger.info("Save results to {}".format(self.args.save_path))
             self.yield_logger = open(self.save_yield_path, "w+")
-
+        
+        self.logger.info(
+            "Detection line arguments " +
+            str(self.args.detector_line) + " " +
+            str(self.args.detector_line_a) + " " +
+            str(self.args.detector_line_b) + " " +
+            str(self.args.detector_line_x) + " " +
+            str(self.args.detector_line_y) + " " +
+            str(self.args.detector_line_t) + " " +
+            str(self.args.mode)
+        )
+        self.detect = Line(*self.args.detector_line.split(","), True)
+        self.detect_a = Line(*self.args.detector_line_a.split(","), True)
+        self.detect_b = Line(*self.args.detector_line_b.split(","), True)
+        self.detect_x = Line(*self.args.detector_line_x.split(","), True)
+        self.detect_y = Line(*self.args.detector_line_y.split(","), True)
+        self.detect_t = Line(*self.args.detector_line_t.split(","), True)
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
@@ -96,18 +112,18 @@ class Sharingan(object):
         if exc_type:
             self.logger.info(exc_type, exc_value, exc_traceback)
 
-    def draw_detector(self, img):
+    def draw_mode_detector(self, img):
         if self.args.mode == "straight":
-            img = draw_detector(img, Line(*self.args.detector_line.split(",")), (255, 255, 255))
+            img = draw_detector(img, self.detect, (255, 255, 255))
         if self.args.mode == "t_intersection":
-            img = draw_detector(img, Line(*self.args.detector_line_a.split(",")), (0, 0, 255))
-            img = draw_detector(img, Line(*self.args.detector_line_b.split(",")), (0, 255, 0))
-            img = draw_detector(img, Line(*self.args.detector_line_t.split(",")), (255, 0, 0))
+            img = draw_detector(img, self.detect_a, (255, 0, 0))
+            img = draw_detector(img, self.detect_b, (0, 255, 0))
+            img = draw_detector(img, self.detect_t, (0, 0, 255))
         if self.args.mode == "cross_intersection":
-            img = draw_detector(img, Line(*self.args.detector_line_a.split(",")), (0, 0, 255))
-            img = draw_detector(img, Line(*self.args.detector_line_b.split(",")), (0, 255, 0))
-            img = draw_detector(img, Line(*self.args.detector_line_t.split(",")), (255, 0, 0))
-            img = draw_detector(img, Line(*self.args.detector_line_t.split(",")), (255, 127, 0))
+            img = draw_detector(img, self.detect_a, (255, 0, 0))
+            img = draw_detector(img, self.detect_b, (0, 255, 0))
+            img = draw_detector(img, self.detect_x, (0, 0, 255))
+            img = draw_detector(img, self.detect_y, (0, 127, 255))
         return img
 
     def run(self):
@@ -121,23 +137,17 @@ class Sharingan(object):
         for enabled_cls_id in self.enabled_classes:
             if self.args.mode == "straight":
                 detection_counter[enabled_cls_id] = Counter(
-                    self.vdo.get(cv2.CAP_PROP_FPS),
-                    Line(*self.args.detector_line.split(","))
+                    self.vdo.get(cv2.CAP_PROP_FPS), self.detect
                 )
             if self.args.mode == "t_intersection":
                 detection_counter[enabled_cls_id] = TCounter(
-                    self.vdo.get(cv2.CAP_PROP_FPS),
-                    Line(*self.args.detector_line_a.split(",")),
-                    Line(*self.args.detector_line_b.split(",")),
-                    Line(*self.args.detector_line_t.split(","))
+                    self.vdo.get(cv2.CAP_PROP_FPS), self.logger,
+                    self.detect_a, self.detect_b, self.detect_t
                 )
             if self.args.mode == "cross_intersection":
                 detection_counter[enabled_cls_id] = CrossCounter(
-                    self.vdo.get(cv2.CAP_PROP_FPS),
-                    Line(*self.args.detector_line_a.split(",")),
-                    Line(*self.args.detector_line_b.split(",")),
-                    Line(*self.args.detector_line_x.split(",")),
-                    Line(*self.args.detector_line_y.split(","))
+                    self.vdo.get(cv2.CAP_PROP_FPS), self.logger,
+                    self.detect_a, self.detect_b, self.detect_x, self.detect_y
                 )
         
         width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH)) 
@@ -189,7 +199,7 @@ class Sharingan(object):
                         bb_xyxy, bb_id = bbox_xyxy[i], identities[i]
                         bbox_tlwh.append(self.deepsort[k]._xyxy_to_tlwh(bb_xyxy))
                         detection_counter[k].update(bb_id, Box(*bb_xyxy))
-                
+
                     fg_im = draw_boxes(fg_im, bbox_xyxy, identities)
                     results.append((idx_frame - 1, bbox_tlwh, identities))
             
@@ -204,12 +214,9 @@ class Sharingan(object):
                     self.mcu_weight[k]
                 )
             fg_im = draw_flow(fg_im, mcu_counter.get_mcu())
-
-
-            
+            fg_im = self.draw_mode_detector(fg_im)
 
             end = time.time()
-
             if self.args.display:
                 cv2.imshow("test", fg_im)
                 cv2.waitKey(1)
@@ -264,9 +271,9 @@ def parse_args():
     parser.add_argument("--detector_line", type=str, default='0,0,1000,1000')
 
     # T intersection
-    parser.add_argument("--detector_line_t", type=str, default='0,0,1000,1000')
-    parser.add_argument("--detector_line_a", type=str, default='0,0,1000,1000')
-    parser.add_argument("--detector_line_b", type=str, default='0,0,1000,1000')
+    parser.add_argument("--detector_line_t", type=str, default='536,1136,558,1884')
+    parser.add_argument("--detector_line_a", type=str, default='508,628,629,22')
+    parser.add_argument("--detector_line_b", type=str, default='597,1866,1088,1881')
 
     # Cross intersection (a and b were declared. only x and y needs to be declared.)
     parser.add_argument("--detector_line_x", type=str, default='0,0,1000,1000')

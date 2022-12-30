@@ -8,76 +8,77 @@ import Row from 'react-bootstrap/Row';
 
 import { MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit';
 
-import exampleStraight from '../assets/logo-tw.png';
-import exampleT from '../assets/logo-tw.png';
-import exampleCross from '../assets/logo-tw.png';
+import exampleStraight from '../assets/straight_param.png';
+import exampleT from '../assets/t_param.png';
+import exampleCross from '../assets/cross_param.png';
 
 
 class FlowPresentation extends React.Component {
+    renderTable(types, directions, layers = 2) {
+        var table = []
+        try {
+            if (layers == 1) {
+                for (var t in types) for (var src in directions) {
+                    console.log(src, directions[src])
+                    console.log(t, types[t])
+                    console.log(this.props.flow[t][src])
+
+                    table.push(<tr>
+                        <td scope='col'>{ directions[src] }</td>
+                        <td scope='col'>{ types[t] }</td>
+                        <td scope='col'>{ this.props.flow[t][src] }</td>
+                    </tr>)
+                }
+            }
+            if (layers == 2) {
+                for (var t in types) for (var src in directions) for (var d in directions[src]) {
+                    table.push(<tr>
+                        <td scope='col'>{ directions[src][d] }</td>
+                        <td scope='col'>{ types[t] }</td>
+                        <td scope='col'>{ this.props.flow[t][src][d] }</td>
+                    </tr>)
+                }
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        return table
+    }
+
     renderStraight() {
+        var types = {
+            // 'person': '行人',
+            'bicycle': '腳踏車',
+            'car': '小客車',
+            'motorbike': '機車',
+            'large': '大車'
+        }, directions = {
+            "Forward": '實線往虛線車流',
+            "Reverse": '虛線往實線車流'
+        }
         return (
             <Container>
                 <Row><Col><h3>路段俯視圖</h3></Col></Row>
-                <Row><Col style={{ textAlign: 'center' }}><img src={exampleStraight} /></Col></Row>
+                <Row><Col style={{ textAlign: 'center' }}><img style={{ width: '100%' }} src={exampleStraight} /></Col></Row>
                 <Row><Col>
                     <MDBTable striped hover>
                         <MDBTableHead>
                             <tr>
+                                <th scope='col'>流量種類</th>
                                 <th scope='col'>車種</th>
-                                <th scope='col'>順向流量</th>
-                                <th scope='col'>反向流量</th>
+                                <th scope='col'>流量計數</th>
                             </tr>
                         </MDBTableHead>
-                        <MDBTableBody>
-                            <tr>
-                                <th scope='row'>行人</th>
-                                <td>{this.props.flow.pedestrian.Forward}</td>
-                                <td>{this.props.flow.pedestrian.Reverse}</td>
-                            </tr>
-                            <tr>
-                                <th scope='row'>腳踏車</th>
-                                <td>{this.props.flow.bicycle.Forward}</td>
-                                <td>{this.props.flow.bicycle.Reverse}</td>
-                            </tr>
-                            <tr>
-                                <th scope='row'>小客車</th>
-                                <td>{this.props.flow.car.Forward}</td>
-                                <td>{this.props.flow.car.Reverse}</td>
-                            </tr>
-                            <tr>
-                                <th scope='row'>機車</th>
-                                <td>{this.props.flow.motorbike.Forward}</td>
-                                <td>{this.props.flow.motorbike.Reverse}</td>
-                            </tr>
-                            <tr>
-                                <th scope='row'>大車</th>
-                                <td>{this.props.flow.large.Forward}</td>
-                                <td>{this.props.flow.large.Reverse}</td>
-                            </tr>
-                        </MDBTableBody>
+                        <MDBTableBody> {this.renderTable(types, directions, 1)} </MDBTableBody>
                     </MDBTable>
                 </Col></Row>
             </Container>
         )
     }
 
-    renderTable(types, directions) {
-        var table = ""
-        for (var t in types) for (var src in directions) for (var d in directions[src]) {
-            table += (
-                <tr>
-                    <td scope='col'>{ directions[src][d] }</td>
-                    <td scope='col'>{ types[t] }</td>
-                    <td scope='col'>{ this.props.flow[t][src][d] }</td>
-                </tr>
-            )
-        }
-        return table
-    }
-
     renderT() {
         var types = {
-            'pedestrian': '行人',
+            // 'person': '行人',
             'bicycle': '腳踏車',
             'car': '小客車',
             'motorbike': '機車',
@@ -99,7 +100,7 @@ class FlowPresentation extends React.Component {
         return (
             <Container>
                 <Row><Col><h3>T 字路口俯視圖</h3></Col></Row>
-                <Row><Col style={{ textAlign: 'center' }}><img src={exampleT} /></Col></Row>
+                <Row><Col style={{ textAlign: 'center' }}><img style={{ width: '100%' }} src={exampleT} /></Col></Row>
                 <Row><Col>
                     <MDBTable striped hover>
                         <MDBTableHead>
@@ -118,7 +119,7 @@ class FlowPresentation extends React.Component {
 
     renderCross() {
         var types = {
-            'pedestrian': '行人',
+            // 'person': '行人',
             'bicycle': '腳踏車',
             'car': '小客車',
             'motorbike': '機車',
@@ -148,7 +149,7 @@ class FlowPresentation extends React.Component {
         return (
             <Container>
                 <Row><Col><h3>十字路口俯視圖</h3></Col></Row>
-                <Row><Col style={{ textAlign: 'center' }}><img src={exampleCross} /></Col></Row>
+                <Row><Col style={{ textAlign: 'center' }}><img style={{ width: '100%' }} src={exampleCross} /></Col></Row>
                 <Row><Col>
                     <MDBTable striped hover>
                         <MDBTableHead>
