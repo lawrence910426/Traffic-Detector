@@ -1,0 +1,260 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: Traffic flow backend specification
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/lawrence9104265/Sharingan/1.0.0
+  - url: 'https://petstore.swagger.io/v2'
+tags:
+  - name: Video
+    description: Managing videos (in users' aspect)
+  - name: Task
+    description: Managing tasks (in users' aspect)
+
+paths:
+  /Upload_Video:
+    post:
+      tags:
+        - Video
+      summary: Upload the video and get the video handle
+      operationId: upload_video
+      responses:
+        '200':
+          description: Upload success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Video'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+        
+  /Get_First_Frame:
+    post:
+      tags:
+        - Video
+      summary: Get the first frame of a video
+      operationId: addPet
+      responses:
+        '200':
+          description: Upload success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  link:
+                    type: string
+                    default: "url to the image of first frame"
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+            default: "some-uuid"
+    
+  /Task/Initialize/{mode}:
+    post:
+      tags:
+        - Task
+      summary: Initiate a task & Get the task id
+      operationId: init_task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                video_id:
+                  type: string
+                  default: "some-uuid"
+                stabilization:
+                  type: number
+                  default: 30
+                detector:
+                  $ref: '#/components/schemas/Detector'
+      parameters:
+        - name: mode
+          in: path
+          description: The mode of task
+          required: true
+          schema:
+            type: string
+            enum:
+              - straight
+              - cross_intersection
+              - t_intersection
+              
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    default: '1234'
+
+  /Task/Fetch/{id}:
+    post:
+      tags:
+        - Task
+      summary: Fetch task information by its `id`
+      operationId: fetch_task
+      parameters:
+        - name: id
+          in: path
+          description: The id of task
+          required: true
+          schema:
+            type: string
+            default: '1234'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+components:
+  schemas:
+    Line:
+      properties:
+        x1:
+          type: number
+          default: 0
+        y1:
+          type: number
+          default: 0
+        x2:
+          type: number
+          default: 10
+        y2:
+          type: number
+          default: 10
+    Detector:
+      properties:
+        A:
+          $ref: '#/components/schemas/Line'
+        B:
+          $ref: '#/components/schemas/Line'
+        X:
+          $ref: '#/components/schemas/Line'
+        Y:
+          $ref: '#/components/schemas/Line'
+        T:
+          $ref: '#/components/schemas/Line'
+    Video:
+      properties:
+        url:
+          type: string
+        path:
+          type: string
+        uuid:
+          type: string
+          
+    # Different mode have different result strucutre. This
+    # is only an example for straight mode.
+    Results:
+      properties:
+        Car:
+          properties:
+            Forward:
+              type: number
+              default: 10
+            Reverse:
+              type: number
+              default: 10
+        Truck:
+          properties:
+            Forward:
+              type: number
+              default: 10
+            Reverse:
+              type: number
+              default: 10
+        Bus:
+          properties:
+            Forward:
+              type: number
+              default: 10
+            Reverse:
+              type: number
+              default: 10
+        Bicycle:
+          properties:
+            Forward:
+              type: number
+              default: 10
+            Reverse:
+              type: number
+              default: 10
+        Motorcycle:
+          properties:
+            Forward:
+              type: number
+              default: 10
+            Reverse:
+              type: number
+              default: 10
+    
+    Machine:
+      properties:
+        id:
+          type: number
+          default: 1
+        name:
+          type: string
+          default: 'art-1-replica-3'
+        last_active:
+          type: number
+          default: 12341234
+          description: The number is an unix timestamp
+    
+    MachineSet:
+      type: array
+      items:
+        $ref: '#/components/schemas/Machine'
+    
+    Task:
+      properties:
+        raw_video:
+          $ref: '#/components/schemas/Video'
+        processed_video:
+          $ref: '#/components/schemas/Video'
+        parameters:
+          properties:
+            mode:
+              type: string
+              default: straight
+            stable_period:
+              type: number
+              default: 30
+            detector:
+              $ref: '#/components/schemas/Detector'
+        task_id:
+          type: number
+          default: 1
+        results:
+          $ref: '#/components/schemas/Results'
+        machine:
+          $ref: '#/components/schemas/Machine'
+        progress:
+          type: number
+          default: 0
+        status:
+          type: string
+          enum:
+            - Pending
+            - Running
+            - Completed
