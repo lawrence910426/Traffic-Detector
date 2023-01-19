@@ -78,6 +78,9 @@ paths:
                 stabilization:
                   type: number
                   default: 30
+                machine:
+                  type: number
+                  default: 3
                 detector:
                   $ref: '#/components/schemas/Detector'
       parameters:
@@ -125,7 +128,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
-
+                
+  /Machines:
+    post:
+      tags:
+        - Task
+      summary: Fetch machine information
+      operationId: fetch_machines
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MachineSet'
+                
 components:
   schemas:
     Line:
