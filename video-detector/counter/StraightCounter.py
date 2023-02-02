@@ -35,11 +35,11 @@ class StraightCounter(Counter):
             detected_line = "Z"
 
         if not detected_line is None and self.vehicle_status[id] != detected_line:
-            self.occurence_stack[id].append(id, detected_line)
+            self.occurence_stack[id].append(detected_line)
             self.vehicle_status[id] = detected_line
         
         # There is only 1 vehicle in the stack
-        if len(self.vehicle_status[id]) < 2:
+        if len(self.occurence_stack[id]) < 2:
             return
         
         direction = None
@@ -57,7 +57,7 @@ class StraightCounter(Counter):
         # Must be invalid, since the below cases are not valid and (X, Y, Z, Z) is not possible
         # (X, Y, Z, Y), (X, Y, Z, X)
         # (Z, Y, X, Y), (Z, Y, X, Z)
-        if len(self.vehicle_status[id]) > 3:
+        if len(self.occurence_stack[id]) > 3:
             self.flow[direction].remove(id)
             return
 

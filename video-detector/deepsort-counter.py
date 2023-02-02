@@ -91,7 +91,6 @@ class Sharingan(object):
         
         self.logger.info(
             "Detection line arguments " +
-            str(self.args.detector_line) + " " +
             str(self.args.detector_line_a) + " " +
             str(self.args.detector_line_b) + " " +
             str(self.args.detector_line_x) + " " +
@@ -100,7 +99,6 @@ class Sharingan(object):
             str(self.args.detector_line_t) + " " +
             str(self.args.mode)
         )
-        self.detect = Line(*self.args.detector_line.split(","), True)
         self.detect_a = Line(*self.args.detector_line_a.split(","), True)
         self.detect_b = Line(*self.args.detector_line_b.split(","), True)
         self.detect_x = Line(*self.args.detector_line_x.split(","), True)

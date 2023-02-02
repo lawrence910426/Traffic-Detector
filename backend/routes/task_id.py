@@ -16,7 +16,9 @@ def getTaskId():
     args = ""
     if mode == 'straight':
         try:
-            args += f"--detector_line {detector['x1']},{detector['y1']},{detector['x2']},{detector['y2']} "
+            args += f"--detector_line_x {detector['X']['x1']},{detector['X']['y1']},{detector['X']['x2']},{detector['X']['y2']} "
+            args += f"--detector_line_y {detector['Y']['x1']},{detector['Y']['y1']},{detector['Y']['x2']},{detector['Y']['y2']} "
+            args += f"--detector_line_z {detector['Z']['x1']},{detector['Z']['y1']},{detector['Z']['x2']},{detector['Z']['y2']} "
         except:
             pass
     if mode == 't_intersection':
@@ -34,6 +36,7 @@ def getTaskId():
             args += f"--detector_line_b {detector['B']['x1']},{detector['B']['y1']},{detector['B']['x2']},{detector['B']['y2']} "
         except:
             pass
+    
     with open('scripts/init_task.sh', 'r') as file:
         bash_template = file.read()
         bash_command = bash_template.format(

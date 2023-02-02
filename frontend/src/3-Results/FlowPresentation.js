@@ -16,9 +16,11 @@ import exampleCross from '../assets/cross_param.png';
 class FlowPresentation extends React.Component {
     renderTable(types, directions, layers = 2) {
         var table = []
+        var t, src, d
+        
         try {
             if (layers == 1) {
-                for (var t in types) for (var src in directions) {
+                for (t in types) for (src in directions) {
                     console.log(src, directions[src])
                     console.log(t, types[t])
                     console.log(this.props.flow[t][src])
@@ -31,7 +33,7 @@ class FlowPresentation extends React.Component {
                 }
             }
             if (layers == 2) {
-                for (var t in types) for (var src in directions) for (var d in directions[src]) {
+                for (t in types) for (src in directions) for (d in directions[src]) {
                     table.push(<tr>
                         <td scope='col'>{ directions[src][d] }</td>
                         <td scope='col'>{ types[t] }</td>
