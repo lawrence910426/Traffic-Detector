@@ -16,24 +16,24 @@ def getTaskId():
     args = ""
     if mode == 'straight':
         try:
-            args += f"--detector_line_x {detector['X']['x1']},{detector['X']['y1']},{detector['X']['x2']},{detector['X']['y2']} "
-            args += f"--detector_line_y {detector['Y']['x1']},{detector['Y']['y1']},{detector['Y']['x2']},{detector['Y']['y2']} "
-            args += f"--detector_line_z {detector['Z']['x1']},{detector['Z']['y1']},{detector['Z']['x2']},{detector['Z']['y2']} "
+            args += f"--detector_line_x \"{detector['X']['x1']},{detector['X']['y1']},{detector['X']['x2']},{detector['X']['y2']}\" "
+            args += f"--detector_line_y \"{detector['Y']['x1']},{detector['Y']['y1']},{detector['Y']['x2']},{detector['Y']['y2']}\" "
+            args += f"--detector_line_z \"{detector['Z']['x1']},{detector['Z']['y1']},{detector['Z']['x2']},{detector['Z']['y2']}\" "
         except:
             pass
     if mode == 't_intersection':
         try:
-            args += f"--detector_line_t {detector['T']['x1']},{detector['T']['y1']},{detector['T']['x2']},{detector['T']['y2']} "
-            args += f"--detector_line_a {detector['A']['x1']},{detector['A']['y1']},{detector['A']['x2']},{detector['A']['y2']} "
-            args += f"--detector_line_b {detector['B']['x1']},{detector['B']['y1']},{detector['B']['x2']},{detector['B']['y2']} "
+            args += f"--detector_line_t \"{detector['T']['x1']},{detector['T']['y1']},{detector['T']['x2']},{detector['T']['y2']}\" "
+            args += f"--detector_line_a \"{detector['A']['x1']},{detector['A']['y1']},{detector['A']['x2']},{detector['A']['y2']}\" "
+            args += f"--detector_line_b \"{detector['B']['x1']},{detector['B']['y1']},{detector['B']['x2']},{detector['B']['y2']}\" "
         except:
             pass
     if mode == 'cross_intersection':
         try:
-            args += f"--detector_line_x {detector['X']['x1']},{detector['X']['y1']},{detector['X']['x2']},{detector['X']['y2']} "
-            args += f"--detector_line_y {detector['Y']['x1']},{detector['Y']['y1']},{detector['Y']['x2']},{detector['Y']['y2']} "
-            args += f"--detector_line_a {detector['A']['x1']},{detector['A']['y1']},{detector['A']['x2']},{detector['A']['y2']} "
-            args += f"--detector_line_b {detector['B']['x1']},{detector['B']['y1']},{detector['B']['x2']},{detector['B']['y2']} "
+            args += f"--detector_line_x \"{detector['X']['x1']},{detector['X']['y1']},{detector['X']['x2']},{detector['X']['y2']}\" "
+            args += f"--detector_line_y \"{detector['Y']['x1']},{detector['Y']['y1']},{detector['Y']['x2']},{detector['Y']['y2']}\" "
+            args += f"--detector_line_a \"{detector['A']['x1']},{detector['A']['y1']},{detector['A']['x2']},{detector['A']['y2']}\" "
+            args += f"--detector_line_b \"{detector['B']['x1']},{detector['B']['y1']},{detector['B']['x2']},{detector['B']['y2']}\" "
         except:
             pass
     

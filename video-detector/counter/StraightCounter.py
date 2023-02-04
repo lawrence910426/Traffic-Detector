@@ -62,12 +62,13 @@ class StraightCounter(Counter):
             return
 
         # (X, Y, Z) and (Z, Y, X) is the only allowed case
-        if direction == 'Forward' and self.occurence_stack[id][2] != 'Z':
-            self.flow[direction].remove(id)
-            return
-        if direction == 'Reverse' and self.occurence_stack[id][2] != 'X':
-            self.flow[direction].remove(id)
-            return
+        if len(self.occurence_stack[id]) == 3:
+            if direction == 'Forward' and self.occurence_stack[id][2] != 'Z':
+                self.flow[direction].remove(id)
+                return
+            if direction == 'Reverse' and self.occurence_stack[id][2] != 'X':
+                self.flow[direction].remove(id)
+                return
         
         # `id` might be added twice. First time when there is only 2 element in the stack.
         # Second time when there is 3 element in the stack.
