@@ -46,8 +46,8 @@ class ImageEditor extends React.Component {
           var A = this.imageEditorInst.getObjectPosition(colorIdMapping[k], 'left', 'top')
           var B = this.imageEditorInst.getObjectPosition(colorIdMapping[k], 'right', 'bottom')
           detector[k] = {
-            x1: Math.floor(A.y), y1: Math.floor(A.x),
-            x2: Math.floor(B.y), y2: Math.floor(B.x)
+            x1: Math.max(0, Math.floor(A.y)), y1: Math.max(0, Math.floor(A.x)),
+            x2: Math.max(0, Math.floor(B.y)), y2: Math.max(0, Math.floor(B.x))
           }
         }
         this.props.updateDetectorCallback(detector)
@@ -85,8 +85,8 @@ class ImageEditor extends React.Component {
           var A = this.imageEditorInst.getObjectPosition(colorIdMapping[k], 'left', 'top')
           var B = this.imageEditorInst.getObjectPosition(colorIdMapping[k], 'right', 'bottom')
           detector[k] = {
-            x1: Math.floor(A.y), y1: Math.floor(A.x),
-            x2: Math.floor(B.y), y2: Math.floor(B.x)
+            x1: Math.max(0, Math.floor(A.y)), y1: Math.max(0, Math.floor(A.x)),
+            x2: Math.max(0, Math.floor(B.y)), y2: Math.max(0, Math.floor(B.x))
           }
         }
         this.props.updateDetectorCallback(detector)
@@ -130,8 +130,8 @@ class ImageEditor extends React.Component {
           var A = this.imageEditorInst.getObjectPosition(colorIdMapping[k], 'left', 'top')
           var B = this.imageEditorInst.getObjectPosition(colorIdMapping[k], 'right', 'bottom')
           detector[k] = {
-            x1: Math.floor(A.y), y1: Math.floor(A.x),
-            x2: Math.floor(B.y), y2: Math.floor(B.x)
+            x1: Math.max(0, Math.floor(A.y)), y1: Math.max(0, Math.floor(A.x)),
+            x2: Math.max(0, Math.floor(B.y)), y2: Math.max(0, Math.floor(B.x))
           }
         }
         this.props.updateDetectorCallback(detector)
