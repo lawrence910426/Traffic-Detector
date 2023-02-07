@@ -7,12 +7,10 @@ import proto.interface_pb2_grpc as interface_pb2_grpc
 class RpcClient:
     def __init__(self):
         self.state = "INIT"
-
-    def __enter__(self):
         self.channel = grpc.insecure_channel('localhost:50051')
         self.stub = interface_pb2_grpc.RouteGuideStub(self.channel)
     
-    def __exit__(self):
+    def __del__(self):
         self.channel.close()
 
     def Init_Task(self):

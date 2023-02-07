@@ -14,8 +14,7 @@ from detector import build_detector
 from deep_sort import build_tracker
 from utils.draw import draw_boxes, draw_flow, draw_detector
 from utils.log import get_logger
-from utils.io import write_results
-from utils.progress import Progress
+from utils.progress import Progress_Divider
 from stabilization.stabilizer import Stabilizer
 from counter import *
 
@@ -52,15 +51,17 @@ class TrafficCounter(object):
             5: 4, # Bus
             7: 4  # Truck
         }
-        
+
         self.detector = build_detector(cfg, use_cuda=use_cuda)
         self.deepsort = {}
         for k in self.enabled_classes:
             self.deepsort[k] = build_tracker(cfg, use_cuda=use_cuda)
         self.class_names = self.detector.class_names
 
+        self.build_info()
+        self.init_loop()
 
-    def __enter__(self):
+    def build_info(self):
         assert os.path.isfile(self.video_path), "Path error"
         self.vdo = cv2.VideoCapture(self.video_path)
         self.im_width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -102,10 +103,48 @@ class TrafficCounter(object):
         self.detect_x = Line(*self.args.detector_line_x.split(","), True)
         self.detect_y = Line(*self.args.detector_line_y.split(","), True)
         self.detect_z = Line(*self.args.detector_line_z.split(","), True)
-        self.detect_t = Line(*self.args.detector_line_t.split(","), True)
-        return self
+        self.detect_t = Line(*self.args.detector_line_t.split(","), True)    
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def init_loop(self):
+        # Initialize loop flags
+        self.loop_state = "INIT"
+
+        # initialize detection line & counters
+        self.detection_counter = {}
+        for enabled_cls_id in self.enabled_classes:
+            if self.args.mode == "straight":
+                self.detection_counter[enabled_cls_id] = StraightCounter(
+                    self.logger, self.detect_x, self.detect_y, self.detect_z
+                )
+            if self.args.mode == "t_intersection":
+                self.detection_counter[enabled_cls_id] = TCounter(
+                    self.logger, self.detect_a, self.detect_b, self.detect_t
+                )
+            if self.args.mode == "cross_intersection":
+                self.detection_counter[enabled_cls_id] = CrossCounter(
+                    self.logger, self.detect_a, self.detect_b, self.detect_x, self.detect_y
+                )
+        
+        self.width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH)) 
+        self.height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.idx_frame = 0
+
+        self.vdo.set(cv2.CAP_PROP_POS_FRAMES, 0)
+    
+    def finalize_loop(self):
+        flow = {}
+        for k in self.enabled_classes:
+            cls_name = self.enabled_classes[k]
+            flow[cls_name] = self.detection_counter[k].getFlow()
+        flow = str(flow)
+        
+        log = f"Flow: {flow}, " + Progress_Divider(99, 100).get_progress(100)
+        self.logger.info(log)
+        self.yield_logger.write(log + '\n')
+        self.yield_logger.flush()
+        return flow
+    
+    def __del__(self, exc_type, exc_value, exc_traceback):
         self.yield_logger.close()
         if exc_type:
             self.logger.info(exc_type, exc_value, exc_traceback)
@@ -126,40 +165,30 @@ class TrafficCounter(object):
             img = draw_detector(img, self.detect_y, (0, 127, 255))
         return img
 
-    def run(self):
-        # calculate the stabilization transform
-        stable_fixer = Stabilizer(self.args.stable_period, Progress(0, 10))
-        fixed_transform = stable_fixer.get_transform(self.vdo)
-        progress = Progress(10, 99)
+    def loop(self):
+        if self.loop_state == "INIT":
+            self.stable_fixer = Stabilizer(self.args.stable_period, Progress_Divider(0, 0.1))
+            self.stable_fixer.init_loop(self.vdo)
+            self.loop_state = "STABILIZE"
+            return 0 # Progress = 0%
 
-        # initialize detection line & counters
-        detection_counter = {}
-        for enabled_cls_id in self.enabled_classes:
-            if self.args.mode == "straight":
-                detection_counter[enabled_cls_id] = StraightCounter(
-                    self.logger, self.detect_x, self.detect_y, self.detect_z
-                )
-            if self.args.mode == "t_intersection":
-                detection_counter[enabled_cls_id] = TCounter(
-                    self.logger, self.detect_a, self.detect_b, self.detect_t
-                )
-            if self.args.mode == "cross_intersection":
-                detection_counter[enabled_cls_id] = CrossCounter(
-                    self.logger, self.detect_a, self.detect_b, self.detect_x, self.detect_y
-                )
-        
-        width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH)) 
-        height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        elif self.loop_state == "STABILIZE":
+            try:
+                progress = self.stable_fixer.loop()
+                return progress
+            except Exception as e:
+                self.loop_state = "DETECT"
+                self.detection_progress = Progress_Divider(0.1, 1)
+                return 0.1 # Progress = 10%
 
-        results = []
-        idx_frame = 0
-        self.vdo.set(cv2.CAP_PROP_POS_FRAMES, 0)
-        while self.vdo.grab():
-            idx_frame += 1
-            if idx_frame % self.args.frame_interval:
-                continue
-            if idx_frame >= len(fixed_transform):
-                break
+        elif self.loop_state == "DETECT":
+            progress = self.detection_progress.get_progress(
+                self.idx_frame / len(self.fixed_transform))
+            
+            if self.idx_frame % self.args.frame_interval:
+                return progress
+            if self.idx_frame >= len(self.fixed_transform):
+                raise Exception("End of loop")
 
             start = time.time()
 
@@ -167,7 +196,8 @@ class TrafficCounter(object):
             _, ori_im = self.vdo.retrieve()
 
             # fix image. stabilize then foreground masking
-            fixed_im = stable_fixer.fix_frame(ori_im, fixed_transform[idx_frame], width, height)
+            fixed_im = self.stable_fixer.fix_frame(
+                ori_im, self.fixed_transform[self.idx_frame], self.width, self.height)
             fg_im = fixed_im
             
             # convert to rgb
@@ -196,17 +226,16 @@ class TrafficCounter(object):
                     for i in range(len(outputs)):
                         bb_xyxy, bb_id = bbox_xyxy[i], identities[i]
                         bbox_tlwh.append(self.deepsort[k]._xyxy_to_tlwh(bb_xyxy))
-                        detection_counter[k].update(bb_id, Box(*bb_xyxy))
+                        self.detection_counter[k].update(bb_id, Box(*bb_xyxy))
 
                     fg_im = draw_boxes(fg_im, bbox_xyxy, identities)
-                    results.append((idx_frame - 1, bbox_tlwh, identities))
             
             # Sum up the MCU and draw the statistics
             mcu_counter = MCU()
             detector_flow = {}
-            for k in detection_counter:
+            for k in self.detection_counter:
                 key = self.enabled_classes[k]
-                detector_flow[key] = detection_counter[k].getFlow()
+                detector_flow[key] = self.detection_counter[k].getFlow()
                 mcu_counter.increment_mcu(
                     detector_flow[key], 
                     self.mcu_weight[k]
@@ -215,31 +244,22 @@ class TrafficCounter(object):
             fg_im = self.draw_mode_detector(fg_im)
 
             end = time.time()
-            if self.args.display:
-                cv2.imshow("test", fg_im)
-                cv2.waitKey(1)
 
             if self.args.save_path:
                 self.writer.write(fg_im)
 
-            # save results
-            write_results(self.save_results_path, results, 'mot')
-
             # logging
-            log = "time: {:.03f}s, fps: {:.03f}, detection numbers: {}, tracking numbers: {}, " \
-                .format(end - start, 1 / (end - start), bbox_xywh.shape[0], len(outputs))
-            log += progress.get_progress(idx_frame / len(fixed_transform) * 100)
+            log = f"time: {end - start}s, " + \
+                  f"fps: {1 / (end - start)}, " + \
+                  f"detection numbers: {bbox_xywh.shape[0]}, " + \
+                  f"tracking numbers: {len(outputs)}" + \
+                  f"progress: {str(int(progress * 100))}"
+            
             self.logger.info(log)
             self.yield_logger.write(log + '\n')
             self.yield_logger.flush()
 
-        flow = {}
-        for k in self.enabled_classes:
-            cls_name = self.enabled_classes[k]
-            flow[cls_name] = detection_counter[k].getFlow()
-        flow = str(flow)
+            self.idx_frame += 1
+            return progress
+
         
-        log = f"Flow: {flow}, " + Progress(99, 100).get_progress(100)
-        self.logger.info(log)
-        self.yield_logger.write(log + '\n')
-        self.yield_logger.flush()

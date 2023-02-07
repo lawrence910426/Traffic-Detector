@@ -32,50 +32,57 @@ class Stabilizer:
 	
 		return smoothed_trajectory
 
-	def get_transform(self, cp):
-		n_frames = int(cp.get(cv2.CAP_PROP_FRAME_COUNT))
-		cp.set(cv2.CAP_PROP_POS_FRAMES, 0) 
-		_, prev = cp.read()
-		prev_gray = cv2.cvtColor(prev, cv2.COLOR_BGR2GRAY)
-		transforms = np.zeros((n_frames-1, 3), np.float32) 
+	def init_loop(self, cp):
+		self.cp = cp
+		self.n_frames = int(cp.get(cv2.CAP_PROP_FRAME_COUNT))
+		self.cp.set(cv2.CAP_PROP_POS_FRAMES, 0) 
+		_, prev = self.cp.read()
+		self.prev_gray = cv2.cvtColor(prev, cv2.COLOR_BGR2GRAY)
+		self.transforms = np.zeros((self.n_frames - 1, 3), np.float32) 
 
-		for i in range(n_frames - 2):
-			prev_pts = cv2.goodFeaturesToTrack(
-				prev_gray, 
-				maxCorners=200, 
-				qualityLevel=0.01, 
-				minDistance=30, 
-				blockSize=3
-			)
-
-			succ, curr = cp.read()
-			if not succ:
-				break
-
-			curr_gray = cv2.cvtColor(curr, cv2.COLOR_BGR2GRAY)
-			curr_pts, status, err = cv2.calcOpticalFlowPyrLK(
-				prev_gray, curr_gray, 
-				prev_pts, None
-			)
-
-			idx = np.where(status==1)[0]
-			prev_pts, curr_pts = prev_pts[idx], curr_pts[idx]
-			m, _ = cv2.estimateAffinePartial2D(prev_pts, curr_pts)
-
-			dx, dy = m[0, 2], m[1, 2]
-			da = np.arctan2(m[1, 0], m[0, 0])
-			transforms[i] = [dx, dy, da] 
-
-			prev_gray = curr_gray
-
-			progress_status = self.progress.get_progress(i / (n_frames - 2) * 100)
-			print(f"Frame: {str(i)} / {str(n_frames - 2)}, Pts: {str(len(prev_pts))}, " + progress_status)
-
-		trajectory = np.cumsum(transforms, axis=0) 
+	def finalize_loop(self):
+		trajectory = np.cumsum(self.transforms, axis=0) 
 		smoothed_trajectory = self.smooth(trajectory)
 		difference = smoothed_trajectory - trajectory
-		transforms_smooth = transforms + difference
+		transforms_smooth = self.transforms + difference
 		return transforms_smooth
+
+	def loop(self):
+		prev_pts = cv2.goodFeaturesToTrack(
+			self.prev_gray, 
+			maxCorners=200, 
+			qualityLevel=0.01, 
+			minDistance=30, 
+			blockSize=3
+		)
+
+		succ, curr = self.cp.read()
+		if not succ:
+			raise Exception("End of loop")
+
+		curr_gray = cv2.cvtColor(curr, cv2.COLOR_BGR2GRAY)
+		curr_pts, status, err = cv2.calcOpticalFlowPyrLK(
+			self.prev_gray, curr_gray, 
+			prev_pts, None
+		)
+
+		idx = np.where(status == 1)[0]
+		prev_pts, curr_pts = prev_pts[idx], curr_pts[idx]
+		m, _ = cv2.estimateAffinePartial2D(prev_pts, curr_pts)
+
+		dx, dy = m[0, 2], m[1, 2]
+		da = np.arctan2(m[1, 0], m[0, 0])
+		self.transforms[i] = [dx, dy, da] 
+
+		self.prev_gray = curr_gray
+
+		progress_status = self.progress.get_progress(i / (self.n_frames - 2))
+		log = f"Frame: {str(i)} / {str(n_frames - 2)}, " + \
+			f"Pts: {str(len(prev_pts))}, " + \
+			f"Progress: {str(int(progress_status * 100))}"
+		print(log)
+
+		return progress_status
 
 
 	def fix_frame(self, frame, transform, width, height):

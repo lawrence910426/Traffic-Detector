@@ -49,5 +49,14 @@ if __name__ == "__main__":
     else:
         cfg.USE_FASTREID = False
 
-    with TrafficCounter(cfg, args, video_path=args.VIDEO_PATH) as vdo_trk:
-        vdo_trk.run()
+    vdo_trk = TrafficCounter(cfg, args, video_path=args.VIDEO_PATH)
+
+    vdo_trk.init_loop()
+    while True:
+        try:
+            vdo_trk.run()
+        except:
+            break
+    print(vdo_trk.finalize_loop())
+    
+    del vdo_trk
