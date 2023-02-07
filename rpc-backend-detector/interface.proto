@@ -1,0 +1,51 @@
+syntax = "proto2";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+package flask_pytorch;
+
+message Parameter {
+    enum Mode {
+        STRAIGHT = 0;
+        T_INTERSECTION = 1;
+        CROSS_INTERSECTION = 2;
+    }
+
+    optional Mode Traffic_Mode = 1 [default = STRAIGHT];
+
+    message Detector_Line {
+        optional int32 x1 = 1;
+        optional int32 y1 = 2;
+        optional int32 x2 = 3;
+        optional int32 y2 = 4;
+    }
+
+    optional Detector_Line X = 2;
+    optional Detector_Line Y = 3;
+    optional Detector_Line Z = 4;
+    optional Detector_Line T = 5;
+    optional Detector_Line A = 6;
+    optional Detector_Line B = 7;
+
+    optional double Stabilization_Period = 8;
+    optional string Input_Video_Path = 9;
+    optional string Output_Video_Path = 10;
+    optional string Log_Path = 11;
+
+    optional double Start_Time = 12;
+    optional double End_Time = 13;
+    optional double Buffer_Time = 14;
+}
+
+message Result {
+    optional string JsonFlow = 1;
+    optional double Progress = 2;
+    optional string Output_Video_Path = 3;
+}
+
+service RouteGuide {
+    rpc Init_Task ( Parameter ) returns ( google.protobuf.BoolValue ) {}
+    rpc Get_Task ( google.protobuf.Empty ) returns ( Result ) {}
+    rpc Kill_Task ( google.protobuf.Empty ) returns ( google.protobuf.BoolValue ) {}
+ }
