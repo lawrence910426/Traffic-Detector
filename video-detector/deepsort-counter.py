@@ -95,7 +95,6 @@ class Sharingan(object):
             str(self.args.detector_line_b) + " " +
             str(self.args.detector_line_x) + " " +
             str(self.args.detector_line_y) + " " +
-            str(self.args.detector_line_y) + " " +
             str(self.args.detector_line_t) + " " +
             str(self.args.mode)
         )
@@ -103,7 +102,6 @@ class Sharingan(object):
         self.detect_b = Line(*self.args.detector_line_b.split(","), True)
         self.detect_x = Line(*self.args.detector_line_x.split(","), True)
         self.detect_y = Line(*self.args.detector_line_y.split(","), True)
-        self.detect_z = Line(*self.args.detector_line_z.split(","), True)
         self.detect_t = Line(*self.args.detector_line_t.split(","), True)
         return self
 
@@ -114,9 +112,8 @@ class Sharingan(object):
 
     def draw_mode_detector(self, img):
         if self.args.mode == "straight":
-            img = draw_detector(img, self.detect_x, (255, 0, 0))
+            img = draw_detector(img, self.detect_x, (0, 0, 255))
             img = draw_detector(img, self.detect_y, (0, 255, 0))
-            img = draw_detector(img, self.detect_z, (0, 0, 255))
         if self.args.mode == "t_intersection":
             img = draw_detector(img, self.detect_a, (255, 0, 0))
             img = draw_detector(img, self.detect_b, (0, 255, 0))
@@ -139,7 +136,7 @@ class Sharingan(object):
         for enabled_cls_id in self.enabled_classes:
             if self.args.mode == "straight":
                 detection_counter[enabled_cls_id] = StraightCounter(
-                    self.logger, self.detect_x, self.detect_y, self.detect_z
+                    self.logger, self.detect_x, self.detect_y
                 )
             if self.args.mode == "t_intersection":
                 detection_counter[enabled_cls_id] = TCounter(
@@ -272,7 +269,6 @@ def parse_args():
     parser.add_argument("--detector_line_b", type=str, default='597,1866,1088,1881')
     parser.add_argument("--detector_line_x", type=str, default='0,0,1000,1000')
     parser.add_argument("--detector_line_y", type=str, default='0,0,1000,1000')
-    parser.add_argument("--detector_line_z", type=str, default='0,0,1000,1000')
 
     parser.add_argument("--stable_period", type=int, default=1000)
     parser.add_argument("--output_name", type=str, default='results')

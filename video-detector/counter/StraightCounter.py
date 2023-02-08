@@ -3,9 +3,9 @@ from utils.shapes import Box, Line
 from .Counter import Counter
 
 class StraightCounter(Counter):
-    def __init__(self, logger, x: Line, y: Line, z: Line):
+    def __init__(self, logger, x: Line, y: Line):
         super().__init__(logger)
-        self.X, self.Y, self.Z = x, y, z
+        self.X, self.Y = x, y
         
         self.occurence_stack = {}
         self.vehicle_status = {}
@@ -65,6 +65,4 @@ class StraightCounter(Counter):
 
             if not direction is None:
                 self.flow[direction].add(id)
-
-        
-
+                
