@@ -19,27 +19,21 @@ class ImageEditor extends React.Component {
     async StraightWidgets() {
       this.redId = (await this.imageEditorInst.addIcon('detectionLineHori')).id
       this.greenId = (await this.imageEditorInst.addIcon('detectionLineHori')).id
-      this.blueId = (await this.imageEditorInst.addIcon('detectionLineHori')).id
       
       await this.imageEditorInst.changeIconColor(this.redId, '#FF0000')
       await this.imageEditorInst.changeIconColor(this.greenId, '#00FF00')
-      await this.imageEditorInst.changeIconColor(this.blueId, '#0000FF')
 
       await this.imageEditorInst.setObjectPosition(this.redId, {
         x: 50, y: 50, originX: 'left', originY: 'top'
       })
-      await this.imageEditorInst.setObjectPosition(this.blueId, {
-        x: 50, y: 100, originX: 'left', originY: 'top'
-      })
       await this.imageEditorInst.setObjectPosition(this.greenId, {
-        x: 50, y: 150, originX: 'left', originY: 'top'
+        x: 50, y: 100, originX: 'left', originY: 'top'
       })
 
       const updatePosition = () => {
         var colorIdMapping = {
-          'X': this.blueId,
-          'Y': this.greenId,
-          // 'Z': this.redId,
+          'X': this.redId,
+          'Y': this.greenId
         }
         var detector = {}
         for (var k in colorIdMapping) {
