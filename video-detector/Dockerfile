@@ -49,5 +49,5 @@ COPY . /work/lawrence910426/Sharingan/video-detector
 
 WORKDIR /work/lawrence910426/Sharingan/video-detector
 
-# CMD ["conda", "run", "-n", "detector", "python", "deepsort-counter.py", "videos/10sec.mp4", "--mode", "straight"]
-CMD ["nohup", "bash", "remote_shell.sh", "&"]
+# CMD ["conda", "run", "-n", "detector", "python", "rpc_server/daemon.py"]
+CMD ["conda", "run", "-n", "detector", "python", "traffic_terminal.py", "videos/10sec.mp4", "--mode", "straight"]
