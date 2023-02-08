@@ -48,7 +48,7 @@ class Sharingan(object):
         }
         self.mcu_weight = {
             # 0: 0, # Person
-            1: 0, # Bicycle
+            1: 1, # Bicycle
             2: 2, # Car
             3: 1, # Motorbike
             5: 4, # Bus

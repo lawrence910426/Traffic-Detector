@@ -39,7 +39,7 @@ class ImageEditor extends React.Component {
         var colorIdMapping = {
           'X': this.blueId,
           'Y': this.greenId,
-          'Z': this.redId,
+          // 'Z': this.redId,
         }
         var detector = {}
         for (var k in colorIdMapping) {
