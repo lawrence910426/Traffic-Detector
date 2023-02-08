@@ -34,6 +34,8 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
         )
 
     def Kill_Task(self, request, context):
+        if not self.counter is None:
+            del self.counter
         self.counter = None
         return interface_pb2.BoolValue(value=True)
 
@@ -49,3 +51,4 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
         # Finalize the loop
         if not self.counter is None:
             self.JsonFlow = self.counter.finalize_loop()
+            del self.counter

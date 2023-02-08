@@ -6,7 +6,6 @@ WORKDIR /app
 RUN apt update -y && apt upgrade -y
 RUN apt install gettext -y
 
-# # build stage
 COPY package.json ./
 COPY src src
 COPY public public
@@ -18,7 +17,7 @@ RUN npm run build
 
 # # production stage
 FROM nginx:stable-alpine as production-stage
-ARG LOCAL_IP
+ARG GPU_LOCALHOST
 
 COPY --from=build-stage /app/build /usr/share/nginx/html
 
@@ -26,7 +25,7 @@ COPY nginx/nginx_template.conf /etc/nginx/nginx_template.conf
 COPY nginx/nginx_configure.sh /etc/nginx/nginx_configure.sh
 
 WORKDIR /etc/nginx
-RUN LOCAL_IP=${LOCAL_IP} && echo $LOCAL_IP
-RUN LOCAL_IP=${LOCAL_IP} && envsubst '${LOCAL_IP}' < nginx_template.conf > nginx.conf
+RUN GPU_LOCALHOST=${GPU_LOCALHOST} && echo $GPU_LOCALHOST
+RUN GPU_LOCALHOST=${GPU_LOCALHOST} && envsubst '${GPU_LOCALHOST}' < nginx_template.conf > nginx.conf
 
 CMD nginx -g 'daemon off;'

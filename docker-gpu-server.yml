@@ -1,0 +1,31 @@
+version: '3'
+services:
+  backend:
+    container_name: 'traffic-backend'
+    build: ./backend
+    restart: always
+    ports:
+      - 8000:8000
+    depends_on:
+      - detector-1
+    environment:
+      - BACKEND_HOST=${BACKEND_HOST}
+      - GPU_LOCALHOST=${GPU_LOCALHOST}
+    volumes:
+      - video-in-volume:/mnt/video-in
+      - video-out-volume:/mnt/video-out
+
+  detector-1:
+    container_name: 'traffic-detector'
+    build: 
+      context: ./video-detector
+    environment:
+      RPC_PORT: ${RPC_PORT_1}
+    restart: always
+    volumes:
+      - video-out-volume:/app/video-detector/output
+      - video-in-volume:/app/video-detector/videos
+
+volumes:
+  video-out-volume: 
+  video-in-volume:
