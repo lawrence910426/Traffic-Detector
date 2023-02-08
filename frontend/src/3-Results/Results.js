@@ -21,8 +21,8 @@ class Results extends React.Component {
       <div>
         {
           this.state.isLoading ? 
-          (<Progress reset={this.props.reset} complete={this.computationComplete.bind(this)} task={this.props.task} />) : 
-          (<Data reset={this.props.reset} task={this.props.task} video={this.props.video} mode={this.props.mode} />)
+          (<Progress reset={this.props.reset} complete={this.computationComplete.bind(this)} video={this.props.video} />) : 
+          (<Data reset={this.props.reset} video={this.props.video} mode={this.props.mode} />)
         }
       </div>
     )
@@ -31,7 +31,6 @@ class Results extends React.Component {
 
 Results.propTypes = {
   reset: PropTypes.func,
-  task: PropTypes.string,
   video: PropTypes.string,
   mode: PropTypes.string
 };

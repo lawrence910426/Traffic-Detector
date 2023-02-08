@@ -28,8 +28,8 @@ class Data extends React.Component {
     }
 
     async componentDidMount() {
-        var flow = await axios.get(config.host + "flow", {
-            params: { taskId: this.props.task, videoId: this.props.video }
+        var flow = await axios.get(config.host + "query_task", {
+            params: { videoId: this.props.video }
         })
         flow = flow.data
         

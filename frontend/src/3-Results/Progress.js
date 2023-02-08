@@ -21,8 +21,8 @@ class Progress extends React.Component {
 
   componentDidMount() {
     var intervalId = setInterval(async () => {
-        var progress = await axios.get(config.host + "progress", {
-            params: { taskId: this.props.task }
+        var progress = await axios.get(config.host + "query_task", {
+            params: { videoId: this.props.video }
         })
         progress = parseInt(progress.data.progress)
 
@@ -92,7 +92,7 @@ class Progress extends React.Component {
 Progress.propTypes = {
     complete: PropTypes.func,
     reset: PropTypes.func,
-    task: PropTypes.string
+    video: PropTypes.string
 };
 
 export default Progress;

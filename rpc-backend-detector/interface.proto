@@ -31,11 +31,9 @@ message Parameter {
     optional double Stabilization_Period = 8;
     optional string Input_Video_Path = 9;
     optional string Output_Video_Path = 10;
-    optional string Log_Path = 11;
 
-    optional double Start_Time = 12;
-    optional double End_Time = 13;
-    optional double Buffer_Time = 14;
+    optional double Start_Frame = 11;
+    optional double End_Frame = 12;
 }
 
 message Result {

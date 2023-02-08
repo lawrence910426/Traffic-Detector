@@ -11,6 +11,7 @@ services:
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
       - GPU_LOCALHOST=${GPU_LOCALHOST}
+      - RPC_PORT_LIST=${RPC_PORT_LIST}
     volumes:
       - video-in-volume:/mnt/video-in
       - video-out-volume:/mnt/video-out
@@ -20,11 +21,11 @@ services:
     build: 
       context: ./video-detector
     environment:
-      RPC_PORT: ${RPC_PORT_1}
+      - RPC_PORT=${RPC_PORT_1}
     restart: always
     volumes:
-      - video-out-volume:/app/video-detector/output
       - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
 
 volumes:
   video-out-volume: 

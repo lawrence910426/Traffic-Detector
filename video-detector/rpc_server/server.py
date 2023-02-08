@@ -15,11 +15,20 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
         self.Output_Video_Path = ""
 
     def Init_Task(self, request, context):
+        self.Output_Video_Path = "/app/video_detector/output" + request.Output_Video_Path
         args = {
-            "Stabilization_Period": request.Stabilization_Period
+            "mode": request.Mode,
+            "detector_line_t": request.Detector_Line_T,
+            "detector_line_a": request.Detector_Line_A,
+            "detector_line_b": request.Detector_Line_B,
+            "detector_line_x": request.Detector_Line_X,
+            "detector_line_y": request.Detector_Line_Y,
+            "detector_line_z": request.Detector_Line_Z,
+            "stable_period": request.Stabilization_Period,
+            "output_name": self.Output_Video_Path,
         }
-        self.counter = TrafficCounter(get_config(), args, request.Input_Video_Path)
-        self.Output_Video_Path = request.Output_Video_Path
+        self.counter = TrafficCounter(get_config(), args, 
+            "/app/video_detector/videos" + request.Input_Video_Path)
 
         self.background_thread = threading.Thread(target=self.Run_Task)
         self.background_thread.start()
