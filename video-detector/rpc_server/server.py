@@ -5,6 +5,7 @@ import proto.interface_pb2 as interface_pb2
 import proto.interface_pb2_grpc as interface_pb2_grpc
 
 from ..utils.parser import get_config
+from ..utils.loop_exception import LoopException
 from ..traffic_counter import TrafficCounter
 
 class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
@@ -53,8 +54,8 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
         self.counter.init_loop()
         while not self.counter is None:
             try:
-                self.Progress = self.counter.run()
-            except:
+                self.Progress = self.counter.loop()
+            except LoopException as e:
                 break
         
         # Finalize the loop

@@ -1,10 +1,13 @@
 import numpy as np
 import cv2
 
+from utils.loop_exception import LoopException
+
 class Stabilizer:
-	def __init__(self, smoothing_radius, progress):
+	def __init__(self, smoothing_radius, progress, logger):
 		self.smoothing = smoothing_radius
 		self.progress = progress
+		self.logger = logger
 
 	def movingAverage(self, curve, radius): 
 		window_size = 2 * radius + 1
@@ -33,6 +36,8 @@ class Stabilizer:
 	def init_loop(self, cp):
 		self.cp = cp
 		self.n_frames = int(cp.get(cv2.CAP_PROP_FRAME_COUNT))
+		self.index = 0
+
 		self.cp.set(cv2.CAP_PROP_POS_FRAMES, 0) 
 		_, prev = self.cp.read()
 		self.prev_gray = cv2.cvtColor(prev, cv2.COLOR_BGR2GRAY)
@@ -46,6 +51,9 @@ class Stabilizer:
 		return transforms_smooth
 
 	def loop(self):
+		if self.index >= self.n_frames - 2:
+			raise LoopException
+
 		prev_pts = cv2.goodFeaturesToTrack(
 			self.prev_gray, 
 			maxCorners=200, 
@@ -56,7 +64,7 @@ class Stabilizer:
 
 		succ, curr = self.cp.read()
 		if not succ:
-			raise Exception("End of loop")
+			raise LoopException
 
 		curr_gray = cv2.cvtColor(curr, cv2.COLOR_BGR2GRAY)
 		curr_pts, status, err = cv2.calcOpticalFlowPyrLK(
@@ -70,16 +78,17 @@ class Stabilizer:
 
 		dx, dy = m[0, 2], m[1, 2]
 		da = np.arctan2(m[1, 0], m[0, 0])
-		self.transforms[i] = [dx, dy, da] 
+		self.transforms[self.index] = [dx, dy, da] 
 
 		self.prev_gray = curr_gray
 
-		progress_status = self.progress.get_progress(i / (self.n_frames - 2))
-		log = f"Frame: {str(i)} / {str(n_frames - 2)}, " + \
+		progress_status = self.progress.get_progress(self.index / (self.n_frames - 2))
+		log = f"Frame: {str(self.index)} / {str(self.n_frames - 2)}, " + \
 			f"Pts: {str(len(prev_pts))}, " + \
 			f"Progress: {str(int(progress_status * 100))}"
-		print(log)
+		self.logger.info(log)
 
+		self.index += 1
 		return progress_status
 
 

@@ -1,5 +1,6 @@
 import argparse
 from utils.parser import get_config
+from utils.loop_exception import LoopException
 from traffic_counter import TrafficCounter
 
 def parse_args():
@@ -54,8 +55,8 @@ if __name__ == "__main__":
     vdo_trk.init_loop()
     while True:
         try:
-            vdo_trk.run()
-        except:
+            vdo_trk.loop()
+        except LoopException as e:
             break
     print(vdo_trk.finalize_loop())
     

@@ -15,6 +15,7 @@ from deep_sort import build_tracker
 from utils.draw import draw_boxes, draw_flow, draw_detector
 from utils.log import get_logger
 from utils.progress import Progress_Divider
+from utils.loop_exception import LoopException
 from stabilization.stabilizer import Stabilizer
 from counter import *
 
@@ -138,17 +139,15 @@ class TrafficCounter(object):
             flow[cls_name] = self.detection_counter[k].getFlow()
         flow = str(flow)
         
-        log = f"Flow: {flow}, " + Progress_Divider(99, 100).get_progress(100)
+        log = f"Flow: {flow}, " + str(Progress_Divider(99, 100).get_progress(100))
         self.logger.info(log)
         self.yield_logger.write(log + '\n')
         self.yield_logger.flush()
         return flow
     
-    def __del__(self, exc_type, exc_value, exc_traceback):
+    def __del__(self):
         self.yield_logger.close()
-        if exc_type:
-            self.logger.info(exc_type, exc_value, exc_traceback)
-
+    
     def draw_mode_detector(self, img):
         if self.args.mode == "straight":
             img = draw_detector(img, self.detect_x, (255, 0, 0))
@@ -167,7 +166,8 @@ class TrafficCounter(object):
 
     def loop(self):
         if self.loop_state == "INIT":
-            self.stable_fixer = Stabilizer(self.args.stable_period, Progress_Divider(0, 0.1))
+            self.stable_fixer = Stabilizer(
+                self.args.stable_period, Progress_Divider(0, 0.1), self.logger)
             self.stable_fixer.init_loop(self.vdo)
             self.loop_state = "STABILIZE"
             return 0 # Progress = 0%
@@ -176,9 +176,10 @@ class TrafficCounter(object):
             try:
                 progress = self.stable_fixer.loop()
                 return progress
-            except Exception as e:
+            except LoopException as e:
                 self.loop_state = "DETECT"
                 self.detection_progress = Progress_Divider(0.1, 1)
+                self.fixed_transform = self.stable_fixer.finalize_loop()
                 return 0.1 # Progress = 10%
 
         elif self.loop_state == "DETECT":
@@ -188,7 +189,7 @@ class TrafficCounter(object):
             if self.idx_frame % self.args.frame_interval:
                 return progress
             if self.idx_frame >= len(self.fixed_transform):
-                raise Exception("End of loop")
+                raise LoopException
 
             start = time.time()
 
@@ -252,7 +253,7 @@ class TrafficCounter(object):
             log = f"time: {end - start}s, " + \
                   f"fps: {1 / (end - start)}, " + \
                   f"detection numbers: {bbox_xywh.shape[0]}, " + \
-                  f"tracking numbers: {len(outputs)}" + \
+                  f"tracking numbers: {len(outputs)}, " + \
                   f"progress: {str(int(progress * 100))}"
             
             self.logger.info(log)

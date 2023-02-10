@@ -44,11 +44,7 @@ WORKDIR ../../../
 # Copy the remaining files
 COPY . /app/video-detector
 
-# Build the gRPC proto
-WORKDIR /app/video-detector/rpc_server
-RUN bash generate_proto.sh
-
 WORKDIR /app/video-detector
 
 # CMD ["conda", "run", "-n", "detector", "python", "rpc_server/daemon.py"]
-CMD ["conda", "run", "-n", "detector", "python", "traffic_terminal.py", "videos/10sec.mp4", "--mode", "straight"]
+CMD ["conda", "run", "-n", "detector", "python", "traffic_terminal.py", "videos/sample.mp4", "--mode", "straight"]

@@ -5,5 +5,5 @@ class Progress_Divider:
         self.right = r
     
     def get_progress(self, progress_ratio):
-        progress = self.left + progress_ratio / (self.right - self.left)
+        progress = self.left + progress_ratio * (self.right - self.left)
         return progress
