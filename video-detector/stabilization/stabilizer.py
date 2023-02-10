@@ -1,8 +1,6 @@
 import numpy as np
 import cv2
 
-from utils.progress import Progress
-
 class Stabilizer:
 	def __init__(self, smoothing_radius, progress):
 		self.smoothing = smoothing_radius
