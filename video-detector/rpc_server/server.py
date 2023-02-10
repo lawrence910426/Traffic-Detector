@@ -27,6 +27,8 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
             "detector_line_z": request.Detector_Line_Z,
             "stable_period": request.Stabilization_Period,
             "output_name": self.Output_Video_Path,
+            "start_frame": request.Start_Frame,
+            "end_frame": request.End_Frame
         }
         self.counter = TrafficCounter(get_config(), args, 
             "/app/video_detector/videos" + request.Input_Video_Path)

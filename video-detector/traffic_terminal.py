@@ -32,6 +32,9 @@ def parse_args():
 
     parser.add_argument("--stable_period", type=int, default=1000)
     parser.add_argument("--output_name", type=str, default='results')
+
+    parser.add_argument("--start_frame", type=int, default=0)
+    parser.add_argument("--end_frame", type=int, default=-1)
     return parser.parse_args()
 
 if __name__ == "__main__":

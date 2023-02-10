@@ -60,7 +60,6 @@ class TrafficCounter(object):
         self.class_names = self.detector.class_names
 
         self.build_info()
-        self.init_loop()
 
     def build_info(self):
         assert os.path.isfile(self.video_path), "Path error"
@@ -107,6 +106,25 @@ class TrafficCounter(object):
         self.detect_t = Line(*self.args.detector_line_t.split(","), True)    
 
     def init_loop(self):
+        start_frame = self.args.start_frame
+        end_frame = self.args.end_frame
+        n_frames = int(self.vdo.get(cv2.CAP_PROP_FRAME_COUNT))
+
+        start_frame = max(0, min(n_frames, start_frame))
+        end_frame = n_frames if end_frame == -1 else end_frame
+        end_frame = max(0, min(n_frames, end_frame))
+        start_buffer_frame = max(0, min(n_frames, start_frame - 300))
+
+        self.logger.info(
+            "Start buffer frame: " + str(start_buffer_frame) + ", " + \
+            "Start frame: " + str(start_frame) + ", " \
+            "End frame: " + str(end_frame))
+
+        self.start_frame, self.start_buffer_frame, self.end_frame = \
+            start_frame, start_buffer_frame, end_frame
+        self.args.start_frame, self.args.start_buffer_frame, self.args.end_frame = \
+            start_frame, start_buffer_frame, end_frame
+
         # Initialize loop flags
         self.loop_state = "INIT"
 
@@ -128,9 +146,6 @@ class TrafficCounter(object):
         
         self.width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH)) 
         self.height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        self.idx_frame = 0
-
-        self.vdo.set(cv2.CAP_PROP_POS_FRAMES, 0)
     
     def finalize_loop(self):
         flow = {}
@@ -167,7 +182,7 @@ class TrafficCounter(object):
     def loop(self):
         if self.loop_state == "INIT":
             self.stable_fixer = Stabilizer(
-                self.args.stable_period, Progress_Divider(0, 0.1), self.logger)
+                self.args, Progress_Divider(0, 0.1), self.logger)
             self.stable_fixer.init_loop(self.vdo)
             self.loop_state = "STABILIZE"
             return 0 # Progress = 0%
@@ -180,15 +195,19 @@ class TrafficCounter(object):
                 self.loop_state = "DETECT"
                 self.detection_progress = Progress_Divider(0.1, 1)
                 self.fixed_transform = self.stable_fixer.finalize_loop()
+                
+                self.vdo.set(cv2.CAP_PROP_POS_FRAMES, self.start_buffer_frame)
+                self.idx_frame = self.start_buffer_frame
                 return 0.1 # Progress = 10%
 
         elif self.loop_state == "DETECT":
             progress = self.detection_progress.get_progress(
-                self.idx_frame / len(self.fixed_transform))
+                (self.idx_frame - self.start_buffer_frame) / 
+                (self.end_frame - self.start_buffer_frame))
             
             if self.idx_frame % self.args.frame_interval:
                 return progress
-            if self.idx_frame >= len(self.fixed_transform):
+            if self.idx_frame >= self.end_frame:
                 raise LoopException
 
             start = time.time()
@@ -198,7 +217,8 @@ class TrafficCounter(object):
 
             # fix image. stabilize then foreground masking
             fixed_im = self.stable_fixer.fix_frame(
-                ori_im, self.fixed_transform[self.idx_frame], self.width, self.height)
+                ori_im, self.fixed_transform[self.idx_frame - self.start_buffer_frame], 
+                self.width, self.height)
             fg_im = fixed_im
             
             # convert to rgb
@@ -227,7 +247,8 @@ class TrafficCounter(object):
                     for i in range(len(outputs)):
                         bb_xyxy, bb_id = bbox_xyxy[i], identities[i]
                         bbox_tlwh.append(self.deepsort[k]._xyxy_to_tlwh(bb_xyxy))
-                        self.detection_counter[k].update(bb_id, Box(*bb_xyxy))
+                        if self.start_frame <= self.idx_frame and self.idx_frame < self.end_frame:
+                            self.detection_counter[k].update(bb_id, Box(*bb_xyxy))
 
                     fg_im = draw_boxes(fg_im, bbox_xyxy, identities)
             
@@ -262,5 +283,3 @@ class TrafficCounter(object):
 
             self.idx_frame += 1
             return progress
-
-        

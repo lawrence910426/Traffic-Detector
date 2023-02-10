@@ -4,8 +4,11 @@ import cv2
 from utils.loop_exception import LoopException
 
 class Stabilizer:
-	def __init__(self, smoothing_radius, progress, logger):
-		self.smoothing = smoothing_radius
+	def __init__(self, args, progress, logger):
+		self.smoothing = args.stable_period
+		self.start_buffer_frame = args.start_buffer_frame
+		self.end_frame = args.end_frame
+
 		self.progress = progress
 		self.logger = logger
 
@@ -36,12 +39,13 @@ class Stabilizer:
 	def init_loop(self, cp):
 		self.cp = cp
 		self.n_frames = int(cp.get(cv2.CAP_PROP_FRAME_COUNT))
-		self.index = 0
+		self.index = self.start_buffer_frame
 
-		self.cp.set(cv2.CAP_PROP_POS_FRAMES, 0) 
+		self.cp.set(cv2.CAP_PROP_POS_FRAMES, self.start_buffer_frame) 
 		_, prev = self.cp.read()
 		self.prev_gray = cv2.cvtColor(prev, cv2.COLOR_BGR2GRAY)
-		self.transforms = np.zeros((self.n_frames - 1, 3), np.float32) 
+
+		self.transforms = np.zeros((self.end_frame - self.start_buffer_frame, 3), np.float32) 
 
 	def finalize_loop(self):
 		trajectory = np.cumsum(self.transforms, axis=0) 
@@ -51,7 +55,7 @@ class Stabilizer:
 		return transforms_smooth
 
 	def loop(self):
-		if self.index >= self.n_frames - 2:
+		if self.index >= self.end_frame - 2:
 			raise LoopException
 
 		prev_pts = cv2.goodFeaturesToTrack(
@@ -78,12 +82,13 @@ class Stabilizer:
 
 		dx, dy = m[0, 2], m[1, 2]
 		da = np.arctan2(m[1, 0], m[0, 0])
-		self.transforms[self.index] = [dx, dy, da] 
+		self.transforms[self.index - self.start_buffer_frame] = [dx, dy, da] 
 
 		self.prev_gray = curr_gray
 
-		progress_status = self.progress.get_progress(self.index / (self.n_frames - 2))
-		log = f"Frame: {str(self.index)} / {str(self.n_frames - 2)}, " + \
+		progress_status = self.progress.get_progress(
+			(self.index - self.start_buffer_frame) / (self.end_frame - self.start_buffer_frame))
+		log = f"Frame: {str(self.index - self.start_buffer_frame)} / {str(self.end_frame - self.start_buffer_frame)}, " + \
 			f"Pts: {str(len(prev_pts))}, " + \
 			f"Progress: {str(int(progress_status * 100))}"
 		self.logger.info(log)
