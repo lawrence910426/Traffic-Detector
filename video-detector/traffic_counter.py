@@ -73,7 +73,6 @@ class TrafficCounter(object):
 
             # path of saved video and results
             self.save_video_path = os.path.join(self.args.save_path, self.args.output_name + ".mp4")
-            self.save_results_path = os.path.join(self.args.save_path, self.args.output_name + ".txt")
             self.save_yield_path = os.path.join(self.args.save_path, self.args.output_name + ".out")
             
             # create video writer
@@ -154,7 +153,7 @@ class TrafficCounter(object):
             flow[cls_name] = self.detection_counter[k].getFlow()
         flow = str(flow)
         
-        log = f"Flow: {flow}, " + str(Progress_Divider(99, 100).get_progress(100))
+        log = f"Flow: {flow}"
         self.logger.info(log)
         self.yield_logger.write(log + '\n')
         self.yield_logger.flush()

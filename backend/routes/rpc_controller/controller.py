@@ -19,6 +19,7 @@ class RpcController:
 
     @staticmethod
     def init_task(params):
+        RpcController.completed = False
         RpcController.params = params
         RpcController.controller_state = "RUNNING"
         host_list = os.environ["RPC_HOST_LIST"].split(",")
@@ -48,11 +49,11 @@ class RpcController:
 
         # Loop through the clients
         for client in RpcController.clients:
-            completed = completed and client.Get_State() != "COMPLETED"
+            completed = completed and client.Get_State() == "COMPLETED"
             result = client.Get_Task()
             task_result.Progress += result.Progress
             RpcController.merge_json(task_result.JsonFlow, result.JsonFlow)
-        task_result.Progress = 100 * task_result.Progress // len(RpcController.clients)
+        task_result.Progress = int(100 * task_result.Progress) // len(RpcController.clients)
         
         # Merge all videos into one big video
         video_list = [
@@ -62,12 +63,11 @@ class RpcController:
         # Task become completed        
         if completed and RpcController.controller_state != "COMPLETED":
             RpcController.merge_video(video_list)
-            RpcController.clients = []
             RpcController.controller_state = "COMPLETED"
 
         # Generate the output video url if completed
         if completed:            
-            task_result.Output_Video_Path = RpcController.config['STATIC_URL'] + "/" + \
+            task_result.Output_Video_Path = RpcController.config['STATIC_URL'] + \
                 RpcController.params["Output_Video_Path"]
         return task_result
         

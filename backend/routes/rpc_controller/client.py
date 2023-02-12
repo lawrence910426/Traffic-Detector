@@ -53,6 +53,8 @@ class RpcClient:
     
     def Get_Task(self):
         task_result = self.stub.Get_Task(wrappers.Empty())
+        if task_result.Progress == 1.0:
+            print(task_result)
         self.state = "COMPLETED" if task_result.Progress == 1.0 else "RUNNING"
         return task_result
     

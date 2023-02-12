@@ -1,5 +1,6 @@
 import argparse
 from routes.rpc_controller.controller import RpcController
+import time
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -19,6 +20,9 @@ def parse_args():
     parser.add_argument("--stable_period", type=int, default=1000)
     parser.add_argument("--output_name", type=str, default='this-is-some-uuid')
     return parser.parse_args()
+
+# Wait until the RPC Server is ready.
+time.sleep(5)
 
 if __name__ == "__main__":
     args = parse_args()
@@ -47,6 +51,7 @@ if __name__ == "__main__":
     RpcController.init_task(task_params)
     while True:
         task_info = RpcController.get_task()
+        print("[Running] ", task_info)
         if task_info.Progress == 100:
             print(task_info.JsonFlow)
             break
