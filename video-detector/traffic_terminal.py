@@ -53,6 +53,13 @@ if __name__ == "__main__":
     else:
         cfg.USE_FASTREID = False
 
+    args.detector_line_a = args.detectior_line_a.split(",")
+    args.detector_line_b = args.detectior_line_b.split(",")
+    args.detector_line_t = args.detectior_line_y.split(",")
+    args.detector_line_x = args.detectior_line_x.split(",")
+    args.detector_line_y = args.detectior_line_y.split(",")
+    args.detector_line_z = args.detectior_line_z.split(",")
+
     vdo_trk = TrafficCounter(cfg, args, video_path=args.VIDEO_PATH)
 
     vdo_trk.init_loop()

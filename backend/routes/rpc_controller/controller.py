@@ -2,8 +2,7 @@ import os
 import subprocess
 import copy
 import cv2
-
-from app import app
+from attrdict import AttrDict
 
 from .proto import interface_pb2
 from .client import RpcClient
@@ -13,19 +12,23 @@ class RpcController:
     controller_state = None
     clients = []
     params = None
+    config = {
+        'UPLOAD_FOLDER': "/mnt/video-in/",
+        'STATIC_URL': os.environ['BACKEND_HOST'] + "static/"
+    }
 
     @staticmethod
     def init_task(params):
         RpcController.params = params
         RpcController.controller_state = "RUNNING"
-        port_list = os.environ["RPC_PORT_LIST"].split(",")
+        host_list = os.environ["RPC_HOST_LIST"].split(",")
 
         for client in RpcController.clients:
             del client
-        RpcController.clients = [RpcClient(port) for port in port_list]
+        RpcController.clients = [RpcClient(host) for host in host_list]
 
         total_frames = RpcController.get_video_frames(
-            os.path.join(app.config['UPLOAD_FOLDER'], params["Input_Video_Path"]))
+            os.path.join(RpcController.config['UPLOAD_FOLDER'], params["Input_Video_Path"]))
         for i in range(len(RpcController.clients)):
             new_params = copy.deepcopy(params)
             new_params["Output_Video_Path"] = \
@@ -37,8 +40,11 @@ class RpcController:
     @staticmethod
     def get_task():
         completed = True
-        task_result = interface_pb2.TaskResult()
-        task_result.JsonFlow = {}
+        task_result = AttrDict({
+            "JsonFlow": {},
+            "Progress": 0,
+            "Output_Video_Path": ""
+        })
 
         # Loop through the clients
         for client in RpcController.clients:
@@ -61,7 +67,7 @@ class RpcController:
 
         # Generate the output video url if completed
         if completed:            
-            task_result.Output_Video_Path = app.config['STATIC_URL'] + "/" + \
+            task_result.Output_Video_Path = RpcController.config['STATIC_URL'] + "/" + \
                 RpcController.params["Output_Video_Path"]
         return task_result
         

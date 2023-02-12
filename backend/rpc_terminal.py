@@ -1,5 +1,5 @@
 import argparse
-from controller import RpcController
+from routes.rpc_controller.controller import RpcController
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument("--detector_line_z", type=str, default='0,0,1000,1000')
 
     parser.add_argument("--stable_period", type=int, default=1000)
-    parser.add_argument("--output_name", type=str, default='results')
+    parser.add_argument("--output_name", type=str, default='this-is-some-uuid')
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -33,8 +33,8 @@ if __name__ == "__main__":
     task_params = {
         "Mode": args.mode,
         "Stabilization_Period": args.stable_period,
-        "Input_Video_Path": "input/traffic.mp4",
-        "Output_Video_Path": args.VIDEO_PATH
+        "Input_Video_Path": args.VIDEO_PATH,
+        "Output_Video_Path": args.output_name
     }
     for key, value in mapping.items():
         task_params[key] = {

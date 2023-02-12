@@ -75,7 +75,7 @@ class TrafficCounter(object):
             self.save_video_path = os.path.join(self.args.save_path, self.args.output_name + ".mp4")
             self.save_results_path = os.path.join(self.args.save_path, self.args.output_name + ".txt")
             self.save_yield_path = os.path.join(self.args.save_path, self.args.output_name + ".out")
-
+            
             # create video writer
             fourcc = cv2.VideoWriter_fourcc(*'avc1')
             self.writer = cv2.VideoWriter(
@@ -98,12 +98,12 @@ class TrafficCounter(object):
             str(self.args.detector_line_t) + " " +
             str(self.args.mode)
         )
-        self.detect_a = Line(*self.args.detector_line_a.split(","), True)
-        self.detect_b = Line(*self.args.detector_line_b.split(","), True)
-        self.detect_x = Line(*self.args.detector_line_x.split(","), True)
-        self.detect_y = Line(*self.args.detector_line_y.split(","), True)
-        self.detect_z = Line(*self.args.detector_line_z.split(","), True)
-        self.detect_t = Line(*self.args.detector_line_t.split(","), True)    
+        self.detect_a = Line(*self.args.detector_line_a, True)
+        self.detect_b = Line(*self.args.detector_line_b, True)
+        self.detect_x = Line(*self.args.detector_line_x, True)
+        self.detect_y = Line(*self.args.detector_line_y, True)
+        self.detect_z = Line(*self.args.detector_line_z, True)
+        self.detect_t = Line(*self.args.detector_line_t, True)    
 
     def init_loop(self):
         start_frame = self.args.start_frame
