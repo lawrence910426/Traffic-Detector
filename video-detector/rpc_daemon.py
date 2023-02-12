@@ -7,8 +7,6 @@ from rpc_server.proto import interface_pb2_grpc
 
 from rpc_server.server import RouteGuideServicer
 
-print(dir(interface_pb2))
-
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
     interface_pb2_grpc.add_RouteGuideServicer_to_server(
