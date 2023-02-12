@@ -4,7 +4,9 @@ import subprocess
 import json
 import os
 import uuid
-from ..rpc_controller import RpcController
+import sys
+
+from routes.rpc_controller.controller import RpcController
 
 @app.route('/init_task', methods=['GET'])
 def init_task():

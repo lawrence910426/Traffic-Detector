@@ -32,8 +32,8 @@ message Parameter {
     optional string Input_Video_Path = 9;
     optional string Output_Video_Path = 10;
 
-    optional int Start_Frame = 11;
-    optional int End_Frame = 12;
+    optional int32 Start_Frame = 11;
+    optional int32 End_Frame = 12;
 }
 
 message Result {

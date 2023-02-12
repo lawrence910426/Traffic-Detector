@@ -2,8 +2,9 @@ import os
 from concurrent import futures
 
 import grpc
-import proto.interface_pb2 as interface_pb2
-import proto.interface_pb2_grpc as interface_pb2_grpc
+
+from .proto import interface_pb2
+from .proto import interface_pb2_grpc
 
 class RpcClient:
     def __init__(self, port):

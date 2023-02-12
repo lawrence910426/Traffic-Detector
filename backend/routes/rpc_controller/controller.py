@@ -1,11 +1,12 @@
 import os
-from client import RpcClient
 import subprocess
 import copy
 import cv2
 
 from app import app
-import proto.interface_pb2 as interface_pb2
+
+from .proto import interface_pb2
+from .client import RpcClient
 
 # Singleton design to prevent multiple instances of the controller.
 class RpcController:

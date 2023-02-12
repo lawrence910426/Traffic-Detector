@@ -10,4 +10,4 @@ app = Flask(
 app.config['UPLOAD_FOLDER'] = "/mnt/video-in/"
 app.config['STATIC_URL'] = os.environ['BACKEND_HOST'] + "static/"
 
-from routes import first_frame, flow, progress, task_id, upload
+from routes import first_frame, query_task, init_task, upload

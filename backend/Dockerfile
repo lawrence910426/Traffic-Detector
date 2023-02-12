@@ -12,4 +12,6 @@ EXPOSE 8000
 COPY . .
 
 # CMD ["flask", "run"]
-CMD ["gunicorn", "-w", "4", "--bind", "0.0.0.0:8000", "app:app"]
+
+# Singleton design
+CMD ["gunicorn", "-w", "1", "--bind", "0.0.0.0:8000", "app:app"]

@@ -3,7 +3,7 @@ from app import app
 import subprocess
 import os
 
-from ..rpc_controller import RpcController
+from routes.rpc_controller.controller import RpcController
 
 @app.route('/query_task', methods=['GET'])
 def query_task():

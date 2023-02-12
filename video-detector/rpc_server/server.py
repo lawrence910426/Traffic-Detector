@@ -1,12 +1,12 @@
 import threading
 
-import grpc
-import proto.interface_pb2 as interface_pb2
-import proto.interface_pb2_grpc as interface_pb2_grpc
+from utils.parser import get_config
+from utils.loop_exception import LoopException
+from traffic_counter import TrafficCounter
 
-from ..utils.parser import get_config
-from ..utils.loop_exception import LoopException
-from ..traffic_counter import TrafficCounter
+import grpc
+from .proto import interface_pb2
+from .proto import interface_pb2_grpc
 
 class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
     def __init__(self):
