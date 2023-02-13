@@ -28,7 +28,7 @@ message Parameter {
     optional Detector_Line A = 6;
     optional Detector_Line B = 7;
 
-    optional double Stabilization_Period = 8;
+    optional int32 Stabilization_Period = 8;
     optional string Input_Video_Path = 9;
     optional string Output_Video_Path = 10;
 

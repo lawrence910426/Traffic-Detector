@@ -21,4 +21,4 @@ COPY . .
 # CMD ["gunicorn", "-w", "1", "--bind", "0.0.0.0:8000", "app:app"]
 
 # Run with rpc terminal
-CMD ["python", "rpc_terminal.py", "10sec.mp4"]
+CMD ["python", "rpc_terminal.py", "minimal.mp4"]

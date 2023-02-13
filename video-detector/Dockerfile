@@ -46,5 +46,6 @@ COPY . /app/video-detector
 
 WORKDIR /app/video-detector
 
+# CMD ["sleep", "3600"]
 CMD ["conda", "run", "-n", "detector", "python", "rpc_daemon.py"]
-# CMD ["conda", "run", "-n", "detector", "python", "traffic_terminal.py", "videos/sample.mp4", "--mode", "straight", "--start_frame", "20", "--end_frame", "30"]
+# CMD ["conda", "run", "-n", "detector", "python", "traffic_terminal.py", "videos/minimal.mp4", "--mode", "straight"]

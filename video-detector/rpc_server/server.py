@@ -19,7 +19,7 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
 
     def Init_Task(self, request, context):
         self.background_thread = threading.Thread(
-            target=self.Run_Task, args=(request))
+            target=self.Run_Task, args=(self, request))
         self.background_thread.start()
 
         return wrappers.BoolValue(value=True)
@@ -37,7 +37,8 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
         self.counter = None
         return interface_pb2.BoolValue(value=True)
 
-    def Run_Task(self, request):
+    @staticmethod
+    def Run_Task(servicer, request):
         try:
             print("Start running task", flush=True)
             # Build args
@@ -77,7 +78,8 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
                 "end_frame": request.End_Frame,
                 "use_cuda": True,
                 "display": False,
-                "save_path": "./output/"
+                "save_path": "./output/",
+                "frame_interval": 1
             })
 
             # Build config
@@ -88,22 +90,21 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
             config.USE_FASTREID = False
 
             # Build Traffic counter
-            self.counter = TrafficCounter(config, args, 
-                "./videos/" + request.Input_Video_Path)
-            self.Output_Video_Path = request.Output_Video_Path + ".mp4"
+            servicer.counter = TrafficCounter(config, args, 
+                video_path="./videos/" + request.Input_Video_Path)
+            servicer.Output_Video_Path = request.Output_Video_Path + ".mp4"
 
             # Assume cross thread communication is safe
-            self.counter.init_loop()
-            while not self.counter is None:
+            servicer.counter.init_loop()
+            while not servicer.counter is None:
                 try:
-                    self.Progress = self.counter.loop()
+                    servicer.Progress = servicer.counter.loop()
                 except LoopException as e:
                     break
             
             # Finalize the loop
-            if not self.counter is None:
-                self.JsonFlow = self.counter.finalize_loop()
-                del self.counter
-            self.Progress = 1
+            if not servicer.counter is None:
+                servicer.JsonFlow = servicer.counter.finalize_loop()
+            servicer.Progress = 1
         except e:
             print(str(e), flush=True)

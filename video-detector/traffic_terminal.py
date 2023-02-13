@@ -65,7 +65,8 @@ if __name__ == "__main__":
     vdo_trk.init_loop()
     while True:
         try:
-            vdo_trk.loop()
+            progress = vdo_trk.loop()
+            print(f"Progress: {progress}", flush=True)
         except LoopException as e:
             break
     print(vdo_trk.finalize_loop())

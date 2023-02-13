@@ -159,9 +159,6 @@ class TrafficCounter(object):
         self.yield_logger.flush()
         return flow
     
-    def __del__(self):
-        self.yield_logger.close()
-    
     def draw_mode_detector(self, img):
         if self.args.mode == "straight":
             img = draw_detector(img, self.detect_x, (255, 0, 0))
@@ -205,14 +202,15 @@ class TrafficCounter(object):
                 (self.end_frame - self.start_buffer_frame))
             
             if self.idx_frame % self.args.frame_interval:
+                self.idx_frame += 1
                 return progress
-            if self.idx_frame >= self.end_frame:
-                raise LoopException
 
             start = time.time()
 
             # fetch image
-            _, ori_im = self.vdo.retrieve()
+            succ, ori_im = self.vdo.retrieve()
+            if not succ or self.idx_frame >= self.end_frame:
+                raise LoopException
 
             # fix image. stabilize then foreground masking
             fixed_im = self.stable_fixer.fix_frame(
