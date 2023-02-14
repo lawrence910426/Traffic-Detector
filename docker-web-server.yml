@@ -1,0 +1,12 @@
+version: '3'
+services:
+  frontend:
+    container_name: 'traffic-frontend'
+    build:
+      context: ./frontend/
+      args:
+        GPU_LOCALHOST: ${GPU_LOCALHOST}
+        BACKEND_HOST: ${BACKEND_HOST}
+    restart: always
+    ports:
+      - "80:80"

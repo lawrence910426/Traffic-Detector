@@ -1,2 +1,2 @@
-echo "LOCAL_IP = $LOCAL_IP"
-envsubst '${LOCAL_IP}' < nginx_template.conf > nginx.conf
+echo "GPU_LOCALHOST = $GPU_LOCALHOST"
+envsubst '${GPU_LOCALHOST}' < nginx_template.conf > nginx.conf

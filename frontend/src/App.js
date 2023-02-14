@@ -25,12 +25,11 @@ export default function App() {
 
   const [activeStep, setActiveStep] = React.useState(paramActiveStep);
   const [videoId, setVideoId] = React.useState(paramVideoId);
-  const [taskId, setTaskId] = React.useState(paramTaskId);
   const [mode, setMode] = React.useState(paramMode);
 
   window.history.replaceState(
     null, "Traffic Flow Detector", 
-    `/?activeStep=${activeStep}&videoId=${videoId}&taskId=${taskId}&mode=${mode}`
+    `/?activeStep=${activeStep}&videoId=${videoId}&mode=${mode}`
   )
 
   const handleNext = () => {
@@ -43,8 +42,8 @@ export default function App() {
 
   const getStepContent = () => {
     if(activeStep == 0) return (<Upload next={handleNext} video={setVideoId}></Upload>)
-    if(activeStep == 1) return (<Parameter next={handleNext} video={videoId} task={setTaskId} mode={setMode}></Parameter>)
-    if(activeStep == 2) return (<Results reset={handleReset} task={taskId} video={videoId} mode={mode}></Results>)
+    if(activeStep == 1) return (<Parameter next={handleNext} video={videoId} mode={setMode}></Parameter>)
+    if(activeStep == 2) return (<Results reset={handleReset} video={videoId} mode={mode}></Results>)
   }
 
   return (

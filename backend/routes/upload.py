@@ -5,33 +5,16 @@ from werkzeug.utils import secure_filename
 import os
 import time
 import subprocess
+import uuid
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     file = request.files['file']
-    timestamp = int(time.time())
+    extension = file.filename.split('.')[-1]
 
-    filename = str(timestamp) + secure_filename(file.filename)
-    extension = filename.split('.')[-1]
-
-    m = hashlib.sha256()
-    m.update(filename.encode('utf-8'))
-    fname = m.hexdigest() + "." + extension
-
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-    with open('scripts/upload_video.sh', 'r') as file:
-        bash_template = file.read()
-        bash_command = bash_template.format(
-            host=os.environ['BACKEND_HOST'],
-            LOCAL_IP=os.environ['LOCAL_IP'],
-            fileName=fname
-        )
-
-    out = subprocess.check_output(
-        bash_command, 
-        shell=True
-    )
-    out = out.decode('utf-8')
-    print("[Out]", out)
+    unique_id = str(uuid.uuid4())
+    fname = unique_id + "." + extension
+    path = os.path.join(app.config['UPLOAD_FOLDER'], fname)
+    file.save(path)
 
     return jsonify({ "id": fname })

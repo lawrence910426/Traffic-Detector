@@ -3,41 +3,74 @@ from utils.shapes import Box, Line
 from .Counter import Counter
 
 class StraightCounter(Counter):
-    def __init__(self, fps, logger, detector: Line):
+    def __init__(self, logger, x: Line, y: Line, z: Line):
         super().__init__(logger)
-        self.detector = detector
-        self.fps = fps
+        self.X, self.Y, self.Z = x, y, z
         
-        # Stores the inner product of last second between
-        # detector and the vehicle as a queue. The queue
-        # has length of fps.
-        self.state = {}
+        self.occurence_stack = {}
+        self.vehicle_status = {}
+
         self.flow = {
-            "Forward": 0,
-            "Reverse": 0
+            "Forward": set(),
+            "Reverse": set()
         }
 
     def getFlow(self):
-        return self.flow
+        return {
+            "Forward": len(self.flow["Forward"]),
+            "Reverse": len(self.flow["Reverse"])
+        }
 
     def update(self, id, vehicle: Box):
-        if not (id in self.state):
-            self.state[id] = { "Counted": False, "InnerProduct": [] }
+        if not (id in self.occurence_stack):
+            self.occurence_stack[id] = []
+            self.vehicle_status[id] = None
         
-        if self.state[id]["Counted"]:
+        detected_line = None
+        if self.hover(self.X, vehicle):
+            detected_line = "X"
+        if self.hover(self.Y, vehicle):
+            detected_line = "Y"
+        if self.hover(self.Z, vehicle):
+            detected_line = "Z"
+
+        if not detected_line is None and self.vehicle_status[id] != detected_line:
+            self.occurence_stack[id].append(detected_line)
+            self.vehicle_status[id] = detected_line
+        
+        # There is only 1 vehicle in the stack
+        if len(self.occurence_stack[id]) < 2:
+            return
+        
+        direction = None
+        direction = 'Forward' if (self.occurence_stack[id][0], self.occurence_stack[id][1]) in [
+            ('X', 'Y'), ('Y', 'Z')
+        ] else direction
+        direction = 'Reverse' if (self.occurence_stack[id][0], self.occurence_stack[id][1]) in [
+            ('Z', 'Y'), ('Y', 'X')
+        ] else direction
+
+        # Hop from (X to Z) or (Z to X)
+        if direction is None:
+            return 
+        
+        # Must be invalid, since the below cases are not valid and (X, Y, Z, Z) is not possible
+        # (X, Y, Z, Y), (X, Y, Z, X)
+        # (Z, Y, X, Y), (Z, Y, X, Z)
+        if len(self.occurence_stack[id]) > 3:
+            self.flow[direction].discard(id)
             return
 
-        if len(self.state[id]["InnerProduct"]) > self.fps:
-            self.state[id]["InnerProduct"].pop(0)
+        # (X, Y, Z) and (Z, Y, X) is the only allowed case
+        if len(self.occurence_stack[id]) == 3:
+            if direction == 'Forward' and self.occurence_stack[id][2] != 'Z':
+                self.flow[direction].discard(id)
+                return
+            if direction == 'Reverse' and self.occurence_stack[id][2] != 'X':
+                self.flow[direction].discard(id)
+                return
         
-        centroid = (vehicle.x1 + vehicle.x2) / 2, (vehicle.y1 + vehicle.y2) / 2
-        midpoint = (self.detector.x1 + self.detector.x2) / 2, (self.detector.y1 + self.detector.y2) / 2
-        vector = self.detector.x2 - self.detector.x1, self.detector.y2 - self.detector.y1
-        inner_prod = np.dot(np.array(vector), np.array(centroid) - np.array(midpoint))
-        self.state[id]["InnerProduct"].append(inner_prod)
+        # `id` might be added twice. First time when there is only 2 element in the stack.
+        # Second time when there is 3 element in the stack.
+        self.flow[direction].add(id)
 
-        if self.hover(self.detector, vehicle):
-            self.state[id]["Counted"] = True
-            positive = sum([1 if item > 0 else 0 for item in self.state[id]["InnerProduct"]])
-            negative = self.fps - positive
-            self.flow["Forward" if positive > negative else "Reverse"] += 1

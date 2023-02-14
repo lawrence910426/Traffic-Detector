@@ -43,10 +43,10 @@ class Parameters extends React.Component {
   async complete() {
     var params = this.state
     params.modeValue = this.modeMapping[params.modeValue]
-    var taskId = await axios.get(config.host + "task_id", { params: params })
-    taskId = taskId.data.id
-    
-    this.props.task(taskId)
+    var result = await axios.get(config.host + "init_task", { params: params })
+    var uuid = result.data.id
+    console.log(uuid)
+
     this.props.next()
   }
 
@@ -106,8 +106,7 @@ class Parameters extends React.Component {
 Parameters.propTypes = {
   next: PropTypes.func,
   mode: PropTypes.func,
-  video: PropTypes.string,
-  task: PropTypes.func
+  video: PropTypes.string
 };
 
 export default Parameters;
