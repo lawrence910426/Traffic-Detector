@@ -106,7 +106,7 @@ class RpcController:
     def merge_video(path_list):
         with open("/tmp/filelist.txt", "w+") as f:
            for path in path_list:
-               f.write("file " + path)
+               f.write("file " + path + "\n")
 
         out_path = RpcController.params["Output_Video_Path"]
         result = subprocess.run([
