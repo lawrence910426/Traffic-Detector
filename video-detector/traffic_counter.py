@@ -96,11 +96,11 @@ class TrafficCounter(object):
             str(self.args.detector_line_t) + " " +
             str(self.args.mode)
         )
-        self.detect_a = Line(*self.args.detector_line_a.split(","), True)
-        self.detect_b = Line(*self.args.detector_line_b.split(","), True)
-        self.detect_x = Line(*self.args.detector_line_x.split(","), True)
-        self.detect_y = Line(*self.args.detector_line_y.split(","), True)
-        self.detect_t = Line(*self.args.detector_line_t.split(","), True)
+        self.detect_a = Line(*self.args.detector_line_a, True)
+        self.detect_b = Line(*self.args.detector_line_b, True)
+        self.detect_x = Line(*self.args.detector_line_x, True)
+        self.detect_y = Line(*self.args.detector_line_y, True)
+        self.detect_t = Line(*self.args.detector_line_t, True)
         return self
 
     def init_loop(self):
@@ -131,7 +131,7 @@ class TrafficCounter(object):
         for enabled_cls_id in self.enabled_classes:
             if self.args.mode == "straight":
                 self.detection_counter[enabled_cls_id] = StraightCounter(
-                    self.logger, self.detect_x, self.detect_y, self.detect_z
+                    self.logger, self.detect_x, self.detect_y
                 )
             if self.args.mode == "t_intersection":
                 self.detection_counter[enabled_cls_id] = TCounter(
