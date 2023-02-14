@@ -160,9 +160,8 @@ class TrafficCounter(object):
     
     def draw_mode_detector(self, img):
         if self.args.mode == "straight":
-            img = draw_detector(img, self.detect_x, (255, 0, 0))
+            img = draw_detector(img, self.detect_x, (0, 0, 255))
             img = draw_detector(img, self.detect_y, (0, 255, 0))
-            img = draw_detector(img, self.detect_z, (0, 0, 255))
         if self.args.mode == "t_intersection":
             img = draw_detector(img, self.detect_a, (255, 0, 0))
             img = draw_detector(img, self.detect_b, (0, 255, 0))
@@ -207,7 +206,7 @@ class TrafficCounter(object):
             start = time.time()
 
             # fetch image
-            succ, ori_im = self.vdo.retrieve()
+            succ, ori_im = self.vdo.read()
             if not succ or self.idx_frame >= self.end_frame:
                 raise LoopException
 
@@ -258,7 +257,10 @@ class TrafficCounter(object):
                     detector_flow[key], 
                     self.mcu_weight[k]
                 )
-            fg_im = draw_flow(fg_im, mcu_counter.get_mcu())
+            if self.args.mode == "straight":
+                fg_im = draw_flow(fg_im, detector_flow)
+            else:
+                fg_im = draw_flow(fg_im, mcu_counter.get_mcu())
             fg_im = self.draw_mode_detector(fg_im)
 
             end = time.time()
