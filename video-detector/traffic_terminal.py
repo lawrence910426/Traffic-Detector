@@ -28,7 +28,6 @@ def parse_args():
     parser.add_argument("--detector_line_b", type=str, default='597,1866,1088,1881')
     parser.add_argument("--detector_line_x", type=str, default='0,0,1000,1000')
     parser.add_argument("--detector_line_y", type=str, default='0,0,1000,1000')
-    parser.add_argument("--detector_line_z", type=str, default='0,0,1000,1000')
 
     parser.add_argument("--stable_period", type=int, default=1000)
     parser.add_argument("--output_name", type=str, default='results')
@@ -58,7 +57,6 @@ if __name__ == "__main__":
     args.detector_line_t = args.detector_line_y.split(",")
     args.detector_line_x = args.detector_line_x.split(",")
     args.detector_line_y = args.detector_line_y.split(",")
-    args.detector_line_z = args.detector_line_z.split(",")
 
     vdo_trk = TrafficCounter(cfg, args, video_path=args.VIDEO_PATH)
 

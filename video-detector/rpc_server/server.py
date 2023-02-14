@@ -69,10 +69,6 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
                     request.Y.x1, request.Y.y1,
                     request.Y.x2, request.Y.y2
                 ],
-                "detector_line_z": [
-                    request.Z.x1, request.Z.y1,
-                    request.Z.x2, request.Z.y2
-                ],
                 "stable_period": request.Stabilization_Period,
                 "output_name": request.Output_Video_Path,
                 "start_frame": request.Start_Frame,

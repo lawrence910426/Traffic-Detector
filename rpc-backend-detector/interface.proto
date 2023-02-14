@@ -23,7 +23,6 @@ message Parameter {
 
     optional Detector_Line X = 2;
     optional Detector_Line Y = 3;
-    optional Detector_Line Z = 4;
     optional Detector_Line T = 5;
     optional Detector_Line A = 6;
     optional Detector_Line B = 7;
