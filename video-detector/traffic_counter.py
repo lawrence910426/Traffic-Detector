@@ -46,7 +46,7 @@ class TrafficCounter(object):
         }
         self.mcu_weight = {
             # 0: 0, # Person
-            1: 0, # Bicycle
+            1: 1, # Bicycle
             2: 2, # Car
             3: 1, # Motorbike
             5: 4, # Bus
@@ -93,16 +93,15 @@ class TrafficCounter(object):
             str(self.args.detector_line_b) + " " +
             str(self.args.detector_line_x) + " " +
             str(self.args.detector_line_y) + " " +
-            str(self.args.detector_line_y) + " " +
             str(self.args.detector_line_t) + " " +
             str(self.args.mode)
         )
-        self.detect_a = Line(*self.args.detector_line_a, True)
-        self.detect_b = Line(*self.args.detector_line_b, True)
-        self.detect_x = Line(*self.args.detector_line_x, True)
-        self.detect_y = Line(*self.args.detector_line_y, True)
-        self.detect_z = Line(*self.args.detector_line_z, True)
-        self.detect_t = Line(*self.args.detector_line_t, True)    
+        self.detect_a = Line(*self.args.detector_line_a.split(","), True)
+        self.detect_b = Line(*self.args.detector_line_b.split(","), True)
+        self.detect_x = Line(*self.args.detector_line_x.split(","), True)
+        self.detect_y = Line(*self.args.detector_line_y.split(","), True)
+        self.detect_t = Line(*self.args.detector_line_t.split(","), True)
+        return self
 
     def init_loop(self):
         start_frame = self.args.start_frame
@@ -160,9 +159,8 @@ class TrafficCounter(object):
     
     def draw_mode_detector(self, img):
         if self.args.mode == "straight":
-            img = draw_detector(img, self.detect_x, (255, 0, 0))
+            img = draw_detector(img, self.detect_x, (0, 0, 255))
             img = draw_detector(img, self.detect_y, (0, 255, 0))
-            img = draw_detector(img, self.detect_z, (0, 0, 255))
         if self.args.mode == "t_intersection":
             img = draw_detector(img, self.detect_a, (255, 0, 0))
             img = draw_detector(img, self.detect_b, (0, 255, 0))

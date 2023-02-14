@@ -3,9 +3,9 @@ from utils.shapes import Box, Line
 from .Counter import Counter
 
 class StraightCounter(Counter):
-    def __init__(self, logger, x: Line, y: Line, z: Line):
+    def __init__(self, logger, x: Line, y: Line):
         super().__init__(logger)
-        self.X, self.Y, self.Z = x, y, z
+        self.X, self.Y = x, y
         
         self.occurence_stack = {}
         self.vehicle_status = {}
@@ -26,51 +26,43 @@ class StraightCounter(Counter):
             self.occurence_stack[id] = []
             self.vehicle_status[id] = None
         
-        detected_line = None
+        detected_line = []
         if self.hover(self.X, vehicle):
-            detected_line = "X"
+            detected_line.append("X")
         if self.hover(self.Y, vehicle):
-            detected_line = "Y"
-        if self.hover(self.Z, vehicle):
-            detected_line = "Z"
+            detected_line.append("Y")
 
-        if not detected_line is None and self.vehicle_status[id] != detected_line:
-            self.occurence_stack[id].append(detected_line)
-            self.vehicle_status[id] = detected_line
-        
-        # There is only 1 vehicle in the stack
-        if len(self.occurence_stack[id]) < 2:
-            return
-        
-        direction = None
-        direction = 'Forward' if (self.occurence_stack[id][0], self.occurence_stack[id][1]) in [
-            ('X', 'Y'), ('Y', 'Z')
-        ] else direction
-        direction = 'Reverse' if (self.occurence_stack[id][0], self.occurence_stack[id][1]) in [
-            ('Z', 'Y'), ('Y', 'X')
-        ] else direction
+        detected_symbol = None
+        detected_symbol = detected_line[0] if len(detected_line) == 1 else detected_symbol
+        detected_symbol = 'Q' if len(detected_line) == 2 else detected_symbol
 
-        # Hop from (X to Z) or (Z to X)
-        if direction is None:
-            return 
-        
-        # Must be invalid, since the below cases are not valid and (X, Y, Z, Z) is not possible
-        # (X, Y, Z, Y), (X, Y, Z, X)
-        # (Z, Y, X, Y), (Z, Y, X, Z)
-        if len(self.occurence_stack[id]) > 3:
-            self.flow[direction].discard(id)
-            return
+        if self.vehicle_status[id] != detected_symbol:
+            self.occurence_stack[id].append(detected_symbol)
+            self.vehicle_status[id] = detected_symbol
 
-        # (X, Y, Z) and (Z, Y, X) is the only allowed case
+        # There are 2 occurences in the stack. 
+        if len(self.occurence_stack[id]) == 2:
+            direction = None
+            direction = 'Forward' if (self.occurence_stack[id][0], self.occurence_stack[id][1]) in [
+                ('X', 'Y'), ('Q', 'Y'), ('X', 'Q')
+            ] else direction
+            direction = 'Reverse' if (self.occurence_stack[id][0], self.occurence_stack[id][1]) in [
+                ('Y', 'X'), ('Q', 'X'), ('Y', 'Q')
+            ] else direction
+
+            if not direction is None:
+                self.flow[direction].add(id)
+
+        # There are 3 occurences in the stack. Must be (X, Q, Y) or (Y, Q, X)
         if len(self.occurence_stack[id]) == 3:
-            if direction == 'Forward' and self.occurence_stack[id][2] != 'Z':
-                self.flow[direction].discard(id)
-                return
-            if direction == 'Reverse' and self.occurence_stack[id][2] != 'X':
-                self.flow[direction].discard(id)
-                return
-        
-        # `id` might be added twice. First time when there is only 2 element in the stack.
-        # Second time when there is 3 element in the stack.
-        self.flow[direction].add(id)
+            direction = None
+            direction = 'Forward' if (self.occurence_stack[id][0], self.occurence_stack[id][2]) in [
+                ('X', 'Y')
+            ] else direction
+            direction = 'Reverse' if (self.occurence_stack[id][0], self.occurence_stack[id][2]) in [
+                ('Y', 'X')
+            ] else direction
 
+            if not direction is None:
+                self.flow[direction].add(id)
+                
