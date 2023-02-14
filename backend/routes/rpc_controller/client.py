@@ -42,7 +42,7 @@ class RpcClient:
                 x1=int(params['B']['x1']), y1=int(params['B']['y1']), 
                 x2=int(params['B']['x2']), y2=int(params['B']['y2'])
             ),
-            Stabilization_Period=params["Stabilization_Period"],
+            Stabilization_Period=int(params["Stabilization_Period"]),
             Input_Video_Path=params["Input_Video_Path"],
             Output_Video_Path=params["Output_Video_Path"],
             Start_Frame=int(params["Start_Frame"]),

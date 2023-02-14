@@ -28,10 +28,10 @@ class Data extends React.Component {
     }
 
     async componentDidMount() {
-        var flow = await axios.get(config.host + "query_task", {
+        var result = await axios.get(config.host + "query_task", {
             params: { videoId: this.props.video }
         })
-        flow = flow.data
+        result = result.data
         
         // Recursive addition
         const recursiveSum = (a, b) => {
@@ -43,11 +43,11 @@ class Data extends React.Component {
             }
             return ans
         }
-        flow.large = recursiveSum(flow.truck, flow.bus)
-        console.log(flow)
+        result.flow.large = recursiveSum(result.flow.truck, result.flow.bus)
+        console.log(result.flow)
 
-        this.setState({ flow: flow })
-        this.setState({ videoUrl: flow.videoUrl })
+        this.setState({ flow: result.flow })
+        this.setState({ videoUrl: result.videoUrl })
     }
     
     downloadExcel() {

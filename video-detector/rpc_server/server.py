@@ -1,5 +1,6 @@
 import threading
 from attrdict import AttrDict
+import json
 
 from utils.parser import get_config
 from utils.loop_exception import LoopException
@@ -104,7 +105,9 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
             
             # Finalize the loop
             if not servicer.counter is None:
-                servicer.JsonFlow = servicer.counter.finalize_loop()
+                servicer.JsonFlow = json.dumps(servicer.counter.finalize_loop())
+                del servicer.counter
+
             servicer.Progress = 1
         except e:
             print(str(e), flush=True)

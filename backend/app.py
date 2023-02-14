@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(
     __name__,
-    static_folder='/tmp/',
+    static_folder='/mnt/video-in/',
     static_url_path='/static'
 )
 app.config['UPLOAD_FOLDER'] = "/mnt/video-in/"

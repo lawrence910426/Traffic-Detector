@@ -151,7 +151,6 @@ class TrafficCounter(object):
         for k in self.enabled_classes:
             cls_name = self.enabled_classes[k]
             flow[cls_name] = self.detection_counter[k].getFlow()
-        flow = str(flow)
         
         log = f"Flow: {flow}"
         self.logger.info(log)
@@ -189,7 +188,7 @@ class TrafficCounter(object):
                 return progress
             except LoopException as e:
                 self.loop_state = "DETECT"
-                self.detection_progress = Progress_Divider(0.1, 1)
+                self.detection_progress = Progress_Divider(0.1, 0.99)
                 self.fixed_transform = self.stable_fixer.finalize_loop()
                 
                 self.vdo.set(cv2.CAP_PROP_POS_FRAMES, self.start_buffer_frame)

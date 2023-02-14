@@ -29,7 +29,7 @@ export default function App() {
 
   window.history.replaceState(
     null, "Traffic Flow Detector", 
-    `/?activeStep=${activeStep}&videoId=${videoId}&taskId=${taskId}&mode=${mode}`
+    `/?activeStep=${activeStep}&videoId=${videoId}&mode=${mode}`
   )
 
   const handleNext = () => {

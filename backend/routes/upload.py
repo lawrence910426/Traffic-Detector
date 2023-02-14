@@ -12,9 +12,9 @@ def upload_file():
     file = request.files['file']
     extension = file.filename.split('.')[-1]
 
-    unique_id = uuid.uuid4()
+    unique_id = str(uuid.uuid4())
     fname = unique_id + "." + extension
-    path = os.path.join(app.config['UPLOAD_FOLDER'], "input", fname)
+    path = os.path.join(app.config['UPLOAD_FOLDER'], fname)
     file.save(path)
 
     return jsonify({ "id": fname })

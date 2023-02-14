@@ -1,7 +1,7 @@
 version: '3'
 services:
   frontend:
-    container_name: 'sharingan-frontend'
+    container_name: 'traffic-frontend'
     build:
       context: ./frontend/
       args:
@@ -10,5 +10,3 @@ services:
     restart: always
     ports:
       - "80:80"
-    depends_on:
-      - backend

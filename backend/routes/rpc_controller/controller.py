@@ -3,6 +3,7 @@ import subprocess
 import copy
 import cv2
 from attrdict import AttrDict
+import json
 
 from .proto import interface_pb2
 from .client import RpcClient
@@ -41,34 +42,38 @@ class RpcController:
     @staticmethod
     def get_task():
         completed = True
-        task_result = AttrDict({
-            "JsonFlow": {},
+        task_result = {
+            "JsonFlow": None,
             "Progress": 0,
             "Output_Video_Path": ""
-        })
+        }
 
         # Loop through the clients
         for client in RpcController.clients:
             completed = completed and client.Get_State() == "COMPLETED"
             result = client.Get_Task()
-            task_result.Progress += result.Progress
-            RpcController.merge_json(task_result.JsonFlow, result.JsonFlow)
-        task_result.Progress = int(100 * task_result.Progress) // len(RpcController.clients)
-        
-        # Merge all videos into one big video
-        video_list = [
-            "/mnt/video-out/" + client.Get_Task().Output_Video_Path
-            for client in RpcController.clients]
+            task_result["Progress"] += result.Progress
+        task_result["Progress"] = int(100 * task_result["Progress"]) // len(RpcController.clients)
 
         # Task become completed        
         if completed and RpcController.controller_state != "COMPLETED":
-            RpcController.merge_video(video_list)
+            RpcController.merge_video([
+                "/mnt/video-out/" + client.Get_Task().Output_Video_Path
+                for client in RpcController.clients])
             RpcController.controller_state = "COMPLETED"
 
-        # Generate the output video url if completed
-        if completed:            
-            task_result.Output_Video_Path = RpcController.config['STATIC_URL'] + \
-                RpcController.params["Output_Video_Path"]
+        if completed:
+            # Generate the output video url if completed
+            task_result["Output_Video_Path"] = RpcController.config['STATIC_URL'] + \
+                RpcController.params["Output_Video_Path"] + ".mp4"
+            
+            # Generate output json if completed
+            for client in RpcController.clients:
+                task_result["JsonFlow"] = RpcController.merge_json(
+                    task_result["JsonFlow"], json.loads(client.Get_Task().JsonFlow))
+        else:
+            task_result["JsonFlow"] = {}
+
         return task_result
         
     @staticmethod
@@ -91,10 +96,10 @@ class RpcController:
         
         ans = {}
         for key in x:
-            if type(x[key]) == int:
-                ans[key] = x[key] + y[key]
-            else:
+            if type(x[key]) == dict:
                 ans[key] = RpcController.merge_json(x[key], y[key])
+            else:
+                ans[key] = x[key] + y[key]
         return ans
     
     @staticmethod
@@ -107,7 +112,7 @@ class RpcController:
         result = subprocess.run([
             "ffmpeg", "-f", "concat", "-safe", "0", 
             "-i", "/tmp/filelist.txt", "-c", "copy", 
-            f"/mnt/video-out/{out_path}.mp4"])
+            f"/mnt/video-in/{out_path}.mp4"])
         print(result)
 
     @staticmethod

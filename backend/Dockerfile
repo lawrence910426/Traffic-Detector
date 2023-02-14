@@ -18,7 +18,7 @@ COPY . .
 # CMD ["flask", "run"]
 
 # Only 1 worker is allowed.
-# CMD ["gunicorn", "-w", "1", "--bind", "0.0.0.0:8000", "app:app"]
+CMD ["gunicorn", "-w", "1", "--bind", "0.0.0.0:8000", "app:app"]
 
 # Run with rpc terminal
-CMD ["python", "rpc_terminal.py", "minimal.mp4"]
+# CMD ["python", "rpc_terminal.py", "minimal.mp4"]
