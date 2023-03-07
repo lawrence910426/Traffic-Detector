@@ -7,7 +7,8 @@ ENV PATH=$PATH:/usr/local/cuda/bin
 RUN apt update -y && apt upgrade -y && \
     apt install -y build-essential cmake && \
     apt install -y wget && \
-    apt install -y git
+    apt install -y git && \
+    apt install -y libx264-dev
 
 # Install conda
 ENV CONDA_DIR /opt/conda
@@ -23,7 +24,8 @@ WORKDIR /opt
 RUN git clone https://github.com/FFmpeg/FFmpeg.git
 WORKDIR /opt/FFmpeg
 RUN git checkout release/4.4
-RUN ./configure --disable-x86asm --enable-shared --enable-avresample --prefix=/opt/ffmpeg/
+RUN ./configure --disable-x86asm --enable-shared --enable-gpl \
+    --enable-libx264 --enable-avresample --prefix=/opt/ffmpeg/
 RUN make -j 80 && make install
 
 ## Add env variables
@@ -97,6 +99,11 @@ RUN wget https://pjreddie.com/media/files/yolov3.weights
 RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights
 WORKDIR ../../../
 
+# Fix symbolic link (Ubuntu 22.04 bug)
+RUN rm /opt/conda/envs/detector/lib/libstdc++.so*
+RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so.6
+RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so
+
 # Copy the remaining files
 COPY . /app/video-detector
 WORKDIR /app/video-detector
@@ -107,8 +114,8 @@ WORKDIR /app/video-detector
 RUN echo "cd detector/YOLOv3/nms; sh build.sh; cd ../../../;" > init.sh
 
 # Append initialization script
-# RUN echo "python rpc_daemon.py" >> init.sh
+RUN echo "python rpc_daemon.py" >> init.sh
 # RUN echo "python traffic_terminal.py videos/minimal.mp4 --mode straight" >> init.sh
-RUN echo "sleep 3600" >> init.sh
+# RUN echo "sleep 86400" >> init.sh
 
 CMD ["conda", "run", "-n", "detector", "sh", "init.sh"]

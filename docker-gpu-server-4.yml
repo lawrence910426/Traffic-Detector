@@ -1,0 +1,96 @@
+version: '3'
+services:
+  backend:
+    container_name: 'traffic-backend'
+    build: ./backend
+    restart: always
+    ports:
+      - 8000:8000
+    environment:
+      - BACKEND_HOST=${BACKEND_HOST}
+      - RPC_HOST_LIST=${RPC_HOST_LIST}
+    links:
+      - detector_1
+      - detector_2
+      - detector_3
+      - detector_4
+    volumes:
+      - video-in-volume:/mnt/video-in
+      - video-out-volume:/mnt/video-out
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities: [gpu]
+
+  detector_1:
+    container_name: 'traffic-detector-1'
+    build: 
+      context: ./video-detector
+    restart: always
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  detector_2:
+    container_name: 'traffic-detector-2'
+    build: 
+      context: ./video-detector
+    restart: always
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  detector_3:
+    container_name: 'traffic-detector-3'
+    build: 
+      context: ./video-detector
+    restart: always
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  detector_4:
+    container_name: 'traffic-detector-4'
+    build: 
+      context: ./video-detector
+    restart: always
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+
+
+
+
+
+volumes:
+  video-out-volume: 
+  video-in-volume:
