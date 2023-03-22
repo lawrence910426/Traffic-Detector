@@ -50,8 +50,7 @@ if __name__ == "__main__":
     RpcController.init_task(task_params)
     while True:
         task_info = RpcController.get_task()
-        print("[Running] ", task_info)
-        if task_info.Progress == 100:
-            print(task_info.JsonFlow)
+        print("[Running] ", task_info["Progress"])
+        if task_info["Progress"] == 100:
+            print("[Program Complete]", task_info)
             break
-    print("[Program Complete]")

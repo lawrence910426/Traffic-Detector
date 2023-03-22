@@ -21,6 +21,7 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
     def Init_Task(self, request, context):
         self.background_thread = threading.Thread(
             target=self.Run_Task, args=(self, request))
+        self.Progress = 0
         self.background_thread.start()
 
         return wrappers.BoolValue(value=True)
@@ -105,5 +106,5 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
                 del servicer.counter
 
             servicer.Progress = 1
-        except e:
+        except Exception as e:
             print(str(e), flush=True)

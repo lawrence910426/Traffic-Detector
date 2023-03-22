@@ -95,6 +95,17 @@ class Parameters extends React.Component {
           </Col></Row>
 
           <Row style={{ marginTop: '3rem' }}><Col>
+            <h5>以指令執行模型</h5>
+          </Col><Col><h5>
+            { `python rpc_terminal.py videos/${this.props.video} --mode ${this.modeMapping[this.state.modeValue]} 
+              --detector_line_t ${this.detector["T"]["x1"]},${this.detector["T"]["y1"]},${this.detector["T"]["x2"]},${this.detector["T"]["y2"]}
+              --detector_line_a ${this.detector["A"]["x1"]},${this.detector["A"]["y1"]},${this.detector["A"]["x2"]},${this.detector["A"]["y2"]}
+              --detector_line_b ${this.detector["B"]["x1"]},${this.detector["B"]["y1"]},${this.detector["B"]["x2"]},${this.detector["B"]["y2"]}
+              --detector_line_x ${this.detector["X"]["x1"]},${this.detector["X"]["y1"]},${this.detector["X"]["x2"]},${this.detector["X"]["y2"]}
+              --detector_line_y ${this.detector["Y"]["x1"]},${this.detector["Y"]["y1"]},${this.detector["Y"]["x2"]},${this.detector["Y"]["y2"]}` }
+          </h5></Col></Row>
+          
+          <Row style={{ marginTop: '3rem' }}><Col>
             <MDBBtn onClick={this.complete.bind(this)}>完成參數設置</MDBBtn>
           </Col></Row>
         </Container>
