@@ -13,7 +13,7 @@ def query_task():
     task_info = RpcController.get_task()
     return jsonify({ 
         "progress": task_info["Progress"],
-        "flow": task_info["JsonFlow"],
-        "independentFlow": task_info["IndependentFlow"]
+        "flow": task_info["Json_Flow"],
+        "independentFlow": task_info["Independent_Flow"]
         "videoUrl": task_info["Output_Video_Path"]
     })

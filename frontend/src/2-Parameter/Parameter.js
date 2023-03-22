@@ -9,7 +9,7 @@ import PeriodSelection from "./PeriodSelection";
 import ImageEditor from "./ImageEditor";
 import UserHint from "./UserHint"
 
-import { MDBBtn } from 'mdb-react-ui-kit';
+import { MDBBtn, MDBInput } from 'mdb-react-ui-kit';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -32,6 +32,7 @@ class Parameters extends React.Component {
         'B': { 'x1': 0, 'x2': 0, 'y1': 0, 'y2': 0 },
       },
       stabilization: 10,
+      slice: 0,
       id: props.video,
       modeValue: '0'
     }
@@ -64,6 +65,10 @@ class Parameters extends React.Component {
     this.props.mode(this.modeMapping[newValue])
   }
 
+  handleSliceChange(event, newValue) {
+    this.setState({ slice: newValue })
+  }
+
   renderTabs(index) {
     return (
       <TabPanel value={index.toString()}>
@@ -88,6 +93,11 @@ class Parameters extends React.Component {
           <Row><Col>
             <PeriodSelection period={this.updateStabilization.bind(this)} />
           </Col></Row>
+
+          <Row style={{ marginTop: '3rem' }}>
+            <Col sm={4} md={2} lg={2}><h5>選擇拆分數量</h5></Col>
+            <Col><MDBInput type='number' onChange={this.handleSliceChange.bind(this)} /></Col>
+          </Row>
 
           <Row style={{ marginTop: '3rem' }}><Col>
             <TabContext value={this.state.modeValue}>

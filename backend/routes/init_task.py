@@ -15,6 +15,7 @@ def init_task():
     mode = request.args.get('modeValue')
     detector = json.loads(request.args.get('detector'))
     null_detector = { "x1": 0, "y1": 0, "x2": 0, "y2": 0 }
+    slices = request.args.get('slice')
 
     unique_id = str(uuid.uuid4())
     params = {
@@ -22,6 +23,7 @@ def init_task():
         "Stabilization_Period": stabilization,
         "Input_Video_Path": f"{video_id}",
         "Output_Video_Path": f"{unique_id}",
+        "Slice_Count": slices,
         "X": detector['X'] if 'X' in detector else null_detector,
         "Y": detector['Y'] if 'Y' in detector else null_detector,
         "T": detector['T'] if 'T' in detector else null_detector,
