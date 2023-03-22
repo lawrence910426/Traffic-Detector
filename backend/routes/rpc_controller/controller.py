@@ -44,6 +44,7 @@ class RpcController:
         completed = True
         task_result = {
             "JsonFlow": None,
+            "IndependentFlow": {},
             "Progress": 0,
             "Output_Video_Path": ""
         }
@@ -68,9 +69,12 @@ class RpcController:
                 RpcController.params["Output_Video_Path"] + ".mp4"
             
             # Generate output json if completed
-            for client in RpcController.clients:
+            for i in range(len(RpcController.clients))
+                client = RpcController.clients[i]
+                result = json.loads(client.Get_Task().JsonFlow)
                 task_result["JsonFlow"] = RpcController.merge_json(
-                    task_result["JsonFlow"], json.loads(client.Get_Task().JsonFlow))
+                    task_result["JsonFlow"], result)
+                task_result["IndependentFlow"][i] = result
         else:
             task_result["JsonFlow"] = {}
 

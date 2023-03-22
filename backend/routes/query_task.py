@@ -14,5 +14,6 @@ def query_task():
     return jsonify({ 
         "progress": task_info["Progress"],
         "flow": task_info["JsonFlow"],
+        "independentFlow": task_info["IndependentFlow"]
         "videoUrl": task_info["Output_Video_Path"]
     })
