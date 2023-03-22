@@ -55,8 +55,8 @@ class FlowPresentation extends React.Component {
             'motorbike': '機車',
             'large': '大車'
         }, directions = {
-            "Forward": '實線往虛線車流',
-            "Reverse": '虛線往實線車流'
+            "Forward": '由紅線往綠線車流', // 實線往虛線
+            "Reverse": '由綠線往紅線車流'  // 虛線往實線
         }
         return (
             <Container>
