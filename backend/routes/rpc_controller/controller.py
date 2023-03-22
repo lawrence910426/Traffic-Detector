@@ -55,7 +55,6 @@ class RpcController:
                 params["Output_Video_Path"] + "-" + str(task_id)
             new_params["Start_Frame"] = task_id * total_frames // RpcController.params["Slice_Count"]
             new_params["End_Frame"] = (task_id + 1) * total_frames // RpcController.params["Slice_Count"]
-            RpcController.clients[task_id].Init_Task(new_params)
             RpcController.pending_params.put_nowait(new_params)
             task_id += 1
 
@@ -67,7 +66,7 @@ class RpcController:
     def execute_task(client_id):
         while not RpcController.pending_params.empty():
             param = RpcController.pending_params.get()
-            print(f"[Executing params #{client_id}] ", param)
+            print(f"[Executing params on client #{client_id}] ", param)
 
             client = RpcController.clients[client_id]
 
