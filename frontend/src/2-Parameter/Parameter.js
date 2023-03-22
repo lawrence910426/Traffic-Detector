@@ -24,7 +24,13 @@ class Parameters extends React.Component {
     super(props);
 
     this.state = {
-      detector: {},
+      detector: {
+        'X': { 'x1': 0, 'x2': 0, 'y1': 0, 'y2': 0 },
+        'Y': { 'x1': 0, 'x2': 0, 'y1': 0, 'y2': 0 },
+        'T': { 'x1': 0, 'x2': 0, 'y1': 0, 'y2': 0 },
+        'A': { 'x1': 0, 'x2': 0, 'y1': 0, 'y2': 0 },
+        'B': { 'x1': 0, 'x2': 0, 'y1': 0, 'y2': 0 },
+      },
       stabilization: 10,
       id: props.video,
       modeValue: '0'
@@ -33,7 +39,10 @@ class Parameters extends React.Component {
   }
 
   updateDetector(detectorInfo) {
-    this.setState({ detector: detectorInfo })
+    this.setState({ detector: {
+      ...this.state.detector,
+      ...detectorInfo 
+    }})
   }
 
   updateStabilization(period) {
@@ -71,6 +80,8 @@ class Parameters extends React.Component {
   }
   
   render() {
+    var dtor = this.state.detector
+
     return (
       <div>
         <Container>
@@ -94,16 +105,16 @@ class Parameters extends React.Component {
             </TabContext>
           </Col></Row>
 
-          <Row style={{ marginTop: '3rem' }}><Col>
+          <Row style={{ marginTop: '3rem' }}><Col sm={4} md={2} lg={2}>
             <h5>以指令執行模型</h5>
-          </Col><Col><h5>
+          </Col><Col><code>
             { `python rpc_terminal.py videos/${this.props.video} --mode ${this.modeMapping[this.state.modeValue]} 
-              --detector_line_t ${this.detector["T"]["x1"]},${this.detector["T"]["y1"]},${this.detector["T"]["x2"]},${this.detector["T"]["y2"]}
-              --detector_line_a ${this.detector["A"]["x1"]},${this.detector["A"]["y1"]},${this.detector["A"]["x2"]},${this.detector["A"]["y2"]}
-              --detector_line_b ${this.detector["B"]["x1"]},${this.detector["B"]["y1"]},${this.detector["B"]["x2"]},${this.detector["B"]["y2"]}
-              --detector_line_x ${this.detector["X"]["x1"]},${this.detector["X"]["y1"]},${this.detector["X"]["x2"]},${this.detector["X"]["y2"]}
-              --detector_line_y ${this.detector["Y"]["x1"]},${this.detector["Y"]["y1"]},${this.detector["Y"]["x2"]},${this.detector["Y"]["y2"]}` }
-          </h5></Col></Row>
+              --detector_line_t ${dtor["T"]["x1"]},${dtor["T"]["y1"]},${dtor["T"]["x2"]},${dtor["T"]["y2"]}
+              --detector_line_a ${dtor["A"]["x1"]},${dtor["A"]["y1"]},${dtor["A"]["x2"]},${dtor["A"]["y2"]}
+              --detector_line_b ${dtor["B"]["x1"]},${dtor["B"]["y1"]},${dtor["B"]["x2"]},${dtor["B"]["y2"]}
+              --detector_line_x ${dtor["X"]["x1"]},${dtor["X"]["y1"]},${dtor["X"]["x2"]},${dtor["X"]["y2"]}
+              --detector_line_y ${dtor["Y"]["x1"]},${dtor["Y"]["y1"]},${dtor["Y"]["x2"]},${dtor["Y"]["y2"]}` }
+          </code></Col></Row>
           
           <Row style={{ marginTop: '3rem' }}><Col>
             <MDBBtn onClick={this.complete.bind(this)}>完成參數設置</MDBBtn>

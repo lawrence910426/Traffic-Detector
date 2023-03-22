@@ -23,7 +23,8 @@ class Data extends React.Component {
                 ], { header: ["車種", "順向流量", "逆向流量"] }
             ),
             flow: {},
-            videoUrl: "http://techslides.com/demos/sample-videos/small.mp4"
+            videoUrl: "http://techslides.com/demos/sample-videos/small.mp4",
+            result: {}
         }
     }
 
@@ -48,6 +49,7 @@ class Data extends React.Component {
 
         this.setState({ flow: result.flow })
         this.setState({ videoUrl: result.videoUrl })
+        this.setState({ result: result })
     }
     
     downloadExcel() {
@@ -65,8 +67,15 @@ class Data extends React.Component {
             <Container>
                 <Row>
                     <Col style={{ marginTop: '1rem' }}>
-                        <FlowPresentation mode={this.props.mode} flow={this.state.flow}></FlowPresentation>
-                        <MDBBtn onClick={this.downloadExcel}>下載交通流量結果</MDBBtn>
+                        <Row><Col style={{ marginTop: '1rem' }}>
+                            <FlowPresentation mode={this.props.mode} flow={this.state.flow}></FlowPresentation>
+                            <MDBBtn onClick={this.downloadExcel}>下載交通流量結果</MDBBtn>
+                        </Col></Row>
+
+                        <Row><Col style={{ marginTop: '1rem' }}>
+                            <h3>原始輸出</h3>
+                            <code>{JSON.stringify(this.state.result)}</code>
+                        </Col></Row>
                     </Col>
 
                     <Col style={{ marginTop: '1rem' }}>

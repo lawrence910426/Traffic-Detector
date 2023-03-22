@@ -20,7 +20,6 @@ export default function App() {
   const [searchParams] = useSearchParams();
   var paramActiveStep = searchParams.get("activeStep") ?? 0
   var paramVideoId = searchParams.get("videoId") ?? ""
-  var paramTaskId = searchParams.get("taskId") ?? ""
   var paramMode = searchParams.get("mode") ?? "straight"
 
   const [activeStep, setActiveStep] = React.useState(paramActiveStep);
