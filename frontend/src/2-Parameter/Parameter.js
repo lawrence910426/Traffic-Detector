@@ -96,7 +96,7 @@ class Parameters extends React.Component {
 
           <Row style={{ marginTop: '3rem' }}>
             <Col sm={4} md={2} lg={2}><h5>選擇拆分數量</h5></Col>
-            <Col><MDBInput type='number' onChange={this.handleSliceChange.bind(this)} value={1} /></Col>
+            <Col><MDBInput type='number' onChange={this.handleSliceChange.bind(this)} value={this.state.slice} /></Col>
           </Row>
 
           <Row style={{ marginTop: '3rem' }}><Col>

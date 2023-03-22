@@ -15,7 +15,7 @@ def init_task():
     mode = request.args.get('modeValue')
     detector = json.loads(request.args.get('detector'))
     null_detector = { "x1": 0, "y1": 0, "x2": 0, "y2": 0 }
-    slices = request.args.get('slice')
+    slices = int(request.args.get('slice'))
 
     unique_id = str(uuid.uuid4())
     params = {

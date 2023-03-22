@@ -42,12 +42,12 @@ EXPOSE 8000
 # CMD ["flask", "run"]
 
 # Only 1 worker is allowed.
-CMD [ "sleep", "86400" ]
-# CMD [ \
-#     "conda", "run", "-n", "backend", \
-#     "gunicorn", "-t", "3600", "-w", "1", "--bind", "0.0.0.0:8000", "app:app" \
-# ]
+# CMD [ "sleep", "86400" ]
+CMD [ \
+    "conda", "run", "-n", "backend", \
+    "gunicorn", "-t", "3600", "-w", "1", "--bind", "0.0.0.0:8000", "app:app" \
+]
 
 
 # Run with rpc terminal
-# CMD ["python", "rpc_terminal.py", "minimal.mp4"]
+# CMD ["conda", "run", "-n", "backend", "python", "rpc_terminal.py", "minimal.mp4"]

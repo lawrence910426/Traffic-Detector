@@ -45,9 +45,9 @@ class RpcController:
         # Generate tasks
         total_frames = RpcController.get_video_frames(
             os.path.join(RpcController.config['UPLOAD_FOLDER'], params["Input_Video_Path"]))
-        task_id = 0
         RpcController.pending_params = Queue()
 
+        task_id = 0
         while task_id < RpcController.params["Slice_Count"]:
             new_params = copy.deepcopy(params)
             new_params["task_id"] = task_id
@@ -55,24 +55,27 @@ class RpcController:
                 params["Output_Video_Path"] + "-" + str(task_id)
             new_params["Start_Frame"] = task_id * total_frames // RpcController.params["Slice_Count"]
             new_params["End_Frame"] = (task_id + 1) * total_frames // RpcController.params["Slice_Count"]
-            RpcController.clients[i].Init_Task(new_params)
-            pending_params.add(new_params)
+            RpcController.clients[task_id].Init_Task(new_params)
+            RpcController.pending_params.put_nowait(new_params)
             task_id += 1
 
         # Start the thread without waiting
-        for host in hostlist:
-            threading.Thread(target=RpcController.execute_task, args=(host)).start()
+        for i in range(len(host_list)):
+            threading.Thread(target=RpcController.execute_task, args=(i,)).start()
 
     @staticmethod
     def execute_task(client_id):
-        while RpcController.pending_params.size() > 0:
-            param = RpcController.pending_queue.get()
-            RpcController.clients[client_id].Init_Task(param)
+        while not RpcController.pending_params.empty():
+            param = RpcController.pending_params.get()
+            print(f"[Executing params #{client_id}] ", param)
 
+            client = RpcController.clients[client_id]
+
+            client.Init_Task(param)
             while client.Get_State() != "COMPLETED":
                 time.sleep(1)
             
-            RpcController.task_result["Independent_Results"][params["task_id"]] = {
+            RpcController.task_result["Independent_Results"][param["task_id"]] = {
                 "flow": json.loads(client.Get_Task().JsonFlow),
                 "video_path": client.Get_Task().Output_Video_Path
             }
@@ -80,15 +83,16 @@ class RpcController:
     @staticmethod
     def get_task():
         # Evaluate progress on the fly
-        progress = RpcController.params["Slice_Count"] - RpcController.pending_params.size() + len(RpcController.clients)
+        progress = RpcController.params["Slice_Count"] - RpcController.pending_params.qsize()
         for client in RpcController.clients:
-            result = client.Get_Task()
-            client += result.Progress
+            if client.Get_State() == "RUNNING":
+                result = client.Get_Task()
+                print(result)
+                progress += result.Progress - 1
         RpcController.task_result["Progress"] = int(100 * progress) // RpcController.params["Slice_Count"]
 
-        # Task become completed   
-        completed = all([client.Get_State() == "COMPLETED" for client in RpcController.clients]) \
-            and RpcController.pending_params.size() == 0
+        # Task become completed
+        completed = len(RpcController.task_result["Independent_Results"]) == RpcController.params["Slice_Count"]
         become_complete = completed and RpcController.controller_state != "COMPLETED"     
 
         if become_complete:
@@ -96,15 +100,15 @@ class RpcController:
 
             # Merge videos
             RpcController.merge_video([
-                "/mnt/video-out/" + RpcController.task_result["Independent_Results"][task_id]["video_path"]
-                for task_id in RpcController.task_result["Independent_Results"]])
+                "/mnt/video-out/" + item["video_path"]
+                for item in RpcController.task_result["Independent_Results"].values()])
             RpcController.task_result["Output_Video_Path"] = RpcController.config['STATIC_URL'] + \
                 RpcController.params["Output_Video_Path"] + ".mp4"
 
             for task_id in RpcController.task_result["Independent_Results"]:
                 result = RpcController.task_result["Independent_Results"][task_id]["flow"]
-                RpcController.task_result["JsonFlow"] = RpcController.merge_json(
-                    RpcController.task_result["JsonFlow"], result)
+                RpcController.task_result["Json_Flow"] = RpcController.merge_json(
+                    RpcController.task_result["Json_Flow"], result)
 
         return RpcController.task_result
         

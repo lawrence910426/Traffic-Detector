@@ -13,7 +13,7 @@ from .proto import interface_pb2_grpc
 
 class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
     def __init__(self):
-        self.running_thread = None
+        self.background_thread = None
         self.JsonFlow = ""
         self.Progress = 0.0
         self.Output_Video_Path = ""
@@ -88,23 +88,24 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
             config.USE_FASTREID = False
 
             # Build Traffic counter
-            servicer.counter = TrafficCounter(config, args, 
+            counter = TrafficCounter(config, args, 
                 video_path="./videos/" + request.Input_Video_Path)
             servicer.Output_Video_Path = request.Output_Video_Path + ".mp4"
 
             # Assume cross thread communication is safe
-            servicer.counter.init_loop()
-            while not servicer.counter is None:
+            counter.init_loop()
+            while not servicer.background_thread is None:
                 try:
-                    servicer.Progress = servicer.counter.loop()
+                    servicer.Progress = counter.loop()
                 except LoopException as e:
                     break
             
             # Finalize the loop
-            if not servicer.counter is None:
-                servicer.JsonFlow = json.dumps(servicer.counter.finalize_loop())
-                del servicer.counter
-
-            servicer.Progress = 1
+            if not counter is None:
+                servicer.JsonFlow = json.dumps(counter.finalize_loop())
+                del counter
         except Exception as e:
             print(str(e), flush=True)
+        
+        # Completed
+        servicer.Progress = 1
