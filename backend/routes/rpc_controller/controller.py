@@ -60,7 +60,7 @@ class RpcController:
             task_id += 1
 
         # Start the thread without waiting
-        for host in hostlist
+        for host in hostlist:
             threading.Thread(target=RpcController.execute_task, args=(host)).start()
 
     @staticmethod
@@ -72,8 +72,8 @@ class RpcController:
             while client.Get_State() != "COMPLETED":
                 time.sleep(1)
             
-            RpcController.task_result["IndependentResults"][params["task_id"]] = {
-                "flow": **json.loads(client.Get_Task().JsonFlow),
+            RpcController.task_result["Independent_Results"][params["task_id"]] = {
+                "flow": json.loads(client.Get_Task().JsonFlow),
                 "video_path": client.Get_Task().Output_Video_Path
             }
 
@@ -101,11 +101,10 @@ class RpcController:
             RpcController.task_result["Output_Video_Path"] = RpcController.config['STATIC_URL'] + \
                 RpcController.params["Output_Video_Path"] + ".mp4"
 
-            for task_id in RpcController.task_result["Independent_Results"]
+            for task_id in RpcController.task_result["Independent_Results"]:
                 result = RpcController.task_result["Independent_Results"][task_id]["flow"]
                 RpcController.task_result["JsonFlow"] = RpcController.merge_json(
                     RpcController.task_result["JsonFlow"], result)
-                RpcController.task_result["IndependentFlow"][i] = result
 
         return RpcController.task_result
         

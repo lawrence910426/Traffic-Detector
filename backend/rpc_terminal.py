@@ -18,6 +18,8 @@ def parse_args():
 
     parser.add_argument("--stable_period", type=int, default=1000)
     parser.add_argument("--output_name", type=str, default='this-is-some-uuid')
+    parser.add_argument("--slices", type=int, default=1)
+
     return parser.parse_args()
 
 # Wait until the RPC Server is ready.
@@ -37,7 +39,8 @@ if __name__ == "__main__":
         "Mode": args.mode,
         "Stabilization_Period": args.stable_period,
         "Input_Video_Path": args.VIDEO_PATH,
-        "Output_Video_Path": args.output_name
+        "Output_Video_Path": args.output_name,
+        "Slice_Count": args.slices
     }
     for key, value in mapping.items():
         task_params[key] = {

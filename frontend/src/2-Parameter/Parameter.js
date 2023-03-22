@@ -32,7 +32,7 @@ class Parameters extends React.Component {
         'B': { 'x1': 0, 'x2': 0, 'y1': 0, 'y2': 0 },
       },
       stabilization: 10,
-      slice: 0,
+      slice: 1,
       id: props.video,
       modeValue: '0'
     }
@@ -65,8 +65,8 @@ class Parameters extends React.Component {
     this.props.mode(this.modeMapping[newValue])
   }
 
-  handleSliceChange(event, newValue) {
-    this.setState({ slice: newValue })
+  handleSliceChange(event) {
+    this.setState({ slice: event.target.value })
   }
 
   renderTabs(index) {
@@ -96,7 +96,7 @@ class Parameters extends React.Component {
 
           <Row style={{ marginTop: '3rem' }}>
             <Col sm={4} md={2} lg={2}><h5>選擇拆分數量</h5></Col>
-            <Col><MDBInput type='number' onChange={this.handleSliceChange.bind(this)} /></Col>
+            <Col><MDBInput type='number' onChange={this.handleSliceChange.bind(this)} value={1} /></Col>
           </Row>
 
           <Row style={{ marginTop: '3rem' }}><Col>
@@ -123,7 +123,8 @@ class Parameters extends React.Component {
               --detector_line_a ${dtor["A"]["x1"]},${dtor["A"]["y1"]},${dtor["A"]["x2"]},${dtor["A"]["y2"]}
               --detector_line_b ${dtor["B"]["x1"]},${dtor["B"]["y1"]},${dtor["B"]["x2"]},${dtor["B"]["y2"]}
               --detector_line_x ${dtor["X"]["x1"]},${dtor["X"]["y1"]},${dtor["X"]["x2"]},${dtor["X"]["y2"]}
-              --detector_line_y ${dtor["Y"]["x1"]},${dtor["Y"]["y1"]},${dtor["Y"]["x2"]},${dtor["Y"]["y2"]}` }
+              --detector_line_y ${dtor["Y"]["x1"]},${dtor["Y"]["y1"]},${dtor["Y"]["x2"]},${dtor["Y"]["y2"]}
+              --slices ${this.state.slice}` }
           </code></Col></Row>
           
           <Row style={{ marginTop: '3rem' }}><Col>
