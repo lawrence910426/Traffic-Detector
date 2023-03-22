@@ -89,8 +89,8 @@ RUN cmake -D WITH_CUDA=ON \
 RUN make -j 80 && make install
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt
 
-# Copy YoloV3
-COPY detector/YOLOv3/ /app/video-detector/detector/YOLOv3/
+# Create YoloV3 weight placeholder
+COPY detector/YOLOv3/weight/ /app/video-detector/detector/YOLOv3/weight/
 WORKDIR /app/video-detector
 
 # Download weights

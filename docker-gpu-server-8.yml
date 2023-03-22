@@ -14,6 +14,10 @@ services:
       - detector_2
       - detector_3
       - detector_4
+      - detector_5
+      - detector_6
+      - detector_7
+      - detector_8
     volumes:
       - video-in-volume:/mnt/video-in
       - video-out-volume:/mnt/video-out
