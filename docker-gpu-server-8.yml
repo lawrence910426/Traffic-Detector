@@ -1,6 +1,7 @@
 version: '3'
 services:
   backend:
+    ipc: host
     container_name: 'traffic-backend'
     build: ./backend
     restart: always
@@ -30,6 +31,7 @@ services:
                 capabilities: [gpu]
 
   detector_1:
+    ipc: host
     container_name: 'traffic-detector-1'
     build: 
       context: ./video-detector
@@ -45,6 +47,7 @@ services:
               count: 1
               capabilities: [gpu]
   detector_2:
+    ipc: host
     container_name: 'traffic-detector-2'
     build: 
       context: ./video-detector
@@ -60,6 +63,7 @@ services:
               count: 1
               capabilities: [gpu]
   detector_3:
+    ipc: host
     container_name: 'traffic-detector-3'
     build: 
       context: ./video-detector
@@ -75,6 +79,7 @@ services:
               count: 1
               capabilities: [gpu]
   detector_4:
+    ipc: host
     container_name: 'traffic-detector-4'
     build: 
       context: ./video-detector
@@ -90,6 +95,7 @@ services:
               count: 1
               capabilities: [gpu]
   detector_5:
+    ipc: host
     container_name: 'traffic-detector-5'
     build: 
       context: ./video-detector
@@ -105,6 +111,7 @@ services:
               count: 1
               capabilities: [gpu]
   detector_6:
+    ipc: host
     container_name: 'traffic-detector-6'
     build: 
       context: ./video-detector
@@ -120,6 +127,7 @@ services:
               count: 1
               capabilities: [gpu]
   detector_7:
+    ipc: host
     container_name: 'traffic-detector-7'
     build: 
       context: ./video-detector
@@ -135,6 +143,7 @@ services:
               count: 1
               capabilities: [gpu]
   detector_8:
+    ipc: host
     container_name: 'traffic-detector-8'
     build: 
       context: ./video-detector
