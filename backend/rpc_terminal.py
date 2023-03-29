@@ -23,7 +23,7 @@ def parse_args():
     return parser.parse_args()
 
 # Wait until the RPC Server is ready.
-time.sleep(5)
+# time.sleep(5)
 
 if __name__ == "__main__":
     args = parse_args()
@@ -52,6 +52,7 @@ if __name__ == "__main__":
 
     RpcController.init_task(task_params)
     while True:
+        time.sleep(1)
         task_info = RpcController.get_task()
         print("[Running] ", task_info["Progress"])
         if task_info["State"] == "COMPLETED":
