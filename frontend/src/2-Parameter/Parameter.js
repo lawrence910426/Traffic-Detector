@@ -118,7 +118,7 @@ class Parameters extends React.Component {
           <Row style={{ marginTop: '3rem' }}><Col sm={4} md={2} lg={2}>
             <h5>以指令執行模型</h5>
           </Col><Col><code>
-            { `python rpc_terminal.py videos/${this.props.video} --mode ${this.modeMapping[this.state.modeValue]} 
+            { `python rpc_terminal.py ${this.props.video} --mode ${this.modeMapping[this.state.modeValue]} 
               --detector_line_t ${dtor["T"]["x1"]},${dtor["T"]["y1"]},${dtor["T"]["x2"]},${dtor["T"]["y2"]}
               --detector_line_a ${dtor["A"]["x1"]},${dtor["A"]["y1"]},${dtor["A"]["x2"]},${dtor["A"]["y2"]}
               --detector_line_b ${dtor["B"]["x1"]},${dtor["B"]["y1"]},${dtor["B"]["x2"]},${dtor["B"]["y2"]}
