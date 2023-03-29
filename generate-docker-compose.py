@@ -55,11 +55,7 @@ workers = "\n".join([
 volumes = """
 volumes:
   video-out-volume:
-    type: tmpfs
-    device: tmpfs
   video-in-volume:
-    type: tmpfs
-    device: tmpfs
 """
 
 print(backend + workers + volumes)
