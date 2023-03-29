@@ -1,4 +1,4 @@
-REPLICAS = 16
+REPLICAS = 32
 
 links = "\n".join([f"      - detector_{i}" for i in range(1, REPLICAS + 1)])
 host_list = ",".join([f"detector_{i}" for i in range(1, REPLICAS + 1)])
@@ -54,7 +54,9 @@ workers = "\n".join([
 
 volumes = """
 volumes:
-  video-out-volume: 
+  video-out-volume:
+    type: tmpfs
+    device: tmpfs
   video-in-volume:
 """
 
