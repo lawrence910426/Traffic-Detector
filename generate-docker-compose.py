@@ -1,6 +1,7 @@
-REPLICAS = 8
+REPLICAS = 16
 
 links = "\n".join([f"      - detector_{i}" for i in range(1, REPLICAS + 1)])
+host_list = ",".join([f"detector_{i}" for i in range(1, REPLICAS + 1)])
 
 backend = f"""
 version: '3'
@@ -14,7 +15,7 @@ services:
       - 8000:8000
     environment:
       - BACKEND_HOST=${{BACKEND_HOST}}
-      - RPC_HOST_LIST=${{RPC_HOST_LIST}}
+      - RPC_HOST_LIST={host_list}
     links:
 {links}
     volumes:
