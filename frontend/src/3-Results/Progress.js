@@ -21,17 +21,17 @@ class Progress extends React.Component {
 
   componentDidMount() {
     var intervalId = setInterval(async () => {
-        var progress = await axios.get(config.host + "query_task", {
+        var results = await axios.get(config.host + "query_task", {
             params: { videoId: this.props.video }
         })
-        progress = parseInt(progress.data.progress)
+        var progress = parseInt(results.data.progress)
 
         this.setState({ progress: progress })
         this.setState((prevState) => { 
           return { seconds: prevState.seconds + 1 }
         })
 
-        if(progress == 100) {
+        if(results.data.state == "COMPLETED") {
           clearInterval(intervalId)
           this.props.complete()
         }

@@ -15,5 +15,6 @@ def query_task():
         "progress": task_info["Progress"],
         "flow": task_info["Json_Flow"],
         "independentFlow": task_info["Independent_Results"],
-        "videoUrl": task_info["Output_Video_Path"]
+        "videoUrl": task_info["Output_Video_Path"],
+        "state": task_info["State"],
     })

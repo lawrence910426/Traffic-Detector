@@ -54,6 +54,7 @@ if __name__ == "__main__":
     while True:
         task_info = RpcController.get_task()
         print("[Running] ", task_info["Progress"])
-        if task_info["Progress"] == 100:
+        if task_info["State"] == "COMPLETED":
             print("[Program Complete]", task_info)
             break
+    exit()

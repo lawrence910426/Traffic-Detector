@@ -33,7 +33,8 @@ class RpcController:
             "Json_Flow": None,
             "Independent_Results": {},
             "Progress": 0,
-            "Output_Video_Path": ""
+            "Output_Video_Path": "",
+            "State": None
         }
 
         # Initialize hosts
@@ -108,7 +109,8 @@ class RpcController:
                 result = RpcController.task_result["Independent_Results"][task_id]["flow"]
                 RpcController.task_result["Json_Flow"] = RpcController.merge_json(
                     RpcController.task_result["Json_Flow"], result)
-
+        
+        RpcController.task_result["State"] = RpcController.get_state()
         return RpcController.task_result
         
     @staticmethod
