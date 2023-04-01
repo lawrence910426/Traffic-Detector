@@ -99,9 +99,9 @@ class RpcController:
             RpcController.controller_state = "COMPLETED"
 
             # Merge videos
-            RpcController.merge_video([
+            RpcController.merge_video(sorted([
                 "/mnt/video-out/" + item["video_path"]
-                for item in RpcController.task_result["Independent_Results"].values()])
+                for item in RpcController.task_result["Independent_Results"].values()]))
             RpcController.task_result["Output_Video_Path"] = RpcController.config['STATIC_URL'] + \
                 RpcController.params["Output_Video_Path"] + ".mp4"
 
