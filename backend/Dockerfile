@@ -45,7 +45,7 @@ EXPOSE 8000
 # CMD [ "sleep", "86400" ]
 CMD [ \
     "conda", "run", "-n", "backend", \
-    "gunicorn", "-t", "3600", "-w", "1", "--bind", "0.0.0.0:8000", "app:app" \
+    "gunicorn", "-t", "86400", "-w", "1", "--bind", "0.0.0.0:8000", "app:app" \
 ]
 
 
