@@ -203,6 +203,8 @@ class ImageEditor extends React.Component {
       this.imageEditorInst.on('objectMoved', updatePosition);
       this.imageEditorInst.on('objectRotated', updatePosition);
       this.imageEditorInst.on('objectScaled', updatePosition);
+
+      this.imageEditorInst.discardSelection();
     }
   
     componentWillUnmount() {
