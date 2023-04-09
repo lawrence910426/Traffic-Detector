@@ -6,6 +6,7 @@ from google.protobuf import empty_pb2 as wrappers
 from .proto import interface_pb2
 from .proto import interface_pb2_grpc
 
+# This is an interface between our Rpc Worker and our Rpc Controller.
 class RpcClient:
     def __init__(self, host):
         self.state = "INIT"

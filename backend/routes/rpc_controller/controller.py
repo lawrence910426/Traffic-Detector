@@ -12,7 +12,8 @@ import threading
 from .proto import interface_pb2
 from .client import RpcClient
 
-# Singleton design to prevent multiple instances of the controller.
+# Singleton design to prevent multiple instances of the controller. This
+# coordinates the task assigned to our Rpc Workers.
 class RpcController:
     controller_state = "INIT"
     clients = []
