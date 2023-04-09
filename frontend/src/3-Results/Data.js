@@ -57,14 +57,14 @@ class Data extends React.Component {
                 "影片編號": index, 
                 "汽車": item["car"]["Forward"], 
                 "機車": item["motorbike"]["Forward"], 
-                "大車": item["large"]["Forward"], 
+                "大車": item["truck"]["Forward"] + item["bus"]["Forward"], 
                 "腳踏車": item["bicycle"]["Forward"]
             })
             Reverse.push({
                 "影片編號": index, 
                 "汽車": item["car"]["Reverse"], 
                 "機車": item["motorbike"]["Reverse"], 
-                "大車": item["large"]["Reverse"], 
+                "大車": item["truck"]["Reverse"] + item["bus"]["Reverse"], 
                 "腳踏車": item["bicycle"]["Reverse"]
             })
         }
