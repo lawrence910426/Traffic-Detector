@@ -47,27 +47,34 @@ class Data extends React.Component {
     
     downloadExcel() {
         const workbook = utils.book_new();
-        const Forward = utils.json_to_sheet(this.state.flow.map((item, index) => {
-            return {
+        var Forward = [], Reverse = []
+        for(var index in this.state.flow) {
+            var item = this.state.flow[index]
+            Forward.push({
                 "影片編號": index, 
                 "汽車": item["car"]["Forward"], 
                 "機車": item["motorbike"]["Forward"], 
                 "大車": item["large"]["Forward"], 
                 "腳踏車": item["bicycle"]["Forward"]
-            }
-        }), { header: ["影片編號", "汽車", "機車", "大車", "腳踏車"] })
-        utils.book_append_sheet(workbook, Forward, "由紅線往綠線車流"); 
-
-        const Reverse = utils.json_to_sheet(this.state.flow.map((item, index) => {
-            return {
+            })
+            Reverse.push({
                 "影片編號": index, 
                 "汽車": item["car"]["Reverse"], 
                 "機車": item["motorbike"]["Reverse"], 
                 "大車": item["large"]["Reverse"], 
                 "腳踏車": item["bicycle"]["Reverse"]
-            }
-        }), { header: ["影片編號", "汽車", "機車", "大車", "腳踏車"] })
-        utils.book_append_sheet(workbook, Reverse, "由綠線往紅線車流"); 
+            })
+        }
+        
+        utils.book_append_sheet(workbook, 
+            utils.json_to_sheet(Forward, { 
+                header: ["影片編號", "汽車", "機車", "大車", "腳踏車"] 
+            }), "由紅線往綠線車流"); 
+
+        utils.book_append_sheet(workbook, 
+            utils.json_to_sheet(Reverse, { 
+                header: ["影片編號", "汽車", "機車", "大車", "腳踏車"] 
+            }), "由綠線往紅線車流"); 
 
         writeFile(workbook, "Traffic.xlsb")
     }
