@@ -14,14 +14,7 @@ import FlowPresentation from './FlowPresentation'
 class Data extends React.Component {
     constructor() {
         super()
-        this.state = { 
-            sheet: utils.json_to_sheet([
-                { 車種: '小客車', 順向流量: 0, 逆向流量: 0 },
-                { 車種: '機車', 順向流量: 0, 逆向流量: 0 },
-                { 車種: '大車', 順向流量: 0, 逆向流量: 0 },
-                { 車種: 'MCU', 順向流量: 0, 逆向流量: 0 }
-                ], { header: ["車種", "順向流量", "逆向流量"] }
-            ),
+        this.state = {
             flow: {},
             videoUrl: "http://techslides.com/demos/sample-videos/small.mp4",
             result: {}
@@ -54,7 +47,28 @@ class Data extends React.Component {
     
     downloadExcel() {
         const workbook = utils.book_new();
-        utils.book_append_sheet(workbook, this.state.sheet, "交通流量計數");
+        const Forward = utils.json_to_sheet(this.state.flow.map((item, index) => {
+            return {
+                "影片編號": index, 
+                "汽車": item["car"]["Forward"], 
+                "機車": item["motorbike"]["Forward"], 
+                "大車": item["large"]["Forward"], 
+                "腳踏車": item["bicycle"]["Forward"]
+            }
+        }), { header: ["影片編號", "汽車", "機車", "大車", "腳踏車"] })
+        utils.book_append_sheet(workbook, Forward, "由紅線往綠線車流"); 
+
+        const Reverse = utils.json_to_sheet(this.state.flow.map((item, index) => {
+            return {
+                "影片編號": index, 
+                "汽車": item["car"]["Reverse"], 
+                "機車": item["motorbike"]["Reverse"], 
+                "大車": item["large"]["Reverse"], 
+                "腳踏車": item["bicycle"]["Reverse"]
+            }
+        }), { header: ["影片編號", "汽車", "機車", "大車", "腳踏車"] })
+        utils.book_append_sheet(workbook, Reverse, "由綠線往紅線車流"); 
+
         writeFile(workbook, "Traffic.xlsb")
     }
 
