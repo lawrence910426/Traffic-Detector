@@ -51,7 +51,8 @@ class Data extends React.Component {
         const workbook = utils.book_new();
         var Forward = [], Reverse = []
         for(var index in this.state.independentFlow) {
-            var item = this.state.independentFlow[index]
+            var item = this.state.independentFlow[index]["flow"]
+            print(item)
             Forward.push({
                 "影片編號": index, 
                 "汽車": item["car"]["Forward"], 
