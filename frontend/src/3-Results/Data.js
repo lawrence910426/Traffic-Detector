@@ -52,7 +52,7 @@ class Data extends React.Component {
         var Forward = [], Reverse = []
         for(var index in this.state.independentFlow) {
             var item = this.state.independentFlow[index]["flow"]
-            print(item)
+            console.log(item)
             Forward.push({
                 "影片編號": index, 
                 "汽車": item["car"]["Forward"], 
