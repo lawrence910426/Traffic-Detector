@@ -83,7 +83,7 @@ class Data extends React.Component {
                     <Col style={{ marginTop: '1rem' }}>
                         <Row><Col style={{ marginTop: '1rem' }}>
                             <FlowPresentation mode={this.props.mode} flow={this.state.flow}></FlowPresentation>
-                            <MDBBtn onClick={this.downloadExcel}>下載交通流量結果</MDBBtn>
+                            <MDBBtn onClick={this.downloadExcel.bind(this)}>下載交通流量結果</MDBBtn>
                         </Col></Row>
 
                         <Row><Col style={{ marginTop: '1rem' }}>
