@@ -21,8 +21,8 @@ class TaskQueue:
             TaskQueue.controller.init_task(TaskQueue.task_queue.get_nowait())
 
             # Initialize the thread
-            master_thread = threading.Thread(target=TaskQueue.feed_task)
-            master_thread.start()
+            TaskQueue.master_thread = threading.Thread(target=TaskQueue.feed_task)
+            TaskQueue.master_thread.start()
 
     @staticmethod
     def get_task_result(video_identifier):
