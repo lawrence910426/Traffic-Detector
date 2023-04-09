@@ -6,7 +6,7 @@ import os
 import uuid
 import sys
 
-from routes.rpc_controller.controller import RpcController
+from routes.rpc_controller.task_queue import TaskQueue
 
 @app.route('/init_task', methods=['GET'])
 def init_task():
@@ -30,6 +30,6 @@ def init_task():
         "A": detector['A'] if 'A' in detector else null_detector,
         "B": detector['B'] if 'B' in detector else null_detector
     }
-    RpcController.init_task(params)
+    TaskQueue.add_task(params)
     
     return jsonify({ "id": unique_id })
