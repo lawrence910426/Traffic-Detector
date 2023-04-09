@@ -9,7 +9,7 @@ class TaskQueue:
     task_queue = Queue()
     controller = RpcController()
     master_thread = None
-    historical_task_result = {}
+    task_result = {}
 
     @staticmethod
     def add_task(task):
@@ -26,7 +26,7 @@ class TaskQueue:
 
     @staticmethod
     def get_task_result(video_identifier):
-        return TaskQueue.historical_task_result[video_identifier]
+        return TaskQueue.task_result[video_identifier]
 
     @staticmethod
     def feed_task():
