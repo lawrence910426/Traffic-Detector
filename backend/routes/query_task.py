@@ -11,10 +11,19 @@ def query_task():
     video_id = request.args.get('videoId')
 
     task_info = TaskQueue.get_task_result(video_id)
-    return jsonify({ 
-        "progress": task_info["Progress"],
-        "flow": task_info["Json_Flow"],
-        "independentFlow": task_info["Independent_Results"],
-        "videoUrl": task_info["Output_Video_Path"],
-        "state": task_info["State"],
-    })
+    if task_info == None:
+        return jsonify({ 
+            "progress": 0,
+            "flow": "",
+            "independentFlow": "",
+            "videoUrl": "",
+            "state": "WAITING",
+        })
+    else:
+        return jsonify({ 
+            "progress": task_info["Progress"],
+            "flow": task_info["Json_Flow"],
+            "independentFlow": task_info["Independent_Results"],
+            "videoUrl": task_info["Output_Video_Path"],
+            "state": task_info["State"],
+        })
