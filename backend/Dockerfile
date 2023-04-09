@@ -43,12 +43,12 @@ EXPOSE 8000
 
 # Only 1 worker is allowed.
 # CMD [ "sleep", "86400" ]
-CMD [ \
-    "rm", "-rf", "/mnt/video-in", "&&", "rm", "-rf", "/mnt/video-out", "&&", \
-    "conda", "run", "-n", "backend", \
-    "gunicorn", "-t", "86400", "-w", "1", "--bind", "0.0.0.0:8000", "app:app" \
-]
 
+RUN echo "rm /mnt/video-in/* && rm /mnt/video-out/*" > startup.sh
+RUN echo "gunicorn -t 86400 -w 1 --bind 0.0.0.0:8000 app:app" >> startup.sh
+# RUN echo "sleep 86400" >> startup.sh
+
+CMD ["conda", "run", "-n", "backend", "bash", "startup.sh"]
 
 # Run with rpc terminal
 # CMD ["conda", "run", "-n", "backend", "python", "rpc_terminal.py", "minimal.mp4"]
