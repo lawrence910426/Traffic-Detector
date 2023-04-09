@@ -34,6 +34,7 @@ class RpcController:
             "Json_Flow": None,
             "Independent_Results": {},
             "Progress": 0,
+            "Input_Video_Path": params["Input_Video_Path"],
             "Output_Video_Path": "",
             "State": None
         }
