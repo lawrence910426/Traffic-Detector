@@ -16,6 +16,7 @@ class Data extends React.Component {
         super()
         this.state = {
             flow: {},
+            independentFlow: {},
             videoUrl: "http://techslides.com/demos/sample-videos/small.mp4",
             result: {}
         }
@@ -41,6 +42,7 @@ class Data extends React.Component {
         console.log(result.flow)
 
         this.setState({ flow: result.flow })
+        this.setState({ independentFlow: result.independentFlow })
         this.setState({ videoUrl: result.videoUrl })
         this.setState({ result: result })
     }
@@ -48,8 +50,8 @@ class Data extends React.Component {
     downloadExcel() {
         const workbook = utils.book_new();
         var Forward = [], Reverse = []
-        for(var index in this.state.flow) {
-            var item = this.state.flow[index]
+        for(var index in this.state.independentFlow) {
+            var item = this.state.independentFlow[index]
             Forward.push({
                 "影片編號": index, 
                 "汽車": item["car"]["Forward"], 
