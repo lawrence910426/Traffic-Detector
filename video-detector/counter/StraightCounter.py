@@ -21,7 +21,7 @@ class StraightCounter(Counter):
             "Reverse": len(self.flow["Reverse"])
         }
 
-    def update(self, id, vehicle: Box):
+    def update(self, id, idx_frame, vehicle: Box):
         if not (id in self.occurence_stack):
             self.occurence_stack[id] = []
             self.vehicle_status[id] = None
@@ -65,4 +65,6 @@ class StraightCounter(Counter):
 
             if not direction is None:
                 self.flow[direction].add(id)
+
+        
                 

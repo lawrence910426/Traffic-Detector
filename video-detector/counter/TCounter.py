@@ -32,7 +32,7 @@ class TCounter(StackCounter):
             }
         }
 
-    def update(self, id, vehicle: Box):
+    def update(self, id, idx_frame, vehicle: Box):
         detected_line = None
         if self.hover(self.A, vehicle):
             detected_line = "A"

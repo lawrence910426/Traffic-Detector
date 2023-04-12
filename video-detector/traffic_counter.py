@@ -242,7 +242,7 @@ class TrafficCounter(object):
                         bb_xyxy, bb_id = bbox_xyxy[i], identities[i]
                         bbox_tlwh.append(self.deepsort[k]._xyxy_to_tlwh(bb_xyxy))
                         if self.start_frame <= self.idx_frame and self.idx_frame < self.end_frame:
-                            self.detection_counter[k].update(bb_id, Box(*bb_xyxy))
+                            self.detection_counter[k].update(bb_id, self.idx_frame, Box(*bb_xyxy))
 
                     fg_im = draw_boxes(fg_im, bbox_xyxy, identities)
             
