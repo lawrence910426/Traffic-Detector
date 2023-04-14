@@ -1,22 +1,31 @@
-FROM nvidia/cuda:11.7.0-devel-ubuntu22.04
+# FROM nvidia/cuda:11.7.0-devel-ubuntu22.04
+FROM nvcr.io/nvidia/pytorch:23.03-py3
 
 ENV CUDA_HOME=/usr/local/cuda                                                          
 ENV PATH=$PATH:/usr/local/cuda/bin
+
+# Setup timezone
+ENV TZ=Asia/Taipei
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install base utilities
 RUN apt update -y && apt upgrade -y && \
     apt install -y build-essential cmake && \
     apt install -y wget && \
     apt install -y git && \
-    apt install -y libx264-dev
+    apt install -y libx264-dev && \
+    apt install -y python3-tk
+
+# Remove NGC's opencv
+RUN pip uninstall -y opencv
 
 # Install conda
-ENV CONDA_DIR /opt/conda
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-     /bin/bash ~/miniconda.sh -b -p /opt/conda
-ENV PATH=$CONDA_DIR/bin:$PATH
-RUN conda create --name detector python=3.7
-SHELL ["conda", "run", "-n", "detector", "/bin/bash", "-c"]
+
+# ENV CONDA_DIR /opt/conda
+# RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && /bin/bash ~/miniconda.sh -b -p /opt/conda
+# ENV PATH=$CONDA_DIR/bin:$PATH
+# RUN conda create --name detector python=3.7
+# SHELL ["conda", "run", "-n", "detector", "/bin/bash", "-c"]
 
 # Install FFmpeg 4.4 with CUDA
 ## Compile and build
@@ -100,9 +109,9 @@ RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights
 WORKDIR ../../../
 
 # Fix symbolic link (Ubuntu 22.04 bug)
-RUN rm /opt/conda/envs/detector/lib/libstdc++.so*
-RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so.6
-RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so
+# RUN rm /opt/conda/envs/detector/lib/libstdc++.so*
+# RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so.6
+# RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so
 
 # Copy the remaining files
 COPY . /app/video-detector
@@ -118,4 +127,5 @@ RUN echo "python rpc_daemon.py" >> init.sh
 # RUN echo "python traffic_terminal.py videos/minimal.mp4 --mode straight" >> init.sh
 # RUN echo "sleep 86400" >> init.sh
 
-CMD ["conda", "run", "-n", "detector", "sh", "init.sh"]
+CMD [ "sh", "init.sh" ]
+# CMD ["conda", "run", "-n", "detector", "sh", "init.sh"]
