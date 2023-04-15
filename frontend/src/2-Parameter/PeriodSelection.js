@@ -51,7 +51,7 @@ class PeriodSelection extends React.Component {
             <Row><Col>
               <Slider
                 aria-label="Restricted values"
-                defaultValue={30}
+                defaultValue={0}
                 max={120}
                 valueLabelFormat={this.valueLabelFormat}
                 getAriaValueText={this.valuetext}

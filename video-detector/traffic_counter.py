@@ -172,25 +172,35 @@ class TrafficCounter(object):
             img = draw_detector(img, self.detect_y, (0, 127, 255))
         return img
 
+    def prepare_stabilize(self):
+        self.stable_fixer = Stabilizer(
+            self.args, Progress_Divider(0, 0.1), self.logger)
+        self.stable_fixer.init_loop(self.vdo)
+        self.loop_state = "STABILIZE"
+
+    def prepare_detect(self):
+        self.detection_progress = Progress_Divider(0.1, 0.99)
+        self.fixed_transform = self.stable_fixer.finalize_loop()
+        
+        self.vdo.set(cv2.CAP_PROP_POS_FRAMES, self.start_buffer_frame)
+        self.idx_frame = self.start_buffer_frame
+        self.loop_state = "DETECT"
+
     def loop(self):
         if self.loop_state == "INIT":
-            self.stable_fixer = Stabilizer(
-                self.args, Progress_Divider(0, 0.1), self.logger)
-            self.stable_fixer.init_loop(self.vdo)
-            self.loop_state = "STABILIZE"
-            return 0 # Progress = 0%
+            if self.args.stable_period == 0:
+                self.prepare_detect()
+                return 0 # Progress = 10%, skip stabilization
+            else:
+                self.prepare_stabilize()
+                return 0 # Progress = 0%
 
         elif self.loop_state == "STABILIZE":
             try:
                 progress = self.stable_fixer.loop()
                 return progress
             except LoopException as e:
-                self.loop_state = "DETECT"
-                self.detection_progress = Progress_Divider(0.1, 0.99)
-                self.fixed_transform = self.stable_fixer.finalize_loop()
-                
-                self.vdo.set(cv2.CAP_PROP_POS_FRAMES, self.start_buffer_frame)
-                self.idx_frame = self.start_buffer_frame
+                self.prepare_detect()
                 return 0.1 # Progress = 10%
 
         elif self.loop_state == "DETECT":
