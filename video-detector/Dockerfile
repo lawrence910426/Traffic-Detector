@@ -16,8 +16,16 @@ RUN apt update -y && apt upgrade -y && \
     apt install -y libx264-dev && \
     apt install -y python3-tk
 
-# Install conda
+# Install Intel oneAPI
+RUN curl -fsSL https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB | apt-key add -
+RUN echo "deb [trusted=yes] https://apt.repos.intel.com/oneapi all main " > /etc/apt/sources.list.d/oneAPI.list
+RUN apt update -y && apt upgrade -y && apt install intel-basekit-getting-started intel-oneapi-advisor intel-oneapi-ccl-devel intel-oneapi-common-licensing intel-oneapi-common-vars intel-oneapi-dev-utilities intel-oneapi-ipp-devel intel-oneapi-tbb-devel -y
 
+ENV CPATH=$CPATH:/opt/intel/oneapi/ipp/latest/include:/opt/intel/oneapi/tbb/latest/include/tbb
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/oneapi/ipp/latest/lib/intel64:/opt/intel/oneapi/tbb/latest/lib/intel64/gcc4.8
+ENV LIBRARY_PATH=$LIBRARY_PATH:/opt/intel/oneapi/ipp/latest/lib/intel64:/opt/intel/oneapi/tbb/latest/lib/intel64/gcc4.8
+
+# Install conda
 # ENV CONDA_DIR /opt/conda
 # RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && /bin/bash ~/miniconda.sh -b -p /opt/conda
 # ENV PATH=$CONDA_DIR/bin:$PATH
@@ -63,8 +71,8 @@ RUN cmake -D WITH_CUDA=ON \
     -D BUILD_opencv_java=OFF \
     -D WITH_OPENGL=OFF \
     -D WITH_OPENCL=OFF \
-    -D WITH_IPP=OFF \
-    -D WITH_TBB=OFF \
+    -D WITH_IPP=ON \
+    -D WITH_TBB=ON \
     -D WITH_EIGEN=ON \
     -D WITH_V4L=OFF \
     -D WITH_VTK=OFF \
