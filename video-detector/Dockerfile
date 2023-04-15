@@ -16,9 +16,6 @@ RUN apt update -y && apt upgrade -y && \
     apt install -y libx264-dev && \
     apt install -y python3-tk
 
-# Remove NGC's opencv
-RUN pip uninstall -y opencv
-
 # Install conda
 
 # ENV CONDA_DIR /opt/conda
@@ -97,6 +94,9 @@ RUN cmake -D WITH_CUDA=ON \
     ..
 RUN make -j 80 && make install
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt
+
+# Remove NGC's opencv
+RUN pip uninstall -y opencv
 
 # Create YoloV3 weight placeholder
 COPY detector/YOLOv3/weight/ /app/video-detector/detector/YOLOv3/weight/

@@ -1,4 +1,4 @@
-REPLICAS = 32
+REPLICAS = 8
 
 links = "\n".join([f"      - detector_{i}" for i in range(1, REPLICAS + 1)])
 host_list = ",".join([f"detector_{i}" for i in range(1, REPLICAS + 1)])
@@ -39,6 +39,7 @@ workers = "\n".join([
     build: 
       context: ./video-detector
     restart: always
+    shm_size: '32gb'
     volumes:
       - video-in-volume:/app/video-detector/videos
       - video-out-volume:/app/video-detector/output
