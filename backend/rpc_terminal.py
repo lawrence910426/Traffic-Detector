@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument("--detector_line_x", type=str, default='0,0,1000,1000')
     parser.add_argument("--detector_line_y", type=str, default='0,0,1000,1000')
 
-    parser.add_argument("--stable_period", type=int, default=1000)
+    parser.add_argument("--stable_period", type=int, default=0)
     parser.add_argument("--output_name", type=str, default='this-is-some-uuid')
     parser.add_argument("--slices", type=int, default=1)
 
