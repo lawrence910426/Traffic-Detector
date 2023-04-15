@@ -219,11 +219,15 @@ class TrafficCounter(object):
             if not succ or self.idx_frame >= self.end_frame:
                 raise LoopException
 
-            # fix image. stabilize then foreground masking
-            fixed_im = self.stable_fixer.fix_frame(
-                ori_im, self.fixed_transform[self.idx_frame - self.start_buffer_frame], 
-                self.width, self.height)
-            fg_im = fixed_im
+            if self.args.stable_period == 0:
+                # disable stabilization
+                fg_im = ori_im
+            else:
+                # fix image. stabilize then foreground masking
+                fixed_im = self.stable_fixer.fix_frame(
+                    ori_im, self.fixed_transform[self.idx_frame - self.start_buffer_frame], 
+                    self.width, self.height)
+                fg_im = fixed_im
             
             # convert to rgb
             fg_im_rgb = cv2.cvtColor(fg_im, cv2.COLOR_BGR2RGB)
