@@ -1,0 +1,256 @@
+
+version: '3'
+services:
+  backend:
+    ipc: host
+    container_name: 'traffic-backend'
+    build: ./backend
+    restart: always
+    ports:
+      - 8000:8000
+    environment:
+      - BACKEND_HOST=${BACKEND_HOST}
+      - RPC_HOST_LIST=detector_1,detector_2,detector_3,detector_4,detector_5,detector_6,detector_7,detector_8,detector_9,detector_10,detector_11,detector_12
+    links:
+      - detector_1
+      - detector_2
+      - detector_3
+      - detector_4
+      - detector_5
+      - detector_6
+      - detector_7
+      - detector_8
+      - detector_9
+      - detector_10
+      - detector_11
+      - detector_12
+    volumes:
+      - video-in-volume:/mnt/video-in
+      - video-out-volume:/mnt/video-out
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                capabilities: [gpu]
+
+
+  detector_1:
+    ipc: host
+    container_name: 'traffic-detector-1'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['0']
+
+  detector_2:
+    ipc: host
+    container_name: 'traffic-detector-2'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['0']
+
+  detector_3:
+    ipc: host
+    container_name: 'traffic-detector-3'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['0']
+
+  detector_4:
+    ipc: host
+    container_name: 'traffic-detector-4'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['0']
+
+  detector_5:
+    ipc: host
+    container_name: 'traffic-detector-5'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['0']
+
+  detector_6:
+    ipc: host
+    container_name: 'traffic-detector-6'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['0']
+
+  detector_7:
+    ipc: host
+    container_name: 'traffic-detector-7'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['1']
+
+  detector_8:
+    ipc: host
+    container_name: 'traffic-detector-8'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['1']
+
+  detector_9:
+    ipc: host
+    container_name: 'traffic-detector-9'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['1']
+
+  detector_10:
+    ipc: host
+    container_name: 'traffic-detector-10'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['1']
+
+  detector_11:
+    ipc: host
+    container_name: 'traffic-detector-11'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['1']
+
+  detector_12:
+    ipc: host
+    container_name: 'traffic-detector-12'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - video-in-volume:/app/video-detector/videos
+      - video-out-volume:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              device_ids: ['1']
+volumes:
+  video-out-volume:
+  video-in-volume:
+
