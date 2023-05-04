@@ -17,7 +17,7 @@ def init_task():
     null_detector = { "x1": 0, "y1": 0, "x2": 0, "y2": 0 }
     slices = int(request.args.get('slice'))
 
-    unique_id = str(uuid.uuid4())
+    unique_id = video_id + str(uuid.uuid4())
     params = {
         "Mode": mode,
         "Stabilization_Period": stabilization,
