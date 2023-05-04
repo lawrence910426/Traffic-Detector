@@ -31,7 +31,7 @@ class Parameters extends React.Component {
         'A': { 'x1': 0, 'x2': 0, 'y1': 0, 'y2': 0 },
         'B': { 'x1': 0, 'x2': 0, 'y1': 0, 'y2': 0 },
       },
-      stabilization: 10,
+      stabilization: 0,
       slice: 1,
       id: props.video,
       modeValue: '0'

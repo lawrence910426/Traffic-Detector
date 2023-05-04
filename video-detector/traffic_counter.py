@@ -180,7 +180,6 @@ class TrafficCounter(object):
 
     def prepare_detect(self):
         self.detection_progress = Progress_Divider(0.1, 0.99)
-        self.fixed_transform = self.stable_fixer.finalize_loop()
         
         self.vdo.set(cv2.CAP_PROP_POS_FRAMES, self.start_buffer_frame)
         self.idx_frame = self.start_buffer_frame
@@ -200,6 +199,7 @@ class TrafficCounter(object):
                 progress = self.stable_fixer.loop()
                 return progress
             except LoopException as e:
+                self.fixed_transform = self.stable_fixer.finalize_loop()
                 self.prepare_detect()
                 return 0.1 # Progress = 10%
 

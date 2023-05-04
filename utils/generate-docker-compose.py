@@ -1,7 +1,8 @@
-REPLICAS = 8
+REPLICAS = 12
 
 links = "\n".join([f"      - detector_{i}" for i in range(1, REPLICAS + 1)])
 host_list = ",".join([f"detector_{i}" for i in range(1, REPLICAS + 1)])
+gen_count = True
 
 backend = f"""
 version: '3'
@@ -48,7 +49,7 @@ workers = "\n".join([
         reservations:
           devices:
             - driver: nvidia
-              count: 1
+              { "count: 1" if gen_count else "" }
               capabilities: [gpu]"""
     for i in range(1, REPLICAS + 1)
 ])
