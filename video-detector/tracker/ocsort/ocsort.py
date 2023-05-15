@@ -190,7 +190,7 @@ class OCSort(Tracker):
         self.use_byte = use_byte
         KalmanBoxTracker.count = 0
 
-    def update(self, output_results, img_info, img_size):
+    def _update(self, bbox_xywh, confidences, ori_img):
         """
         Params:
           dets - a numpy array of detections in the format [[x1,y1,x2,y2,score],[x1,y1,x2,y2,score],...]
@@ -198,21 +198,11 @@ class OCSort(Tracker):
         Returns the a similar array, where the last column is the object ID.
         NOTE: The number of objects returned may differ from the number of detections provided.
         """
-        if output_results is None:
-            return np.empty((0, 5))
 
         self.frame_count += 1
-        # post_process detections
-        if output_results.shape[1] == 5:
-            scores = output_results[:, 4]
-            bboxes = output_results[:, :4]
-        else:
-            output_results = output_results.cpu().numpy()
-            scores = output_results[:, 4] * output_results[:, 5]
-            bboxes = output_results[:, :4]  # x1y1x2y2
-        img_h, img_w = img_info[0], img_info[1]
-        scale = min(img_size[0] / float(img_h), img_size[1] / float(img_w))
-        bboxes /= scale
+        bboxes = self._xywh_to_xyxy(bbox_xywh)
+        scores = confidences
+
         dets = np.concatenate((bboxes, np.expand_dims(scores, axis=-1)), axis=1)
         inds_low = scores > 0.1
         inds_high = scores < self.det_thresh
@@ -427,3 +417,11 @@ class OCSort(Tracker):
         if(len(ret)>0):
             return np.concatenate(ret)
         return np.empty((0, 7))
+
+    def _xywh_to_xyxy(self, bbox_xywh):
+        x,y,w,h = bbox_xywh
+        x1 = max(int(x-w/2),0)
+        x2 = min(int(x+w/2),self.width-1)
+        y1 = max(int(y-h/2),0)
+        y2 = min(int(y+h/2),self.height-1)
+        return x1,y1,x2,y2
