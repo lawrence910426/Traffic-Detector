@@ -11,7 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'thirdparty/fast-reid'))
 
 
 from detector import build_detector
-from deep_sort import build_tracker
+from tracker import build_tracker
 from utils.draw import draw_boxes, draw_flow, draw_detector
 from utils.log import get_logger
 from utils.progress import Progress_Divider
