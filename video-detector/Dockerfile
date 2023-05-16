@@ -1,4 +1,5 @@
-FROM nvcr.io/nvidia/cuda:11.4.1-cudnn8-devel-ubuntu20.04
+# FROM nvidia/cuda:11.7.0-devel-ubuntu22.04
+FROM nvcr.io/nvidia/pytorch:23.03-py3
 
 ENV CUDA_HOME=/usr/local/cuda                                                          
 ENV PATH=$PATH:/usr/local/cuda/bin
@@ -12,15 +13,24 @@ RUN apt update -y && apt upgrade -y && \
     apt install -y build-essential cmake && \
     apt install -y wget && \
     apt install -y git && \
-    apt install -y libx264-dev
+    apt install -y libx264-dev && \
+    apt install -y python3-tk
+
+# Install Intel oneAPI
+RUN curl -fsSL https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB | apt-key add -
+RUN echo "deb [trusted=yes] https://apt.repos.intel.com/oneapi all main " > /etc/apt/sources.list.d/oneAPI.list
+RUN apt update -y && apt upgrade -y && apt install intel-basekit-getting-started intel-oneapi-advisor intel-oneapi-ccl-devel intel-oneapi-common-licensing intel-oneapi-common-vars intel-oneapi-dev-utilities intel-oneapi-ipp-devel intel-oneapi-tbb-devel -y
+
+ENV CPATH=$CPATH:/opt/intel/oneapi/ipp/latest/include:/opt/intel/oneapi/tbb/latest/include/tbb
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/oneapi/ipp/latest/lib/intel64:/opt/intel/oneapi/tbb/latest/lib/intel64/gcc4.8
+ENV LIBRARY_PATH=$LIBRARY_PATH:/opt/intel/oneapi/ipp/latest/lib/intel64:/opt/intel/oneapi/tbb/latest/lib/intel64/gcc4.8
 
 # Install conda
-ENV CONDA_DIR /opt/conda
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-     /bin/bash ~/miniconda.sh -b -p /opt/conda
-ENV PATH=$CONDA_DIR/bin:$PATH
-RUN conda create --name detector python=3.7
-SHELL ["conda", "run", "-n", "detector", "/bin/bash", "-c"]
+# ENV CONDA_DIR /opt/conda
+# RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && /bin/bash ~/miniconda.sh -b -p /opt/conda
+# ENV PATH=$CONDA_DIR/bin:$PATH
+# RUN conda create --name detector python=3.7
+# SHELL ["conda", "run", "-n", "detector", "/bin/bash", "-c"]
 
 # Install FFmpeg 4.4 with CUDA
 ## Compile and build
@@ -39,8 +49,10 @@ ENV CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/ffmpeg
 
 # Install pip environment
 WORKDIR /app/video-detector
+COPY requirements.txt /app/video-detector
 RUN python -m pip install --upgrade pip
 RUN pip install numpy
+RUN pip install -r requirements.txt
 
 # Install OpenCV with CUDA
 ## Prepare necessary files
@@ -59,8 +71,8 @@ RUN cmake -D WITH_CUDA=ON \
     -D BUILD_opencv_java=OFF \
     -D WITH_OPENGL=OFF \
     -D WITH_OPENCL=OFF \
-    -D WITH_IPP=OFF \
-    -D WITH_TBB=OFF \
+    -D WITH_IPP=ON \
+    -D WITH_TBB=ON \
     -D WITH_EIGEN=ON \
     -D WITH_V4L=OFF \
     -D WITH_VTK=OFF \
@@ -91,6 +103,9 @@ RUN cmake -D WITH_CUDA=ON \
 RUN make -j 80 && make install
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt
 
+# Remove NGC's opencv
+RUN pip uninstall -y opencv
+
 # Create YoloV3 weight placeholder
 COPY detector/YOLOv3/weight/ /app/video-detector/detector/YOLOv3/weight/
 WORKDIR /app/video-detector
@@ -102,14 +117,9 @@ RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights
 WORKDIR ../../../
 
 # Fix symbolic link (Ubuntu 22.04 bug)
-RUN rm /opt/conda/envs/detector/lib/libstdc++.so*
-RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so.6
-RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so
-
-# Install all packages
-WORKDIR /app/video-detector
-COPY requirements.txt /app/video-detector
-RUN pip install -r requirements.txt
+# RUN rm /opt/conda/envs/detector/lib/libstdc++.so*
+# RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so.6
+# RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so
 
 # Copy the remaining files
 COPY . /app/video-detector
@@ -125,4 +135,5 @@ RUN echo "python rpc_daemon.py" >> init.sh
 # RUN echo "python traffic_terminal.py videos/minimal.mp4 --mode straight" >> init.sh
 # RUN echo "sleep 86400" >> init.sh
 
-CMD ["conda", "run", "-n", "detector", "sh", "init.sh"]
+CMD [ "sh", "init.sh" ]
+# CMD ["conda", "run", "-n", "detector", "sh", "init.sh"]
