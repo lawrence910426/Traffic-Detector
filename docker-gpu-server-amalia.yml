@@ -1,0 +1,143 @@
+
+version: '3'
+services:
+  backend:
+    ipc: host
+    container_name: 'traffic-backend'
+    build: ./backend
+    restart: always
+    ports:
+      - 8000:8000
+    environment:
+      - BACKEND_HOST=${BACKEND_HOST}
+      - RPC_HOST_LIST=detector_1,detector_2,detector_3,detector_4,detector_5,detector_6
+    links:
+      - detector_1
+      - detector_2
+      - detector_3
+      - detector_4
+      - detector_5
+      - detector_6
+    volumes:
+      - $PWD/storage/video-in:/mnt/video-in
+      - $PWD/storage/video-out:/mnt/video-out
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities: [gpu]
+
+
+  detector_1:
+    ipc: host
+    container_name: 'traffic-detector-1'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - $PWD/storage/video-in:/app/video-detector/videos
+      - $PWD/storage/video-out:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              
+              capabilities: [gpu]
+
+  detector_2:
+    ipc: host
+    container_name: 'traffic-detector-2'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - $PWD/storage/video-in:/app/video-detector/videos
+      - $PWD/storage/video-out:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              
+              capabilities: [gpu]
+
+  detector_3:
+    ipc: host
+    container_name: 'traffic-detector-3'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - $PWD/storage/video-in:/app/video-detector/videos
+      - $PWD/storage/video-out:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              
+              capabilities: [gpu]
+
+  detector_4:
+    ipc: host
+    container_name: 'traffic-detector-4'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - $PWD/storage/video-in:/app/video-detector/videos
+      - $PWD/storage/video-out:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              
+              capabilities: [gpu]
+
+  detector_5:
+    ipc: host
+    container_name: 'traffic-detector-5'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - $PWD/storage/video-in:/app/video-detector/videos
+      - $PWD/storage/video-out:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              
+              capabilities: [gpu]
+
+  detector_6:
+    ipc: host
+    container_name: 'traffic-detector-6'
+    build: 
+      context: ./video-detector
+    restart: always
+    shm_size: '32gb'
+    volumes:
+      - $PWD/storage/video-in:/app/video-detector/videos
+      - $PWD/storage/video-out:/app/video-detector/output
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              
+              capabilities: [gpu]
+volumes:
+  video-out-volume:
+  video-in-volume:
+
