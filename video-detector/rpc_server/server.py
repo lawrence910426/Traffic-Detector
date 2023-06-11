@@ -87,6 +87,12 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
             config.USE_MMDET = False
             config.USE_FASTREID = False
 
+            # Tracker utils
+            config.USE_DEEPSORT = False
+            config.USE_OCSORT = True
+            config.USE_BYTETRACK = False
+
+
             # Build Traffic counter
             counter = TrafficCounter(config, args, 
                 video_path="./videos/" + request.Input_Video_Path)

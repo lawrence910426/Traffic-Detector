@@ -5,7 +5,7 @@ from __future__ import print_function
 
 import numpy as np
 from .association import *
-
+from tracker.tracker import Tracker
 
 def k_previous_obs(observations, cur_age, k):
     if len(observations) == 0:
@@ -190,17 +190,11 @@ class OCSort(Tracker):
         self.use_byte = use_byte
         KalmanBoxTracker.count = 0
 
-    def _update(self, bbox_xywh, confidences, ori_img):
-        """
-        Params:
-          dets - a numpy array of detections in the format [[x1,y1,x2,y2,score],[x1,y1,x2,y2,score],...]
-        Requires: this method must be called once for each frame even with empty detections (use np.empty((0, 5)) for frames without detections).
-        Returns the a similar array, where the last column is the object ID.
-        NOTE: The number of objects returned may differ from the number of detections provided.
-        """
+    def update(self, bbox_xywh, confidences, ori_img):
+        self.height, self.width = ori_img.shape[:2]
 
         self.frame_count += 1
-        bboxes = self._xywh_to_xyxy(bbox_xywh)
+        bboxes = self._xywh_to_xyxy(bbox_xywh).T
         scores = confidences
 
         dets = np.concatenate((bboxes, np.expand_dims(scores, axis=-1)), axis=1)
@@ -418,10 +412,20 @@ class OCSort(Tracker):
             return np.concatenate(ret)
         return np.empty((0, 7))
 
-    def _xywh_to_xyxy(self, bbox_xywh):
-        x,y,w,h = bbox_xywh
-        x1 = max(int(x-w/2),0)
-        x2 = min(int(x+w/2),self.width-1)
-        y1 = max(int(y-h/2),0)
-        y2 = min(int(y+h/2),self.height-1)
-        return x1,y1,x2,y2
+    def _xywh_to_xyxy(self, X):
+        x, y, w, h = X[:, 0], X[:, 1], X[:, 2], X[:, 3]
+
+        x1 = np.maximum((x - w / 2).astype(np.int), 0)
+        x2 = np.minimum((x + w / 2).astype(np.int), self.width - 1)
+        y1 = np.maximum((y - h / 2).astype(np.int), 0)
+        y2 = np.minimum((y + h / 2).astype(np.int), self.height - 1)
+        return np.stack([x1, y1, x2, y2])
+
+    def _xyxy_to_tlwh(self, bbox_xyxy):
+        x1,y1,x2,y2 = bbox_xyxy
+
+        t = x1
+        l = y1
+        w = int(x2-x1)
+        h = int(y2-y1)
+        return t,l,w,h

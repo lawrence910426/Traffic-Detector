@@ -23,6 +23,9 @@ class StraightCounter(Counter):
 
     def calibrate_lone_set(self):
         calibrate = { "Forward": 0, "Reverse": 0 }
+        # Ignore calibration
+        return calibrate
+
         events = copy.deepcopy(sorted(self.lone_timeline.keys(), reverse=True))
         timeline = copy.deepcopy(self.lone_timeline)
 
@@ -126,12 +129,12 @@ class StraightCounter(Counter):
                 self.flow[direction].add(id)
 
         # There are 3 occurences in the stack. Must be (X, Q, Y) or (Y, Q, X)
-        if len(self.occurence_stack[id]) == 3:
+        if len(self.occurence_stack[id]) >= 3:
             direction = None
-            direction = 'Forward' if (self.occurence_stack[id][0], self.occurence_stack[id][2]) in [
+            direction = 'Forward' if (self.occurence_stack[id][0], self.occurence_stack[id][-1]) in [
                 ('X', 'Y')
             ] else direction
-            direction = 'Reverse' if (self.occurence_stack[id][0], self.occurence_stack[id][2]) in [
+            direction = 'Reverse' if (self.occurence_stack[id][0], self.occurence_stack[id][-1]) in [
                 ('Y', 'X')
             ] else direction
 

@@ -54,9 +54,9 @@ class TrafficCounter(object):
         }
 
         self.detector = build_detector(cfg, use_cuda=use_cuda)
-        self.deepsort = {}
+        self.tracker = {}
         for k in self.enabled_classes:
-            self.deepsort[k] = build_tracker(cfg, use_cuda=use_cuda)
+            self.tracker[k] = build_tracker(cfg, use_cuda=use_cuda)
         self.class_names = self.detector.class_names
 
         self.build_info()
@@ -240,7 +240,7 @@ class TrafficCounter(object):
                 mask = cls_ids == k
                 
                 # do tracking
-                outputs = self.deepsort[k].update(
+                outputs = self.tracker[k].update(
                     bbox_xywh[mask], 
                     cls_conf[mask], 
                     fg_im_rgb
@@ -254,7 +254,7 @@ class TrafficCounter(object):
     
                     for i in range(len(outputs)):
                         bb_xyxy, bb_id = bbox_xyxy[i], identities[i]
-                        bbox_tlwh.append(self.deepsort[k]._xyxy_to_tlwh(bb_xyxy))
+                        bbox_tlwh.append(self.tracker[k]._xyxy_to_tlwh(bb_xyxy))
                         if self.start_frame <= self.idx_frame and self.idx_frame < self.end_frame:
                             self.detection_counter[k].update(bb_id, self.idx_frame, Box(*bb_xyxy))
 

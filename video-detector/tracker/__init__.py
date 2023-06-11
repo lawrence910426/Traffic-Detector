@@ -1,5 +1,5 @@
-from deep_sort import DeepSort
-from ocsort import OCSort
+from tracker.deep_sort.deep_sort import DeepSort
+from tracker.ocsort.ocsort import OCSort
 
 def build_tracker(cfg, use_cuda):
     if cfg.USE_DEEPSORT:
@@ -15,7 +15,7 @@ def build_tracker(cfg, use_cuda):
                     nms_max_overlap=cfg.DEEPSORT.NMS_MAX_OVERLAP, max_iou_distance=cfg.DEEPSORT.MAX_IOU_DISTANCE, 
                     max_age=cfg.DEEPSORT.MAX_AGE, n_init=cfg.DEEPSORT.N_INIT, nn_budget=cfg.DEEPSORT.NN_BUDGET, use_cuda=use_cuda)
     if cfg.USE_OCSORT:
-        return OCSort(0.65) # parameter from MOT17-06-FRCNN
+        return OCSort(0.3) # According to deep sort
     if cfg.USE_BYTETRACK:
         pass
     
