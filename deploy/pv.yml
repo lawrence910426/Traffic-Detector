@@ -1,0 +1,16 @@
+# To be fixed for ceph
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: video-volume
+spec:
+  capacity:
+    storage: 250Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: ceph-storage
+  nfs:
+    path: /mnt
+    server: k3s-head
