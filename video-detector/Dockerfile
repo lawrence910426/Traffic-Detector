@@ -114,7 +114,12 @@ WORKDIR /app/video-detector
 WORKDIR detector/YOLOv3/weight/
 RUN wget https://pjreddie.com/media/files/yolov3.weights
 RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights
-WORKDIR ../../../
+
+# Setup ReID
+WORKDIR /app/video-detector/tracker/deep_sort/deep/checkpoint
+RUN wget https://github.com/JDAI-CV/fast-reid/releases/download/v0.1.1/veriwild_bot_R50-ibn.pth
+WORKDIR /app/video-detector/thirdparty/fast-reid/fastreid/evaluation/rank_cylib
+RUN make all
 
 # Fix symbolic link (Ubuntu 22.04 bug)
 # RUN rm /opt/conda/envs/detector/lib/libstdc++.so*
