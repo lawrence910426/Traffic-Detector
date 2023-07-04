@@ -50,7 +50,7 @@ class Upload extends React.Component {
           <Row style={{ marginTop: '3rem' }}><Col>
             <MDBBtn onClick={this.complete.bind(this)}>下一步</MDBBtn>
           </Col><Col>
-            <MDBBtn onClick={window.open(config.nextcloud)}>開啟 NextCloud</MDBBtn>
+            <MDBBtn onClick={() => { window.open(config.nextcloud) }}>開啟 NextCloud</MDBBtn>
           </Col></Row>
         </Container>
       </div>
