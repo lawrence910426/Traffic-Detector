@@ -13,7 +13,9 @@ services:
 
   nextcloud:
     container_name: 'traffic-nextcloud'
-    image: 'lawrnece910426/nextcloud'
+    image: 'lawrence910426/nextcloud'
     restart: always
     ports:
       - "8080:80"
+    volumes:
+      - $PWD/storage:/var/www/html

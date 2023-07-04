@@ -1,4 +1,4 @@
-REPLICAS = 6
+REPLICAS = 1
 
 links = "\n".join([f"      - detector_{i}" for i in range(1, REPLICAS + 1)])
 host_list = ",".join([f"detector_{i}" for i in range(1, REPLICAS + 1)])
@@ -20,8 +20,8 @@ services:
     links:
 {links}
     volumes:
-      - $PWD/storage/video-in:/mnt/video-in
-      - $PWD/storage/video-out:/mnt/video-out
+      - $PWD/storage:/mnt/video-in
+      - $PWD/storage:/mnt/video-out
     deploy:
         resources:
           reservations:
@@ -42,8 +42,8 @@ workers = "\n".join([
     restart: always
     shm_size: '32gb'
     volumes:
-      - $PWD/storage/video-in:/app/video-detector/videos
-      - $PWD/storage/video-out:/app/video-detector/output
+      - $PWD/storage:/app/video-detector/videos
+      - $PWD/storage:/app/video-detector/output
     deploy:
       resources:
         reservations:
@@ -54,10 +54,4 @@ workers = "\n".join([
     for i in range(1, REPLICAS + 1)
 ])
 
-volumes = """
-volumes:
-  video-out-volume:
-  video-in-volume:
-"""
-
-print(backend + workers + volumes)
+print(backend + workers)
