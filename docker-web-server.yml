@@ -7,7 +7,6 @@ services:
       args:
         NEXTCLOUD_HOST: ${NEXTCLOUD_HOST}
         BACKEND_HOST: ${BACKEND_HOST}
-        GPU_LOCALHOST: ${GPU_LOCALHOST}
     restart: always
     ports:
       - "80:80"
