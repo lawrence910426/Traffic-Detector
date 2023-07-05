@@ -10,6 +10,6 @@ app = Flask(
 app.config['UPLOAD_FOLDER'] = "/mnt/video-in/"
 app.config['STATIC_URL'] = os.environ['BACKEND_HOST'] + "static/"
 
-from routes import first_frame, query_task, init_task, upload
+from routes import first_frame, query_task, init_task
 from routes.rpc_controller.controller import RpcController
 RpcController.config = app.config

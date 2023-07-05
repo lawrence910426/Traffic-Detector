@@ -114,7 +114,19 @@ WORKDIR /app/video-detector
 WORKDIR detector/YOLOv3/weight/
 RUN wget https://pjreddie.com/media/files/yolov3.weights
 RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights
-WORKDIR ../../../
+
+# Download ReID model
+COPY tracker/deep_sort/deep/checkpoint /app/video-detector/tracker/deep_sort/deep/checkpoint
+WORKDIR /app/video-detector/tracker/deep_sort/deep/checkpoint
+RUN wget https://github.com/JDAI-CV/fast-reid/releases/download/v0.1.1/veriwild_bot_R50-ibn.pth
+
+# Install ReID
+COPY thirdparty /app/video-detector/thirdparty
+WORKDIR /app/video-detector/thirdparty/fast-reid/docs
+RUN pip install -r requirements
+RUN pip install tensorboard==2.13.0 --force-reinstall
+WORKDIR /app/video-detector/thirdparty/fast-reid/fastreid/evaluation/rank_cylib
+RUN make all
 
 # Fix symbolic link (Ubuntu 22.04 bug)
 # RUN rm /opt/conda/envs/detector/lib/libstdc++.so*
@@ -132,7 +144,7 @@ RUN echo "cd detector/YOLOv3/nms; sh build.sh; cd ../../../;" > init.sh
 
 # Append initialization script
 RUN echo "python rpc_daemon.py" >> init.sh
-# RUN echo "python traffic_terminal.py videos/minimal.mp4 --mode straight" >> init.sh
+# RUN echo "python traffic_terminal.py videos/minimal.mp4 --mode straight --fastreid" >> init.sh
 # RUN echo "sleep 86400" >> init.sh
 
 CMD [ "sh", "init.sh" ]

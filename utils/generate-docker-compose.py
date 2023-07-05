@@ -54,10 +54,4 @@ workers = "\n".join([
     for i in range(1, REPLICAS + 1)
 ])
 
-volumes = """
-volumes:
-  video-out-volume:
-  video-in-volume:
-"""
-
-print(backend + workers + volumes)
+print(backend + workers)

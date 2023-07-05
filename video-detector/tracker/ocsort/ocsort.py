@@ -415,10 +415,10 @@ class OCSort(Tracker):
     def _xywh_to_xyxy(self, X):
         x, y, w, h = X[:, 0], X[:, 1], X[:, 2], X[:, 3]
 
-        x1 = np.maximum((x - w / 2).astype(np.int), 0)
-        x2 = np.minimum((x + w / 2).astype(np.int), self.width - 1)
-        y1 = np.maximum((y - h / 2).astype(np.int), 0)
-        y2 = np.minimum((y + h / 2).astype(np.int), self.height - 1)
+        x1 = np.maximum((x - w / 2).astype(np.int32), 0)
+        x2 = np.minimum((x + w / 2).astype(np.int32), self.width - 1)
+        y1 = np.maximum((y - h / 2).astype(np.int32), 0)
+        y2 = np.minimum((y + h / 2).astype(np.int32), self.height - 1)
         return np.stack([x1, y1, x2, y2])
 
     def _xyxy_to_tlwh(self, bbox_xyxy):

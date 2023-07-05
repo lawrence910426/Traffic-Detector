@@ -55,7 +55,7 @@ _C.MODEL.HEADS.NAME = "EmbeddingHead"
 # Normalization method for the convolution layers.
 _C.MODEL.HEADS.NORM = "BN"
 # Number of identity
-_C.MODEL.HEADS.NUM_CLASSES = 0
+_C.MODEL.HEADS.NUM_CLASSES = 30671
 # Embedding dimension in head
 _C.MODEL.HEADS.EMBEDDING_DIM = 0
 # If use BNneck in embedding

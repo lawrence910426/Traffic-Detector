@@ -53,8 +53,8 @@ if __name__ == "__main__":
         cfg.USE_FASTREID = False
     
     # Tracker utils
-    cfg.USE_DEEPSORT = False
-    cfg.USE_OCSORT = True
+    cfg.USE_DEEPSORT = True
+    cfg.USE_OCSORT = False
     cfg.USE_BYTETRACK = False
 
     args.detector_line_a = args.detector_line_a.split(",")

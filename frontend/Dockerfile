@@ -1,6 +1,7 @@
 # # build stage
 FROM node:18-bullseye as build-stage
 ARG BACKEND_HOST
+ARG NEXTCLOUD_HOST
 
 WORKDIR /app
 RUN apt update -y && apt upgrade -y
@@ -11,7 +12,8 @@ COPY src src
 COPY public public
 
 RUN BACKEND_HOST=${BACKEND_HOST} && echo $BACKEND_HOST
-RUN BACKEND_HOST=${BACKEND_HOST} && envsubst '${BACKEND_HOST}' < src/utils/config_template.js > src/utils/config.js
+RUN NEXTCLOUD_HOST=${NEXTCLOUD_HOST} && echo $NEXTCLOUD_HOST
+RUN BACKEND_HOST=${BACKEND_HOST} && envsubst '${BACKEND_HOST} ${NEXTCLOUD_HOST}' < src/utils/config_template.js > src/utils/config.js
 RUN npm install --legacy-peer-deps
 RUN npm run build
 
