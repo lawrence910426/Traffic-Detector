@@ -1,4 +1,4 @@
-REPLICAS = 1
+REPLICAS = 2
 
 links = "\n".join([f"      - detector_{i}" for i in range(1, REPLICAS + 1)])
 host_list = ",".join([f"detector_{i}" for i in range(1, REPLICAS + 1)])

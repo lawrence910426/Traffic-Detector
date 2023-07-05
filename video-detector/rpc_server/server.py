@@ -85,13 +85,13 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
             config.merge_from_file("./configs/yolov3.yaml")
             config.merge_from_file("./configs/deep_sort.yaml")
             config.USE_MMDET = False
-            config.USE_FASTREID = False
-
-            # Tracker utils
-            config.USE_DEEPSORT = False
-            config.USE_OCSORT = True
+            config.USE_DEEPSORT = True
+            config.USE_FASTREID = True
+            config.USE_OCSORT = False
             config.USE_BYTETRACK = False
 
+            if config.USE_FASTREID:
+                config.merge_from_file("./configs/fastreid.yaml")
 
             # Build Traffic counter
             counter = TrafficCounter(config, args, 
