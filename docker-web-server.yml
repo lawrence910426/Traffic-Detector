@@ -19,4 +19,4 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - $PWD/storage:/var/www/html
+      - $PWD/storage/nextcloud:/var/www/html

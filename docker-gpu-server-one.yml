@@ -14,8 +14,8 @@ services:
     links:
       - detector_1
     volumes:
-      - $PWD/storage:/mnt/video-in
-      - $PWD/storage:/mnt/video-out
+      - $PWD/storage/video-in:/mnt/video-in
+      - $PWD/storage/video-out:/mnt/video-out
     deploy:
         resources:
           reservations:
@@ -33,8 +33,8 @@ services:
     restart: always
     shm_size: '32gb'
     volumes:
-      - $PWD/storage:/app/video-detector/videos
-      - $PWD/storage:/app/video-detector/output
+      - $PWD/storage/video-in:/app/video-detector/videos
+      - $PWD/storage/video-out:/app/video-detector/output
     deploy:
       resources:
         reservations:
