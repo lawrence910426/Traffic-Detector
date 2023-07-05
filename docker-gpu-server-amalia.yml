@@ -61,7 +61,3 @@ services:
             - driver: nvidia
               
               capabilities: [gpu]
-volumes:
-  video-out-volume:
-  video-in-volume:
-

@@ -2,12 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Dropzone from 'react-dropzone'
-import { MDBIcon } from 'mdb-react-ui-kit';
 import config from '../utils/config'
+
+import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
-import axios from 'axios';
+import { MDBCard, MDBCardBody, MDBCardTitle } from 'mdb-react-ui-kit';
+import { MDBInput, MDBBtn } from 'mdb-react-ui-kit';
+
 
 Dropzone.autoDiscover = false;
 
@@ -17,88 +20,39 @@ class Upload extends React.Component {
     this.state = { progress: 0 };
   }
 
-  async droppedFiles(files) {
-    var fileObj = files[0]
-    console.log(fileObj)
+  change(event) {
+    this.props.video(event.target.value);
+  }
 
-    var vid = await this.uploadFileServer(fileObj);
-    this.props.video(vid)
-
+  complete() {
     this.props.next();
-  }
-
-  async uploadFileServer(file) { 
-      let formData = new FormData(); 
-      formData.append("file", file);
-
-      let resp = await axios.request({
-          method: "post", 
-          url: config.host + "upload", 
-          data: formData, 
-          onUploadProgress: (p) => {
-            console.log(p); 
-            this.setState({
-              progress: p.loaded / p.total * 100
-            })
-          }
-      })
-
-      this.setState({
-        progress: 100,
-      })
-
-      return resp.data.id
-  }
-
-  renderProgressBar() {
-    if (this.state.progress != 0) {
-      return (
-        <Row style={{ marginTop: '1rem' }}>
-          <Col xs={6} md={2}><label>影片上傳進度：</label></Col>
-          <Col>
-            <div className="progress" style={{height: '20px'}}>
-              <div className="progress-bar" 
-                  role="progressbar" 
-                  style={{width: this.state.progress + '%'}} 
-                  aria-valuenow={this.state.progress} 
-                  aria-valuemin="0" aria-valuemax="100">
-                  {Math.floor(this.state.progress)}%
-              </div>
-            </div>
-          </Col>
-        </Row>
-      )
-    }
   }
 
   render() {
     return (
       <div>
-        <Dropzone onDrop={this.droppedFiles.bind(this)}>
-          {({getRootProps, getInputProps}) => (
-            <section>
-              <div {...getRootProps()} style={{
-                borderStyle: 'dashed',
-                height: '20rem'
-              }}>
-                <input {...getInputProps()} />
-                <p style={{
-                  textAlign: 'center',
-                  marginTop: '3rem'
-                }}>將檔案拖曳到此以上傳影片</p>
-
-                <MDBIcon fas icon="cloud-upload-alt" style={{
-                  textAlign: 'center',
-                  width: '100%',
-                  fontSize: '10rem',
-                  marginTop: '1rem'
-                }} />
-              </div>
-            </section>
-          )}
-        </Dropzone>
-
-        { this.renderProgressBar() }
+        <Container>
+          <Row><Col>
+            <MDBCard>
+              <MDBCardBody>
+                <MDBCardTitle>輸入影片路徑</MDBCardTitle>
+                <Container>
+                  <Row>
+                    <Col>
+                      <MDBInput label='Video Path' id='path' type='text' onChange={this.change.bind(this)} />
+                    </Col>
+                  </Row>
+                </Container>
+              </MDBCardBody>
+            </MDBCard>
+          </Col></Row>
+          
+          <Row style={{ marginTop: '3rem' }}><Col>
+            <MDBBtn onClick={this.complete.bind(this)}>下一步</MDBBtn>
+          </Col><Col>
+            <MDBBtn onClick={() => { window.open(config.nextcloud) }}>開啟 NextCloud</MDBBtn>
+          </Col></Row>
+        </Container>
       </div>
     );
   }

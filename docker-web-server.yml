@@ -5,8 +5,18 @@ services:
     build:
       context: ./frontend/
       args:
-        GPU_LOCALHOST: ${GPU_LOCALHOST}
+        NEXTCLOUD_HOST: ${NEXTCLOUD_HOST}
         BACKEND_HOST: ${BACKEND_HOST}
+        GPU_LOCALHOST: ${GPU_LOCALHOST}
     restart: always
     ports:
       - "80:80"
+
+  nextcloud:
+    container_name: 'traffic-nextcloud'
+    image: 'lawrence910426/nextcloud'
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - $PWD/storage/nextcloud:/var/www/html

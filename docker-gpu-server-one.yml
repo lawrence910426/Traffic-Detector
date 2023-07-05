@@ -1,6 +1,8 @@
+
 version: '3'
 services:
   backend:
+    ipc: host
     container_name: 'traffic-backend'
     build: ./backend
     restart: always
@@ -12,8 +14,8 @@ services:
     links:
       - detector_1
     volumes:
-      - video-in-volume:/mnt/video-in
-      - video-out-volume:/mnt/video-out
+      - $PWD/storage/video-in:/mnt/video-in
+      - $PWD/storage/video-out:/mnt/video-out
     deploy:
         resources:
           reservations:
@@ -22,24 +24,21 @@ services:
                 count: 1
                 capabilities: [gpu]
 
+
   detector_1:
+    ipc: host
     container_name: 'traffic-detector-1'
     build: 
       context: ./video-detector
     restart: always
+    shm_size: '32gb'
     volumes:
-      - video-in-volume:/app/video-detector/videos
-      - video-out-volume:/app/video-detector/output
+      - $PWD/storage/video-in:/app/video-detector/videos
+      - $PWD/storage/video-out:/app/video-detector/output
     deploy:
       resources:
         reservations:
           devices:
             - driver: nvidia
-              count: 1
+              
               capabilities: [gpu]
-
-
-
-volumes:
-  video-out-volume: 
-  video-in-volume:
