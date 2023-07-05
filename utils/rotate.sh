@@ -12,4 +12,4 @@ then
 	exit
 fi
 
-ffmpeg -i $1 -vf "transpose="+$2 $3
+ffmpeg -i $1 -vcodec libx264 -vf "transpose="+$2 $3
