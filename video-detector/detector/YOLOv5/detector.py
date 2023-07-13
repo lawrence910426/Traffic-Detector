@@ -73,9 +73,9 @@ class YOLOv5(object):
         img = ori_img # RGB
 
         # Convert
+        img = cv2.resize(img, dsize=self.imgsz, interpolation=cv2.INTER_CUBIC)
         img = img.transpose((2, 0, 1))[::-1]  # HWC to CHW, BGR to RGB
         img = np.ascontiguousarray(img)
-        img = cv2.resize(img, dsize=self.imgsz, interpolation=cv2.INTER_CUBIC)
 
         img = torch.from_numpy(img).to(self.device)
         img = img.half() if self.half else img.float()  # uint8 to fp16/32
@@ -92,12 +92,12 @@ class YOLOv5(object):
 
         # Process predictions
         size, i = len(det), 0
-        _xywh, _conf, _cls = np.zeros((size, 4)), np.zeros((size, 1)), np.zeros((size, 1))
+        _xywh, _conf, _cls = np.zeros((size, 4)), np.zeros((size)), np.zeros((size))
         for *xyxy, conf, cls in det:  
             gn = torch.tensor(ori_img.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
             _xywh[i], _conf[i], _cls[i] = xywh, conf, cls
-        return xywh, conf, cls
+        return _xywh, _conf, _cls
 
 
 

@@ -46,11 +46,11 @@ class TrafficCounter(object):
         }
         self.mcu_weight = {
             # 0: 0, # Person
-            1: 1, # Bicycle
-            2: 1, # Car
-            3: 1, # Motorbike
-            5: 1, # Bus
-            7: 1  # Truck
+            0: 1, # Bicycle
+            1: 1, # Car
+            2: 1, # Motorbike
+            3: 1, # Bus
+            4: 1  # Truck
         }
 
         self.detector = build_detector(cfg, use_cuda=use_cuda)
