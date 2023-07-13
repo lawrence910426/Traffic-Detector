@@ -143,8 +143,8 @@ WORKDIR /app/video-detector
 RUN echo "cd detector/YOLOv3/nms; sh build.sh; cd ../../../;" > init.sh
 
 # Append initialization script
-RUN echo "python rpc_daemon.py" >> init.sh
-# RUN echo "python traffic_terminal.py videos/minimal.mp4 --mode straight --fastreid" >> init.sh
+# RUN echo "python rpc_daemon.py" >> init.sh
+RUN echo "python traffic_terminal.py videos/minimal.mp4 --mode straight --fastreid" >> init.sh
 # RUN echo "sleep 86400" >> init.sh
 
 CMD [ "sh", "init.sh" ]

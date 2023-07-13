@@ -1,7 +1,8 @@
-FROM nvidia/cuda:11.7.0-devel-ubuntu22.04
+FROM nvidia/cuda:12.2.0-devel-ubuntu20.04
 
 WORKDIR /usr/src/app
 
+RUN apt update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata && apt-get clean
 RUN apt update -y && \
     apt upgrade -y && \
     apt install tmux vim wget build-essential cmake git -y && \
