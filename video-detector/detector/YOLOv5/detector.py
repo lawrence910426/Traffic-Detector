@@ -71,6 +71,10 @@ class YOLOv5(object):
     @torch.no_grad()
     def __call__(self, ori_img):
         img = ori_img # RGB
+
+        # Convert
+        img = img.transpose((2, 0, 1))[::-1]  # HWC to CHW, BGR to RGB
+        img = np.ascontiguousarray(img)
         img = cv2.resize(img, dsize=self.imgsz, interpolation=cv2.INTER_CUBIC)
 
         img = torch.from_numpy(img).to(self.device)
@@ -84,15 +88,16 @@ class YOLOv5(object):
 
         # NMS
         pred = non_max_suppression(pred, self.conf_thres, self.iou_thres, self.classes, self.agnostic_nms, max_det=self.max_det)
+        det = pred[0]
 
         # Process predictions
-        for i, det in enumerate(pred):  # detections per image
-            if len(det):
-                *xyxy, conf, cls = reversed(det[0])
-                gn = torch.tensor(ori_img.shape)[[1, 0, 1, 0]]  # normalization gain whwh
-                xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-
-                return xywh, conf, cls
+        size, i = len(det), 0
+        _xywh, _conf, _cls = np.zeros((size, 4)), np.zeros((size, 1)), np.zeros((size, 1))
+        for *xyxy, conf, cls in det:  
+            gn = torch.tensor(ori_img.shape)[[1, 0, 1, 0]]  # normalization gain whwh
+            xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+            _xywh[i], _conf[i], _cls[i] = xywh, conf, cls
+        return xywh, conf, cls
 
 
 
