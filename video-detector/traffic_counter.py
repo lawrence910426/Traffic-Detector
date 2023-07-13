@@ -38,19 +38,19 @@ class TrafficCounter(object):
 
         self.enabled_classes = {
             # 0: 'person',
-            1: 'bicycle',
-            2: 'car',
-            3: 'motorbike',
-            5: 'bus',
-            7: 'truck'
+            0: 'car',
+            1: 'motorbike',
+            2: 'truck',
+            3: 'bus',
+            4: 'bicycle'
         }
         self.mcu_weight = {
             # 0: 0, # Person
             1: 1, # Bicycle
-            2: 2, # Car
+            2: 1, # Car
             3: 1, # Motorbike
-            5: 4, # Bus
-            7: 4  # Truck
+            5: 1, # Bus
+            7: 1  # Truck
         }
 
         self.detector = build_detector(cfg, use_cuda=use_cuda)
