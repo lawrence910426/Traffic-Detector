@@ -25,7 +25,7 @@ from .utils.torch_utils import select_device
 
 class YOLOv5(object):
     def __init__(self, weights='detector/YOLOv5/weight/best.pt',  # model.pt path(s)
-            imgsz=640,  # inference size (pixels)
+            imgsz=[640, 640],  # inference size (pixels)
             conf_thres=0.25,  # confidence threshold
             iou_thres=0.45,  # NMS IOU threshold
             max_det=1000,  # maximum detections per image
