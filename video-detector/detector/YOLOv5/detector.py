@@ -14,6 +14,7 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
+import cv2
 
 FILE = Path(__file__).absolute()
 sys.path.append(FILE.parents[0].as_posix())  # add yolov5/ to path
@@ -45,6 +46,7 @@ class YOLOv5(object):
         self.visualize = visualize
         self.classes = classes
         self.agnostic_nms = agnostic_nms
+        self.imgsz = imgsz
 
         # Initialize
         set_logging()
@@ -69,6 +71,7 @@ class YOLOv5(object):
     @torch.no_grad()
     def __call__(self, ori_img):
         img = ori_img # RGB
+        img = cv2.resize(img, dsize=self.imgsz, interpolation=cv2.INTER_CUBIC)
 
         img = torch.from_numpy(img).to(self.device)
         img = img.half() if self.half else img.float()  # uint8 to fp16/32
