@@ -29,7 +29,7 @@ class YOLOv5(object):
             conf_thres=0.25,  # confidence threshold
             iou_thres=0.45,  # NMS IOU threshold
             max_det=1000,  # maximum detections per image
-            device='',  # cuda device, i.e. 0 or 0,1,2,3 or cpu
+            device='cuda:0',  # cuda device, i.e. 0 or 0,1,2,3 or cpu
             classes=None,  # filter by class: --class 0, or --class 0 2 3
             agnostic_nms=False,  # class-agnostic NMS
             augment=False,  # augmented inference
