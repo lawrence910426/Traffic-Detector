@@ -1,10 +1,13 @@
 from .YOLOv3 import YOLOv3
 from .MMDet import MMDet
+from .YOLOv5 import YOLOv5
 
 
 __all__ = ['build_detector']
 
 def build_detector(cfg, use_cuda):
+    return YOLOv5()
+
     if cfg.USE_MMDET:
         return MMDet(cfg.MMDET.CFG, cfg.MMDET.CHECKPOINT,
                     score_thresh=cfg.MMDET.SCORE_THRESH,
@@ -13,5 +16,3 @@ def build_detector(cfg, use_cuda):
         return YOLOv3(cfg.YOLOV3.CFG, cfg.YOLOV3.WEIGHT, cfg.YOLOV3.CLASS_NAMES, 
                     score_thresh=cfg.YOLOV3.SCORE_THRESH, nms_thresh=cfg.YOLOV3.NMS_THRESH, 
                     is_xywh=True, use_cuda=use_cuda)
-
-# Use Baidu Model if YOLOv3 accuracy is not enoguh https://github.com/PaddlePaddle/PaddleHub/tree/develop/modules/image/object_detection/yolov3_darknet53_vehicles
