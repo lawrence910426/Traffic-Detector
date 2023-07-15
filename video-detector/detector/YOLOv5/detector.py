@@ -20,7 +20,7 @@ FILE = Path(__file__).absolute()
 sys.path.append(FILE.parents[0].as_posix())  # add yolov5/ to path
 
 from .models.experimental import attempt_load
-from .utils.general import check_img_size, non_max_suppression, xyxy2xywh, set_logging, scale_coords
+from .utils.general import check_img_size, non_max_suppression, xyxy2xywh, scale_coords
 from .utils.torch_utils import select_device
 from .utils.augmentations import letterbox
 
@@ -47,11 +47,9 @@ class YOLOv5(object):
         self.classes = classes
         self.agnostic_nms = agnostic_nms
         self.imgsz = imgsz
-        self.stride = 32
         self.auto = True
 
         # Initialize
-        set_logging()
         device = select_device(device)
         half &= device.type != 'cpu'  # half precision only supported on CUDA
 
@@ -60,6 +58,8 @@ class YOLOv5(object):
 
         model = attempt_load(weights, map_location=device)  # load FP32 model
         stride = int(model.stride.max())  # model stride
+        self.stride = stride
+
         if half:
             model.half()  # to FP16
 
@@ -97,10 +97,7 @@ class YOLOv5(object):
         size, i = len(det), 0
         _xywh, _conf, _cls = np.zeros((size, 4)), np.zeros((size)), np.zeros((size))
         for *xyxy, conf, cls in det:
-            scale_up = torch.tensor(ori_img.shape)[[1, 0, 1, 0]]  # normalization gain whwh
-            scale_down = torch.tensor(self.imgsz)[[1, 0, 1, 0]]
-            xywh = xyxy2xywh(torch.tensor(xyxy).view(1, 4))
-            xywh = (xywh * scale_up / scale_down).view(-1).tolist()  # normalized xywh
+            xywh = xyxy2xywh(torch.tensor(xyxy).view(1, 4)).view(-1).tolist()
             xywh = list(map(int, xywh))
             xywh[2], xywh[3] = max(1, xywh[2]), max(1, xywh[3])
             _xywh[i], _conf[i], _cls[i] = xywh, conf, cls
