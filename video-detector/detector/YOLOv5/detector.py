@@ -22,7 +22,7 @@ sys.path.append(FILE.parents[0].as_posix())  # add yolov5/ to path
 from .models.experimental import attempt_load
 from .utils.general import check_img_size, non_max_suppression, xyxy2xywh, set_logging
 from .utils.torch_utils import select_device
-
+from .utils.augmentations import letterbox
 
 class YOLOv5(object):
     def __init__(self, weights='detector/YOLOv5/weight/best.pt',  # model.pt path(s)
@@ -47,6 +47,8 @@ class YOLOv5(object):
         self.classes = classes
         self.agnostic_nms = agnostic_nms
         self.imgsz = imgsz
+        self.stride = 32
+        self.auto = True
 
         # Initialize
         set_logging()
@@ -73,8 +75,8 @@ class YOLOv5(object):
         img = ori_img # RGB
 
         # Convert
-        img = cv2.resize(img, dsize=self.imgsz, interpolation=cv2.INTER_CUBIC)
-        img = img.transpose((2, 0, 1))[::-1]  # HWC to CHW, BGR to RGB
+        img = letterbox(img, self.imgsz, stride=self.stride, auto=self.auto)[0]
+        img = img.transpose((2, 0, 1))  # HWC to CHW
         img = np.ascontiguousarray(img)
 
         img = torch.from_numpy(img).to(self.device)
@@ -89,14 +91,20 @@ class YOLOv5(object):
         # NMS
         pred = non_max_suppression(pred, self.conf_thres, self.iou_thres, self.classes, self.agnostic_nms, max_det=self.max_det)
         det = pred[0]
+        print(det)
 
         # Process predictions
         size, i = len(det), 0
         _xywh, _conf, _cls = np.zeros((size, 4)), np.zeros((size)), np.zeros((size))
-        for *xyxy, conf, cls in det:  
-            gn = torch.tensor(ori_img.shape)[[1, 0, 1, 0]]  # normalization gain whwh
-            xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+        for *xyxy, conf, cls in det:
+            scale_up = torch.tensor(ori_img.shape)[[1, 0, 1, 0]]  # normalization gain whwh
+            scale_down = torch.tensor(self.imgsz)[[1, 0, 1, 0]]
+            xywh = xyxy2xywh(torch.tensor(xyxy).view(1, 4))
+            xywh = (xywh * scale_up / scale_down).view(-1).tolist()  # normalized xywh
+            xywh = list(map(int, xywh))
+            xywh[2], xywh[3] = max(1, xywh[2]), max(1, xywh[3])
             _xywh[i], _conf[i], _cls[i] = xywh, conf, cls
+            i += 1
         return _xywh, _conf, _cls
 
 
