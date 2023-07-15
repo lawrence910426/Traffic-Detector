@@ -110,5 +110,6 @@ class YOLOv5(object):
 if __name__ == 'main':
     model = YOLOv5()
     img = cv2.imread('test_images/imtest1.jpeg')
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     xywh, conf, cls = model(img)
     print(xywh, conf, cls)
