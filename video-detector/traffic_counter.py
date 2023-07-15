@@ -293,3 +293,4 @@ class TrafficCounter(object):
 
             self.idx_frame += 1
             return progress
+    

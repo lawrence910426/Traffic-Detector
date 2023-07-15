@@ -20,7 +20,7 @@ FILE = Path(__file__).absolute()
 sys.path.append(FILE.parents[0].as_posix())  # add yolov5/ to path
 
 from .models.experimental import attempt_load
-from .utils.general import check_img_size, non_max_suppression, xyxy2xywh, set_logging
+from .utils.general import check_img_size, non_max_suppression, xyxy2xywh, set_logging, scale_coords
 from .utils.torch_utils import select_device
 from .utils.augmentations import letterbox
 
@@ -72,7 +72,7 @@ class YOLOv5(object):
         
     @torch.no_grad()
     def __call__(self, ori_img):
-        img = ori_img # RGB
+        img = ori_img.copy()
 
         # Convert
         img = letterbox(img, self.imgsz, stride=self.stride, auto=self.auto)[0]
@@ -91,7 +91,7 @@ class YOLOv5(object):
         # NMS
         pred = non_max_suppression(pred, self.conf_thres, self.iou_thres, self.classes, self.agnostic_nms, max_det=self.max_det)
         det = pred[0]
-        print(det)
+        det[:, :4] = scale_coords(img.shape[2:], det[:, :4], ori_img.shape).round()
 
         # Process predictions
         size, i = len(det), 0
@@ -107,5 +107,8 @@ class YOLOv5(object):
             i += 1
         return _xywh, _conf, _cls
 
-
-
+if __name__ == 'main':
+    model = YOLOv5()
+    img = cv2.imread('test_images/imtest1.jpeg')
+    xywh, conf, cls = model(img)
+    print(xywh, conf, cls)
