@@ -54,11 +54,10 @@ class YOLOv5(object):
         half &= device.type != 'cpu'  # half precision only supported on CUDA
 
         # Load model
-        stride, _ = 64, [f'class{i}' for i in range(1000)]  # assign defaults
 
         model = attempt_load(weights, map_location=device)  # load FP32 model
-        stride = int(model.stride.max())  # model stride
-        self.stride = stride
+        self.stride = int(model.stride.max())  # model stride
+        self.names = model.module.names if hasattr(model, 'module') else model.names  # get class names
 
         if half:
             model.half()  # to FP16
