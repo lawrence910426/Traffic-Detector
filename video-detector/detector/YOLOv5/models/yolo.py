@@ -152,7 +152,9 @@ class Model(nn.Module):
                 if m == self.model[0]:
                     LOGGER.info(f"{'time (ms)':>10s} {'GFLOPs':>10s} {'params':>10s}  {'module'}")
                 LOGGER.info(f'{dt[-1]:10.2f} {o:10.2f} {m.np:10.0f}  {m.type}')
-
+            
+            if isinstance(m, nn.Upsample):
+                m.recompute_scale_factor = False
             x = m(x)  # run
             y.append(x if m.i in self.save else None)  # save output
 

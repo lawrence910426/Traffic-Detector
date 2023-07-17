@@ -62,7 +62,7 @@ class YOLOv5(object):
         if half:
             model.half()  # to FP16
 
-        imgsz = check_img_size(imgsz, s=stride)  # check image size
+        imgsz = check_img_size(imgsz, s=self.stride)  # check image size
 
         if device.type != 'cpu':
             model(torch.zeros(1, 3, *imgsz).to(device).type_as(next(model.parameters())))  # run once
