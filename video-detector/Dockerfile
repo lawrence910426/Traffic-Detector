@@ -131,6 +131,7 @@ RUN make all
 # Install MMDetection
 RUN pip install -U openmim
 RUN mim install mmengine
+RUN mim install mmcv-full
 RUN mim install "mmcv>=2.0.0"
 RUN mim install mmdet
 RUN mim download mmdet --config yolox_l_8x8_300e_coco --dest /app/video-detector/detector/MMDet/weight

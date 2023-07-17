@@ -1,5 +1,5 @@
 MMDET:
   CFG: "detector/MMDet/weight/yolox_l_8x8_300e_coco.py"
-  CHECKPOINT: "detector/MMDet/weight/yolox_l_8x8_300e_coco.pth"
+  CHECKPOINT: "detector/MMDet/weight/yolox_l_8x8_300e_coco_20211126_140236-d3bd2b23.pth"
 
   SCORE_THRESH: 0.5
