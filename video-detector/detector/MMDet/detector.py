@@ -18,13 +18,16 @@ class MMDet(object):
         self.score_thresh = score_thresh
         self.use_cuda = use_cuda
         self.is_xywh = is_xywh
-        self.class_names = self.net.CLASSES
-        self.num_classes = len(self.class_names)
+        # self.class_names = self.net.CLASSES
+        # self.num_classes = len(self.class_names)
 
     def __call__(self, ori_img):
         # forward
-        bbox_result = inference_detector(self.net, ori_img)
-        bboxes = np.vstack(bbox_result)
+        bbox_result = inference_detector(self.net, ori_img).cpu()
+        pred_instances = bbox_result.pred_instances
+        bboxes = np.array(pred_instances.bboxes)
+        scores = np.array(pred_instances.scores)
+        bboxes = np.column_stack([bboxes, scores])
 
         if len(bboxes) == 0:
             bbox = np.array([]).reshape([0, 4])
@@ -34,11 +37,7 @@ class MMDet(object):
 
         bbox = bboxes[:, :4]
         cls_conf = bboxes[:, 4]
-        cls_ids = [
-            np.full(bbox.shape[0], i, dtype=np.int32)
-            for i, bbox in enumerate(bbox_result)
-        ]
-        cls_ids = np.concatenate(cls_ids)
+        cls_ids = np.array(pred_instances.labels)
 
         selected_idx = cls_conf > self.score_thresh
         bbox = bbox[selected_idx, :]
@@ -49,7 +48,4 @@ class MMDet(object):
             bbox = xyxy_to_xywh(bbox)
 
         return bbox, cls_conf, cls_ids
-
-
-            
-
+        

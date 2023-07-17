@@ -57,7 +57,7 @@ class TrafficCounter(object):
         self.tracker = {}
         for k in self.enabled_classes:
             self.tracker[k] = build_tracker(cfg, use_cuda=use_cuda)
-        self.class_names = self.detector.class_names
+        # self.class_names = self.detector.class_names
 
         self.build_info()
 
