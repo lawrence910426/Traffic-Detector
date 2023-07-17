@@ -128,6 +128,13 @@ RUN pip install tensorboard==2.13.0 --force-reinstall
 WORKDIR /app/video-detector/thirdparty/fast-reid/fastreid/evaluation/rank_cylib
 RUN make all
 
+# Install MMDetection
+RUN pip install -U openmim
+RUN mim install mmengine
+RUN mim install "mmcv>=2.0.0"
+RUN mim install mmdet
+RUN mim download mmdet --config yolox_l_8x8_300e_coco --dest /app/video-detector/detector/MMDet/weight
+
 # Fix symbolic link (Ubuntu 22.04 bug)
 # RUN rm /opt/conda/envs/detector/lib/libstdc++.so*
 # RUN ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/envs/detector/lib/libstdc++.so.6

@@ -82,9 +82,10 @@ class RouteGuideServicer(interface_pb2_grpc.RouteGuideServicer):
 
             # Build config
             config = get_config()
-            config.merge_from_file("./configs/yolov3.yaml")
+            # config.merge_from_file("./configs/yolov3.yaml")
+            config.merge_from_file("./configs/mmdet.yaml")
             config.merge_from_file("./configs/deep_sort.yaml")
-            config.USE_MMDET = False
+            config.USE_MMDET = True
             config.USE_DEEPSORT = True
             config.USE_FASTREID = True
             config.USE_OCSORT = False
