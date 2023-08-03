@@ -42,16 +42,21 @@ class CrossCounter(StackCounter):
         }
 
     def update(self, id, idx_frame, vehicle: Box):
-        detected_line = None
+        detected_line = []
         if self.hover(self.A, vehicle):
-            detected_line = "A"
+            detected_line.append("A")
         if self.hover(self.B, vehicle):
-            detected_line = "B"
+            detected_line.append("B")
         if self.hover(self.X, vehicle):
-            detected_line = "X"
+            detected_line.append("X")
         if self.hover(self.Y, vehicle):
-            detected_line = "Y"
+            detected_line.append("Y")
         
+        if len(detected_line) != 1:
+            return
+        detected_line = detected_line[0]
+        
+        self.append_detection(id, detected_line)
         if not detected_line is None:
             self.occurence_stack.append((id, detected_line))
 
