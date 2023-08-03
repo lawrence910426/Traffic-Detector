@@ -57,9 +57,6 @@ class CrossCounter(StackCounter):
         detected_line = detected_line[0]
         
         self.append_detection(id, detected_line)
-        if not detected_line is None:
-            self.occurence_stack.append((id, detected_line))
-
         while self.update_realized_flow():
             pass
     
