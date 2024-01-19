@@ -129,12 +129,17 @@ WORKDIR /app/video-detector/thirdparty/fast-reid/fastreid/evaluation/rank_cylib
 RUN make all
 
 # Install MMDetection
+ENV FORCE_CUDA="1"
+ENV MMCV_WITH_OPS=1
+
 RUN pip install -U openmim
 RUN mim install mmengine
 RUN mim install mmcv-full
 RUN mim install "mmcv>=2.0.0"
 RUN mim install mmdet
 RUN mim download mmdet --config yolox_l_8x8_300e_coco --dest /app/video-detector/detector/MMDet/weight
+
+RUN pip uninstall -y sklearn && pip install --force-reinstall scikit-learn
 
 # Fix symbolic link (Ubuntu 22.04 bug)
 # RUN rm /opt/conda/envs/detector/lib/libstdc++.so*
@@ -148,11 +153,11 @@ WORKDIR /app/video-detector
 # Compile YoloV3 after startup
 # Compile nms during build wouldn't detect CUDA. Therefore,
 # nms must be compiled after docker startup.
-RUN echo "cd detector/YOLOv3/nms; sh build.sh; cd ../../../;" > init.sh
+# RUN echo "cd detector/YOLOv3/nms; sh build.sh; cd ../../../;" > init.sh
 
 # Append initialization script
 RUN echo "python rpc_daemon.py" >> init.sh
-# RUN echo "python traffic_terminal.py videos/minimal.mp4 --mode straight --fastreid" >> init.sh
+# RUN echo "python traffic_terminal.py videos/minimal.mp4 --mode straight --mmdet --fastreid" >> init.sh
 # RUN echo "sleep 86400" >> init.sh
 
 CMD [ "sh", "init.sh" ]
